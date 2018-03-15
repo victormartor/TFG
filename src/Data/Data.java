@@ -83,5 +83,10 @@ public class Data {
 	       }
 	       catch (Exception ee) { throw ee; }
     }
+    
+    public static String RutaImagenes() throws IOException{
+        Properties properties = Config.Properties(getPropertiesUrl());
+        return properties.getProperty("jdbc.rutaImagenes");
+    }
 }
 

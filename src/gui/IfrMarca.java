@@ -5,22 +5,41 @@
  */
 package gui;
 
-import Data.modMarcas;
+import Data.Imagen;
+import Data.ListaRender;
+import Data.ModMarcas;
+import java.awt.Image;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author victor
  */
 public class IfrMarca extends javax.swing.JFrame {
-
+    
     /**
      * Creates new form IfrMarca
+     * @throws java.lang.Exception
      */
     public IfrMarca() throws Exception {
         initComponents();
-        listMarcas.setModel(new modMarcas());
+        listMarcas.setModel(new ModMarcas());
+        listMarcas.setCellRenderer(new ListaRender());
+        
+        /*
+        ImageIcon icono = new ImageIcon(getClass().getResource("C:\\Users\\victor\\Dropbox\\universidad\\TFG\\Imagenes\\Hollister\\Marca_Hollister.jpg"));
+        Image imagen = icono.getImage();
+        ImageIcon iconoEscalado = new ImageIcon (imagen.getScaledInstance(100,100,Image.SCALE_SMOOTH));
+        jLabel1.setIcon(iconoEscalado);
+        
+        
+        Image imagen = new ImageIcon(new Imagen(2).getRutaCompleta()).getImage();
+        ImageIcon iconoEscalado = new ImageIcon (imagen.getScaledInstance(100,100,Image.SCALE_SMOOTH));
+        jLabel1.setIcon(iconoEscalado);
+        */
     }
 
     /**
@@ -50,6 +69,11 @@ public class IfrMarca extends javax.swing.JFrame {
         butAddMarca.setText("Agregar");
 
         butRemoveMarca.setText("Eliminar");
+        butRemoveMarca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butRemoveMarcaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -80,6 +104,29 @@ public class IfrMarca extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void butRemoveMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butRemoveMarcaActionPerformed
+        int index = listMarcas.getSelectedIndex();
+        
+        if(index != -1)
+        {
+            Object[] options = {"Sí",
+                                "No"};
+            int n = JOptionPane.showOptionDialog(this,
+                "¿Está seguro? Se eliminarán además todos los artículos de esta marca.",
+                "Eliminar marca",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+
+            if(n == 0)
+            {
+               listMarcas.remove(index);
+            }
+        }
+    }//GEN-LAST:event_butRemoveMarcaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -117,6 +164,8 @@ public class IfrMarca extends javax.swing.JFrame {
                 Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
             }
             if(ifrMarca != null){
+                
+                
                 ifrMarca.setLocationRelativeTo(null);
                 ifrMarca.setVisible(true);
             }
