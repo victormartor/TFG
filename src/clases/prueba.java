@@ -5,6 +5,7 @@
  */
 package clases;
 
+import Data.Data;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,11 +16,12 @@ import java.sql.SQLException;
  */
 public class prueba {
     public static void main(String args[]) throws Exception{
+        Data.LoadDriver();
        Connection con = null;
         ResultSet rs = null;
             try {
 
-                    con = new Conectar().getConnection();
+                    con = Data.Connection();
                     rs = con.createStatement().executeQuery("SELECT * FROM marca;");
                     
                     int i = 0;
