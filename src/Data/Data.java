@@ -12,6 +12,7 @@ package Data;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.Properties;
 
 import util.Config;
@@ -64,6 +65,23 @@ public class Data {
     		return 1;
     	else
     		return 0;
+    }
+    
+    /**
+     * @param con Conexión actualmente abierta
+     * @return Devuelve el último identificador insertado en una conexión dada
+     * @throws Exception
+     */
+    public static int LastId(Connection con) throws Exception{
+	    	try {
+	    		Properties properties = Config.Properties(getPropertiesUrl());
+	    		ResultSet rs = con.createStatement().executeQuery(properties.getProperty("jdbc.lastIdSentence"));
+	    		
+	    		rs.next(); 
+	    		
+	    		return rs.getInt(1);
+	       }
+	       catch (Exception ee) { throw ee; }
     }
 }
 
