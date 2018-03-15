@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package clases;
+package test;
 
 import Data.Data;
 import Data.Marca;
@@ -16,6 +16,7 @@ import java.sql.SQLException;
  * @author victor
  */
 public class prueba {
+    /*
     public static void main(String args[]) throws Exception{
         Data.LoadDriver();
        
@@ -28,4 +29,5 @@ public class prueba {
         System.out.println(marca);
     
     }
+*/
 }
