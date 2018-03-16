@@ -6,8 +6,11 @@
 package gui;
 
 import Data.Imagen;
-import Data.ListaRender;
-import Data.ModMarcas;
+import Data.Marca;
+import Data.Renders.ListaRender;
+import Data.Modelos.ModMarcas;
+import java.awt.Frame;
+import static java.awt.Frame.NORMAL;
 import java.awt.Image;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,26 +23,46 @@ import javax.swing.JOptionPane;
  */
 public class IfrMarca extends javax.swing.JFrame {
     
+    private static ModMarcas modMarcas;
+    
     /**
      * Creates new form IfrMarca
      * @throws java.lang.Exception
      */
     public IfrMarca() throws Exception {
         initComponents();
-        listMarcas.setModel(new ModMarcas());
+        modMarcas = new ModMarcas();
+        listMarcas.setModel(modMarcas);
         listMarcas.setCellRenderer(new ListaRender());
         
-        /*
-        ImageIcon icono = new ImageIcon(getClass().getResource("C:\\Users\\victor\\Dropbox\\universidad\\TFG\\Imagenes\\Hollister\\Marca_Hollister.jpg"));
-        Image imagen = icono.getImage();
-        ImageIcon iconoEscalado = new ImageIcon (imagen.getScaledInstance(100,100,Image.SCALE_SMOOTH));
-        jLabel1.setIcon(iconoEscalado);
+        listMarcas.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                if(e.getClickCount()==2){
+                   modificarMarca();
+                }
+           }
+        });
+    }
+    
+    private void modificarMarca(){
+        int iIndex = listMarcas.getSelectedIndex();
         
-        
-        Image imagen = new ImageIcon(new Imagen(2).getRutaCompleta()).getImage();
-        ImageIcon iconoEscalado = new ImageIcon (imagen.getScaledInstance(100,100,Image.SCALE_SMOOTH));
-        jLabel1.setIcon(iconoEscalado);
-        */
+        Marca marca = modMarcas.getMarca(iIndex);
+
+
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmMarca = null;
+            try {
+                frmMarca = new FrmMarca(marca, modMarcas);
+            } catch (Exception ex) {
+                Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if(frmMarca != null){
+                frmMarca.setLocationRelativeTo(IfrMarca.this);
+                frmMarca.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -67,6 +90,11 @@ public class IfrMarca extends javax.swing.JFrame {
         jScrollPane1.setViewportView(listMarcas);
 
         butAddMarca.setText("Agregar");
+        butAddMarca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butAddMarcaActionPerformed(evt);
+            }
+        });
 
         butRemoveMarca.setText("Eliminar");
         butRemoveMarca.addActionListener(new java.awt.event.ActionListener() {
@@ -123,10 +151,31 @@ public class IfrMarca extends javax.swing.JFrame {
 
             if(n == 0)
             {
-               listMarcas.remove(index);
+                try {
+                    modMarcas.removeMarca(index);
+                } catch (Exception ex) {
+                    Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }//GEN-LAST:event_butRemoveMarcaActionPerformed
+
+    private void butAddMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAddMarcaActionPerformed
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmMarca = null;
+            try {
+                frmMarca = new FrmMarca(null, modMarcas);
+            } catch (Exception ex) {
+                Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if(frmMarca != null){
+                frmMarca.setLocationRelativeTo(IfrMarca.this);
+                frmMarca.setVisible(true);
+            }
+        });
+         
+    }//GEN-LAST:event_butAddMarcaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -164,8 +213,6 @@ public class IfrMarca extends javax.swing.JFrame {
                 Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
             }
             if(ifrMarca != null){
-                
-                
                 ifrMarca.setLocationRelativeTo(null);
                 ifrMarca.setVisible(true);
             }

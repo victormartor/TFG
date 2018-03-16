@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Data;
+package Data.Modelos;
 
+import Data.Marca;
 import java.util.ArrayList;
-import java.util.Locale;
 import javax.swing.AbstractListModel;
 
 /**
@@ -42,14 +42,15 @@ public class ModMarcas extends AbstractListModel
         return lMarca.get(index);
     }
     
-    public void addMarca(Marca marca)
+    public void addMarca(Marca marca) throws Exception
     {
         lMarca.add(marca);
         this.fireIntervalAdded(this, getSize(), getSize()+1);
     }
     
-    public void removeMarca(int index)
+    public void removeMarca(int index) throws Exception
     {
+        lMarca.get(index).Delete();
         lMarca.remove(index);
         this.fireIntervalRemoved(index, getSize(), getSize()+1);
     }

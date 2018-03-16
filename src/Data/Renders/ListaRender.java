@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Data;
+package Data.Renders;
 
+import Data.Imagen;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
@@ -25,12 +26,10 @@ public class ListaRender extends JLabel implements ListCellRenderer{
     public Component getListCellRendererComponent(JList list, Object value, 
             int index, boolean isSelected, boolean cellHasFocus) {
         
-        //String valor = value.toString();
-        setText(value.toString());
-        
         ImageIcon iconoEscalado = null;
-        
         String[] asPartes = value.toString().split(":");
+        
+        setText(asPartes[1]);
         int iId_Imagen = Integer.parseInt(asPartes[2]);
         try {
             Image imagen = new ImageIcon(new Imagen(iId_Imagen).getRutaCompleta()).getImage();
