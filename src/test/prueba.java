@@ -19,7 +19,8 @@ import java.sql.SQLException;
 public class prueba {
     
     public static void main(String args[]) throws Exception{
-        Marca marca = Marca.Create("Scalpers", 2);
+        Imagen imagen = Imagen.Create("camiseta-roly-6503-01-img01.jpg", "\\");
+        System.out.print(imagen.getRuta());
     
     }
 

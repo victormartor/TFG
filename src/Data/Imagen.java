@@ -180,6 +180,6 @@ public class Imagen {
    }
    
    public String getRutaCompleta() throws IOException{
-       return Data.RutaImagenes()+_sRuta+'\\'+_sNombre;
+       return Data.RutaImagenes()+_sRuta+_sNombre;
    }
 }

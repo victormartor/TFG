@@ -5,15 +5,20 @@
  */
 package gui;
 
+import Data.Data;
 import Data.Imagen;
 import Data.Marca;
 import Data.Modelos.ModImagenes;
 import Data.Modelos.ModMarcas;
 import Data.Renders.ListaImagenesRender;
 import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -29,18 +34,22 @@ public class FrmMarca extends javax.swing.JFrame {
     public FrmMarca(Marca marca, ModMarcas modMarcas) throws Exception {
         initComponents();
         
-        _marca = marca;
+        _marca = Marca.Create("", -1);
         _modMarcas = modMarcas;
         //listImagen.setModel(new ModImagenes());
         //listImagen.setCellRenderer(new ListaImagenesRender());
-        if(_marca != null){
-            txtNombre.setText(_marca.getNombre());
+        txtNombre.setText(_marca.getNombre());
+        cargarImagen();
+    }
+    
+    private void cargarImagen() throws Exception{
+        if(_marca.getId_Imagen() != -1){
             Image image = new ImageIcon(new Imagen(_marca.getId_Imagen()).getRutaCompleta()).getImage();
             ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,100,Image.SCALE_SMOOTH));
             iconoImagen.setIcon(iconoEscalado);
         }
         else{
-            iconoImagen.setText("Elige una imagen");
+            iconoImagen.setText("<html><body>Elige una <br> imagen</body></html>");
         }
     }
 
@@ -92,6 +101,11 @@ public class FrmMarca extends javax.swing.JFrame {
         iconoImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         iconoImagen.setToolTipText("");
         iconoImagen.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        iconoImagen.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                iconoImagenMouseClicked(evt);
+            }
+        });
 
         lblCategorias.setText("Categorias");
 
@@ -159,6 +173,14 @@ public class FrmMarca extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNombreActionPerformed
 
     private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
+        try {
+            _marca.Delete();
+            if(_marca.getId_Imagen() != -1){
+                new Imagen(_marca.getId_Imagen()).Delete();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(FrmMarca.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
     }//GEN-LAST:event_butCancelarActionPerformed
 
@@ -166,7 +188,6 @@ public class FrmMarca extends javax.swing.JFrame {
         try {
             if(_marca != null){
                 _marca.setNombre(txtNombre.getText());
-                _marca.setId_Imagen(1);
                 _marca.Update();
             }
             else{
@@ -179,6 +200,91 @@ public class FrmMarca extends javax.swing.JFrame {
         }
         this.dispose();
     }//GEN-LAST:event_butAceptarActionPerformed
+
+    private void iconoImagenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iconoImagenMouseClicked
+        //Creamos nuestra variable archivo en la cual podremos usar todos los metodos de la clase jFileChooser
+        JFileChooser archivo = new JFileChooser();
+        //Si deseamos crear filtros para la selecion de archivos
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG)", "jpg","jpeg");
+        //Si deseas que se muestre primero los filtros usa la linea q esta abajo de esta.
+        //archivo.setFileFilter(filtro);
+        // Agregamos el Filtro pero cuidado se mostrara despues de todos los archivos
+        archivo.addChoosableFileFilter(filtro);
+        archivo.setFileFilter(filtro);
+        // Colocamos titulo a nuestra ventana de Seleccion
+        archivo.setDialogTitle("Abrir Imagen");
+        //Si deseamos que muestre una carpeta predetermina usa la siguiente linea
+        File ruta = null;
+        try {
+            ruta = new File(Data.RutaImagenes());
+        } catch (IOException ex) {
+            Logger.getLogger(FrmMarca.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //Le implementamos a nuestro ventana de seleccion
+         archivo.setCurrentDirectory(ruta);
+         //Abrimos nuestra Ventana de Selccion
+        int ventana = archivo.showOpenDialog(null);
+        //hacemos comparacion en caso de aprete el boton abrir
+        if(ventana == JFileChooser.APPROVE_OPTION)
+        {
+            //Obtenemos la ruta de nuestra imagen seleccionada
+            File file = archivo.getSelectedFile();
+            //Lo imprimimos en una caja de texto para ver su ruta
+            //txtnomimagen.setText(String.valueOf(file));
+            //de cierto modo necesitamos tener la imagen para ello debemos conocer la ruta de dicha imagen
+            //Image foto= getToolkit().getImage(String.valueOf(file));
+            //Le damos dimension a nuestro label que tendra la imagen
+            //foto= foto.getScaledInstance(110, 110, Image.SCALE_DEFAULT);
+            //Imprimimos la imagen en el label
+            //iconoImagen.setIcon(new ImageIcon(foto));
+            /*System.out.println(file.getAbsolutePath());
+            try {
+                System.out.println(file.getCanonicalPath());
+            } catch (IOException ex) {
+                Logger.getLogger(FrmMarca.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println(file.getName());
+            System.out.println(file.getParent());
+            System.out.println(file.getPath());
+            
+            try {
+                String s = file.getPath().replace(Data.RutaImagenes(), "");
+                s = s.replace(file.getName(), "");
+                System.out.println(s);
+            } catch (IOException ex) {
+                Logger.getLogger(FrmMarca.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            Image image = new ImageIcon(String.valueOf(file)).getImage();
+            ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,100,Image.SCALE_SMOOTH));
+            iconoImagen.setIcon(iconoEscalado);*/
+            String sRuta = null;
+            try {
+                sRuta = file.getPath().replace(Data.RutaImagenes(), "");
+            } catch (IOException ex) {
+                Logger.getLogger(FrmMarca.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            sRuta = sRuta.replace(file.getName(), "");
+            Imagen imagen = null;
+            try {
+                imagen = Imagen.Create(file.getName(), sRuta);
+            } catch (Exception ex) {
+                Logger.getLogger(FrmMarca.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if(imagen != null){
+                _marca.setId_Imagen(imagen.getId());
+                try {
+                    _marca.Update();
+                } catch (Exception ex) {
+                    Logger.getLogger(FrmMarca.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try {
+                    cargarImagen();
+                } catch (Exception ex) {
+                    Logger.getLogger(FrmMarca.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_iconoImagenMouseClicked
 
     /**
      * @param args the command line arguments

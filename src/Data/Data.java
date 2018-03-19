@@ -44,6 +44,7 @@ public class Data {
     	{
     		result += s.charAt(i);
     		if(s.charAt(i) == '\'') result += '\''; 
+                if(s.charAt(i) == '\\') result += '\\'; 
     	}
     	
     	if(bAddWildcards)
