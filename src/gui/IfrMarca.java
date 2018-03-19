@@ -47,9 +47,7 @@ public class IfrMarca extends javax.swing.JFrame {
     
     private void modificarMarca(){
         int iIndex = listMarcas.getSelectedIndex();
-        
         Marca marca = modMarcas.getMarca(iIndex);
-
 
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmMarca = null;
@@ -154,7 +152,7 @@ public class IfrMarca extends javax.swing.JFrame {
                 try {
                     modMarcas.removeMarca(index);
                 } catch (Exception ex) {
-                    Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Error en la eliminación de la marca. "+ ex.toString());
                 }
             }
         }
