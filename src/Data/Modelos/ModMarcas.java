@@ -19,7 +19,7 @@ public class ModMarcas extends AbstractListModel
     
     public ModMarcas() throws Exception
     {
-        lMarca = Marca.Select(null, null);//new ArrayList<Marca>();
+        lMarca = Marca.Select(null, null);
     }
 
     @Override
@@ -29,16 +29,6 @@ public class ModMarcas extends AbstractListModel
 
     @Override
     public Object getElementAt(int index) {
-        /*
-        Pedido p = lista.get(index);
-        
-        String mensaje = Cadenas.cadenas[tipo_idioma][6];
-        
-       mensaje += String.format(Locale.ENGLISH,"%d",p.getNumPedido());
-       mensaje += " ["+p.getHora()+"]";
-        
-        return mensaje;
-        */
         return lMarca.get(index);
     }
     

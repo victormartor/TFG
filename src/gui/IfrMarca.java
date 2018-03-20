@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
  */
 public class IfrMarca extends javax.swing.JFrame {
     
-    private static ModMarcas modMarcas;
+    private static ModMarcas _modMarcas;
     
     /**
      * Creates new form IfrMarca
@@ -31,8 +31,8 @@ public class IfrMarca extends javax.swing.JFrame {
      */
     public IfrMarca() throws Exception {
         initComponents();
-        modMarcas = new ModMarcas();
-        listMarcas.setModel(modMarcas);
+        _modMarcas = new ModMarcas();
+        listMarcas.setModel(_modMarcas);
         listMarcas.setCellRenderer(new ListaRender());
         
         listMarcas.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -47,14 +47,14 @@ public class IfrMarca extends javax.swing.JFrame {
     
     private void modificarMarca(){
         int iIndex = listMarcas.getSelectedIndex();
-        Marca marca = modMarcas.getMarca(iIndex);
+        Marca marca = _modMarcas.getMarca(iIndex);
 
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmMarca = null;
             try {
-                frmMarca = new FrmMarca(marca, modMarcas);
+                frmMarca = new FrmMarca(marca, _modMarcas);
             } catch (Exception ex) {
-                Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error al buscar la marca en la base de datos. "+ ex.toString());
             }
             if(frmMarca != null){
                 frmMarca.setLocationRelativeTo(IfrMarca.this);
@@ -79,6 +79,7 @@ public class IfrMarca extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Marcas");
+        setResizable(false);
 
         listMarcas.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -150,7 +151,7 @@ public class IfrMarca extends javax.swing.JFrame {
             if(n == 0)
             {
                 try {
-                    modMarcas.removeMarca(index);
+                    _modMarcas.removeMarca(index);
                 } catch (Exception ex) {
                     System.out.println("Error en la eliminación de la marca. "+ ex.toString());
                 }
@@ -163,9 +164,9 @@ public class IfrMarca extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmMarca = null;
             try {
-                frmMarca = new FrmMarca(null, modMarcas);
+                frmMarca = new FrmMarca(null, _modMarcas);
             } catch (Exception ex) {
-                Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error al buscar la marca en la base de datos. "+ ex.toString());
             }
             if(frmMarca != null){
                 frmMarca.setLocationRelativeTo(IfrMarca.this);

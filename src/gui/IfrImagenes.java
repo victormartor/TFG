@@ -24,6 +24,7 @@ public class IfrImagenes extends javax.swing.JFrame {
     private Marca _marca;
     private JLabel _iconoImagen;
     private ModImagenes _modImagenes = new ModImagenes();
+    public boolean bAbierto;
     
     /**
      * Creates new form IfrImagenes
@@ -33,6 +34,7 @@ public class IfrImagenes extends javax.swing.JFrame {
         
         _marca = marca;
         _iconoImagen = iconoImagen;
+        bAbierto = true;
         
         lImagenes.setModel(_modImagenes);
         lImagenes.setCellRenderer(new ListaImagenesRender());
@@ -109,19 +111,26 @@ public class IfrImagenes extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
+        bAbierto = false;
         this.dispose();
     }//GEN-LAST:event_butCancelarActionPerformed
 
     private void butElegirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butElegirActionPerformed
-        try {
-            _marca.setId_Imagen(_modImagenes.getImagen(lImagenes.getSelectedIndex()).getId());
-            
-            Image image = new ImageIcon(new Imagen(_marca.getId_Imagen()).getRutaCompleta()).getImage();
-            ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,100,Image.SCALE_SMOOTH));
-            _iconoImagen.setIcon(iconoEscalado);
-        } catch (Exception ex) {
-            System.out.println("Error en la imagen. "+ ex.toString());
+        int iIndex = lImagenes.getSelectedIndex();
+        if(iIndex != -1)
+        {
+            try {
+                _marca.setId_Imagen(_modImagenes.getImagen(lImagenes.getSelectedIndex()).getId());
+
+                Image image = new ImageIcon(new Imagen(_marca.getId_Imagen()).getRutaCompleta()).getImage();
+                ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,100,Image.SCALE_SMOOTH));
+                _iconoImagen.setIcon(iconoEscalado);
+            } catch (Exception ex) {
+                System.out.println("Error en la imagen. "+ ex.toString());
+            }
         }
+        
+        bAbierto = false;
         this.dispose();
     }//GEN-LAST:event_butElegirActionPerformed
 

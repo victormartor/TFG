@@ -8,9 +8,11 @@ package gui;
 import Data.Data;
 import Data.Imagen;
 import Data.Marca;
+import Data.Modelos.ModCategorias;
 import Data.Modelos.ModImagenes;
 import Data.Modelos.ModMarcas;
 import Data.Renders.ListaImagenesRender;
+import Data.Renders.ListaRender;
 import java.awt.Frame;
 import java.awt.Image;
 import java.io.File;
@@ -30,6 +32,7 @@ public class FrmMarca extends javax.swing.JFrame {
     private Marca _marca = null;
     private ModMarcas _modMarcas = null;
     private IfrImagenes _ifrImagenes = null;
+    private ModCategorias _modCategorias = null;
     
     private boolean _bModificar = false;
     /**
@@ -49,6 +52,10 @@ public class FrmMarca extends javax.swing.JFrame {
         
         _modMarcas = modMarcas;
         cargarImagen();
+        
+        _modCategorias = new ModCategorias(_marca.getId());
+        lCategorias.setModel(_modCategorias);
+        lCategorias.setCellRenderer(new ListaRender());
         
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -73,7 +80,12 @@ public class FrmMarca extends javax.swing.JFrame {
         try {
             if(!_bModificar){
                 _marca.Delete();
-            }        
+            }    
+            else{
+                Marca marca = new Marca(_marca.getId());
+                _marca.setNombre(marca.getNombre());
+                _marca.setId_Imagen(marca.getId_Imagen());
+            }
         } catch (Exception ex) {
             System.out.println("Error en la eliminación de la marca. "+ ex.toString());
         }
@@ -99,9 +111,12 @@ public class FrmMarca extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         lblCategorias = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        lCategorias = new javax.swing.JList<>();
         butElegir = new javax.swing.JButton();
         butSubir = new javax.swing.JButton();
+        butAgregarCat = new javax.swing.JButton();
+        butEliminarCat = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
 
         jButton1.setText("jButton1");
 
@@ -132,7 +147,7 @@ public class FrmMarca extends javax.swing.JFrame {
 
         iconoImagen.setBackground(new java.awt.Color(255, 255, 255));
         iconoImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        iconoImagen.setToolTipText("");
+        iconoImagen.setToolTipText("Imagen de la marca");
         iconoImagen.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         iconoImagen.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -140,14 +155,14 @@ public class FrmMarca extends javax.swing.JFrame {
             }
         });
 
-        lblCategorias.setText("Categorias");
+        lblCategorias.setText("Categorías");
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+        lCategorias.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(jList1);
+        jScrollPane1.setViewportView(lCategorias);
 
         butElegir.setText("Elegir imagen");
         butElegir.addActionListener(new java.awt.event.ActionListener() {
@@ -163,6 +178,10 @@ public class FrmMarca extends javax.swing.JFrame {
             }
         });
 
+        butAgregarCat.setText("Agregar Categoría");
+
+        butEliminarCat.setText("Eliminar Categoría");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -171,25 +190,33 @@ public class FrmMarca extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblNombre)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(txtNombre))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(butCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(butAceptar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblCategorias)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblNombre)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                         .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(butElegir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(butSubir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(butSubir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(butAgregarCat, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+                                .addComponent(butEliminarCat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(butAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(butCancelar))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblCategorias)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jSeparator2))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -197,8 +224,9 @@ public class FrmMarca extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNombre)
+                        .addGap(3, 3, 3)
                         .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -212,11 +240,16 @@ public class FrmMarca extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(butAceptar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(butCancelar))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
+                        .addComponent(butAgregarCat)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(butEliminarCat))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(butCancelar)
+                    .addComponent(butAceptar))
                 .addContainerGap())
         );
 
@@ -235,7 +268,7 @@ public class FrmMarca extends javax.swing.JFrame {
         try {
                 _marca.setNombre(txtNombre.getText());
                 _marca.Update();
-                _modMarcas.addMarca(_marca);    
+                if(!_bModificar) _modMarcas.addMarca(_marca);    
         } catch (Exception ex) {
             System.out.println("Error en la creación o modificación de la marca. "+ ex.toString());
         }
@@ -289,18 +322,18 @@ public class FrmMarca extends javax.swing.JFrame {
 
     private void butElegirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butElegirActionPerformed
         java.awt.EventQueue.invokeLater(() -> {
-            //Frame ifrImagenes = null;
-            try {
-                _ifrImagenes = new IfrImagenes(_marca, iconoImagen);
-            } catch (Exception ex) {
-                Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
+            if(_ifrImagenes == null || !_ifrImagenes.bAbierto){
+                try {
+                    _ifrImagenes = new IfrImagenes(_marca, iconoImagen);
+                } catch (Exception ex) {
+                    System.out.println("Error al leer la lista de imágenes. "+ ex.toString());
+                }
             }
-            if(_ifrImagenes != null){
-                _ifrImagenes.setLocationRelativeTo(FrmMarca.this);
-                _ifrImagenes.setBounds(this.getX()+this.getWidth()-10, 
-                        this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
-                _ifrImagenes.setVisible(true);
-            }
+            
+            _ifrImagenes.setLocationRelativeTo(FrmMarca.this);
+            _ifrImagenes.setBounds(this.getX()+this.getWidth()-10, 
+                    this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
+            _ifrImagenes.setVisible(true);
         });
     }//GEN-LAST:event_butElegirActionPerformed
 
@@ -352,14 +385,17 @@ public class FrmMarca extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butAceptar;
+    private javax.swing.JButton butAgregarCat;
     private javax.swing.JButton butCancelar;
     private javax.swing.JButton butElegir;
+    private javax.swing.JButton butEliminarCat;
     private javax.swing.JButton butSubir;
     private javax.swing.JLabel iconoImagen;
     private javax.swing.JButton jButton1;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JList<String> lCategorias;
     private javax.swing.JLabel lblCategorias;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JTextField txtNombre;
