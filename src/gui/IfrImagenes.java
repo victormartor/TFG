@@ -120,7 +120,7 @@ public class IfrImagenes extends javax.swing.JFrame {
         if(iIndex != -1)
         {
             try {
-                _marca.setId_Imagen(_modImagenes.getImagen(lImagenes.getSelectedIndex()).getId());
+                _marca.setId_Imagen(_modImagenes.getImagen(iIndex).getId());
 
                 Image image = new ImageIcon(new Imagen(_marca.getId_Imagen()).getRutaCompleta()).getImage();
                 ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,100,Image.SCALE_SMOOTH));

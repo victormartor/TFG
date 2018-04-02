@@ -5,15 +5,10 @@
  */
 package gui;
 
+import Data.Categoria;
 import Data.Data;
 import Data.Imagen;
-import Data.Marca;
 import Data.Modelos.ModCategorias;
-import Data.Modelos.ModImagenes;
-import Data.Modelos.ModMarcas;
-import Data.Renders.ListaImagenesRender;
-import Data.Renders.ListaRender;
-import java.awt.Frame;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -27,47 +22,26 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  * @author victor
  */
-public class FrmMarca extends javax.swing.JFrame {
+public class FrmCategoria extends javax.swing.JFrame {
 
-    private Marca _marca = null;
-    private ModMarcas _modMarcas = null;
-    private IfrImagenes _ifrImagenes = null;
+    private Categoria _categoria = null;
     private ModCategorias _modCategorias = null;
+    private IfrImagenes _ifrImagenes = null;
+    private boolean _bModificar = true;
     
-    private boolean _bModificar = false;
     /**
-     * Creates new form FrmMarca
+     * Creates new form FrmCategoria
      */
-    public FrmMarca(Marca marca, ModMarcas modMarcas) throws Exception {
+    public FrmCategoria() throws Exception {
         initComponents();
         
-        if(marca != null){
-            _bModificar = true;
-            _marca = marca;
-            txtNombre.setText(_marca.getNombre());
-        }
-        else{
-            _marca = Marca.Create("", -1);
-        }
-        
-        _modMarcas = modMarcas;
-        cargarImagen();
-        
-        _modCategorias = new ModCategorias(_marca.getId());
-        lCategorias.setModel(_modCategorias);
-        lCategorias.setCellRenderer(new ListaRender());
-        
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                cancelar();
-            }
-        });
+        _categoria = new Categoria(1);
+        //cargarImagen();
     }
     
     private void cargarImagen() throws Exception{
-        if(_marca.getId_Imagen() != -1){
-            Image image = new ImageIcon(new Imagen(_marca.getId_Imagen()).getRutaCompleta()).getImage();
+        if(_categoria.getId_Imagen() != -1){
+            Image image = new ImageIcon(new Imagen(_categoria.getId_Imagen()).getRutaCompleta()).getImage();
             ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,100,Image.SCALE_SMOOTH));
             iconoImagen.setIcon(iconoEscalado);
         }
@@ -79,15 +53,15 @@ public class FrmMarca extends javax.swing.JFrame {
     private void cancelar(){
         try {
             if(!_bModificar){
-                _marca.Delete();
+                _categoria.Delete();
             }    
             else{
-                Marca marca = new Marca(_marca.getId());
-                _marca.setNombre(marca.getNombre());
-                _marca.setId_Imagen(marca.getId_Imagen());
+                Categoria categoria = new Categoria(_categoria.getId());
+                _categoria.setNombre(categoria.getNombre());
+                _categoria.setId_Imagen(categoria.getId_Imagen());
             }
         } catch (Exception ex) {
-            System.out.println("Error en la eliminación de la marca. "+ ex.toString());
+            System.out.println("Error en la eliminación de la categoria. "+ ex.toString());
         }
         if(_ifrImagenes != null) _ifrImagenes.dispose();
         this.dispose();
@@ -102,32 +76,48 @@ public class FrmMarca extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
         lblNombre = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
-        butCancelar = new javax.swing.JButton();
-        butAceptar = new javax.swing.JButton();
         iconoImagen = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        lblCategorias = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        lCategorias = new javax.swing.JList<>();
         butElegir = new javax.swing.JButton();
         butSubir = new javax.swing.JButton();
-        butAgregarCat = new javax.swing.JButton();
-        butEliminarCat = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        butCancelar = new javax.swing.JButton();
+        butAceptar = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
 
-        jButton1.setText("jButton1");
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("Agregar o modificar marca");
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(486, 519));
 
         lblNombre.setText("Nombre");
 
         txtNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNombreActionPerformed(evt);
+            }
+        });
+
+        iconoImagen.setBackground(new java.awt.Color(255, 255, 255));
+        iconoImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        iconoImagen.setToolTipText("Imagen de la marca");
+        iconoImagen.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        iconoImagen.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                iconoImagenMouseClicked(evt);
+            }
+        });
+
+        butElegir.setText("Elegir imagen");
+        butElegir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butElegirActionPerformed(evt);
+            }
+        });
+
+        butSubir.setText("Subir imagen");
+        butSubir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butSubirActionPerformed(evt);
             }
         });
 
@@ -145,43 +135,6 @@ public class FrmMarca extends javax.swing.JFrame {
             }
         });
 
-        iconoImagen.setBackground(new java.awt.Color(255, 255, 255));
-        iconoImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        iconoImagen.setToolTipText("Imagen de la marca");
-        iconoImagen.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        iconoImagen.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                iconoImagenMouseClicked(evt);
-            }
-        });
-
-        lblCategorias.setText("Categorías");
-
-        lCategorias.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(lCategorias);
-
-        butElegir.setText("Elegir imagen");
-        butElegir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butElegirActionPerformed(evt);
-            }
-        });
-
-        butSubir.setText("Subir imagen");
-        butSubir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butSubirActionPerformed(evt);
-            }
-        });
-
-        butAgregarCat.setText("Agregar Categoría");
-
-        butEliminarCat.setText("Eliminar Categoría");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -189,12 +142,11 @@ public class FrmMarca extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblNombre)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addGap(0, 206, Short.MAX_VALUE))
                             .addComponent(txtNombre))
                         .addGap(18, 18, 18)
                         .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -202,20 +154,12 @@ public class FrmMarca extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(butElegir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(butSubir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jSeparator1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(butAgregarCat, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
-                                .addComponent(butEliminarCat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(butAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(butCancelar))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblCategorias)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(butAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(butCancelar))
                     .addComponent(jSeparator2))
                 .addContainerGap())
         );
@@ -224,29 +168,20 @@ public class FrmMarca extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNombre)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(butElegir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(butSubir)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblCategorias)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(butAgregarCat)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(butEliminarCat))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 337, Short.MAX_VALUE)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(butCancelar)
                     .addComponent(butAceptar))
@@ -260,24 +195,13 @@ public class FrmMarca extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreActionPerformed
 
-    private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
-        cancelar();
-    }//GEN-LAST:event_butCancelarActionPerformed
-
-    private void butAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAceptarActionPerformed
-        try {
-                _marca.setNombre(txtNombre.getText());
-                _marca.Update();
-                if(!_bModificar) _modMarcas.addMarca(_marca);    
-        } catch (Exception ex) {
-            System.out.println("Error en la creación o modificación de la marca. "+ ex.toString());
-        }
-        this.dispose();
-    }//GEN-LAST:event_butAceptarActionPerformed
-
     private void iconoImagenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iconoImagenMouseClicked
 
     }//GEN-LAST:event_iconoImagenMouseClicked
+
+    private void butElegirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butElegirActionPerformed
+
+    }//GEN-LAST:event_butElegirActionPerformed
 
     private void butSubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSubirActionPerformed
         JFileChooser archivo = new JFileChooser();
@@ -286,14 +210,14 @@ public class FrmMarca extends javax.swing.JFrame {
         archivo.addChoosableFileFilter(filtro);
         archivo.setFileFilter(filtro);
         archivo.setDialogTitle("Abrir Imagen");
-    
+
         File ruta = null;
         try {
             ruta = new File(Data.RutaImagenes());
         } catch (IOException ex) {
             System.out.println("Error en la lectura de la ruta. "+ ex.toString());
         }
-         archivo.setCurrentDirectory(ruta);
+        archivo.setCurrentDirectory(ruta);
 
         int ventana = archivo.showOpenDialog(null);
         if(ventana == JFileChooser.APPROVE_OPTION)
@@ -309,7 +233,7 @@ public class FrmMarca extends javax.swing.JFrame {
                 System.out.println("Error en la creación de la imagen. "+ ex.toString());
             }
             if(imagen != null){
-                _marca.setId_Imagen(imagen.getId());
+                _categoria.setId_Imagen(imagen.getId());
                 try {
                     //_marca.Update();
                     cargarImagen();
@@ -320,22 +244,20 @@ public class FrmMarca extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_butSubirActionPerformed
 
-    private void butElegirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butElegirActionPerformed
-        java.awt.EventQueue.invokeLater(() -> {
-            if(_ifrImagenes == null || !_ifrImagenes.bAbierto){
-                try {
-                    _ifrImagenes = new IfrImagenes(_marca, iconoImagen);
-                } catch (Exception ex) {
-                    System.out.println("Error al leer la lista de imágenes. "+ ex.toString());
-                }
-            }
-            
-            _ifrImagenes.setLocationRelativeTo(FrmMarca.this);
-            _ifrImagenes.setBounds(this.getX()+this.getWidth()-10, 
-                    this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
-            _ifrImagenes.setVisible(true);
-        });
-    }//GEN-LAST:event_butElegirActionPerformed
+    private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
+        cancelar();
+    }//GEN-LAST:event_butCancelarActionPerformed
+
+    private void butAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAceptarActionPerformed
+        try {
+            _categoria.setNombre(txtNombre.getText());
+            _categoria.Update();
+            if(!_bModificar) _modCategorias.addCategoria(_categoria);
+        } catch (Exception ex) {
+            System.out.println("Error en la creación o modificación de la marca. "+ ex.toString());
+        }
+        this.dispose();
+    }//GEN-LAST:event_butAceptarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -354,49 +276,34 @@ public class FrmMarca extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmMarca.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmCategoria.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmMarca.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmCategoria.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmMarca.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmCategoria.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmMarca.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmCategoria.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
-        /*
         java.awt.EventQueue.invokeLater(() -> {
-            
-            FrmMarca frmMarca = null;
             try {
-                frmMarca = new FrmMarca();
+                new FrmCategoria().setVisible(true);
             } catch (Exception ex) {
-                Logger.getLogger(FrmMarca.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            if(frmMarca != null){
-                frmMarca.setLocationRelativeTo(null);
-                frmMarca.setVisible(true);
+                Logger.getLogger(FrmCategoria.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        */
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butAceptar;
-    private javax.swing.JButton butAgregarCat;
     private javax.swing.JButton butCancelar;
     private javax.swing.JButton butElegir;
-    private javax.swing.JButton butEliminarCat;
     private javax.swing.JButton butSubir;
     private javax.swing.JLabel iconoImagen;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JList<String> lCategorias;
-    private javax.swing.JLabel lblCategorias;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
