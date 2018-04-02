@@ -214,11 +214,17 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Agregar Categor&#xed;a"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butAgregarCatActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="butEliminarCat">
       <Properties>
         <Property name="text" type="java.lang.String" value="Eliminar Categor&#xed;a"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butEliminarCatActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator2">
     </Component>

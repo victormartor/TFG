@@ -5,6 +5,7 @@
  */
 package Data.Modelos;
 
+import Data.Categoria;
 import Data.Marca;
 import java.util.ArrayList;
 import javax.swing.AbstractListModel;
@@ -40,7 +41,14 @@ public class ModMarcas extends AbstractListModel
     
     public void removeMarca(int index) throws Exception
     {
-        lMarca.get(index).Delete();
+        Marca marca = lMarca.get(index);
+        
+        ArrayList<Categoria> aCategorias = Categoria.Select(null, null, marca.getId());
+        for(Categoria c : aCategorias){
+            c.Delete();
+        }
+        marca.Delete();
+        
         lMarca.remove(index);
         this.fireIntervalRemoved(index, getSize(), getSize()+1);
     }

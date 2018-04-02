@@ -5,6 +5,7 @@
  */
 package test;
 
+import Data.Categoria;
 import Data.Data;
 import Data.Imagen;
 import Data.Marca;
@@ -19,8 +20,9 @@ import java.sql.SQLException;
 public class prueba {
     
     public static void main(String args[]) throws Exception{
-        Imagen imagen = Imagen.Create("camiseta-roly-6503-01-img01.jpg", "\\");
-        System.out.print(imagen.getRuta());
+        Categoria categoria = Categoria.Create("Prueba", -1, 3);
+        
+        System.out.println(categoria);
     
     }
 

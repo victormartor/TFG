@@ -5,6 +5,7 @@
  */
 package gui;
 
+import Data.Categoria;
 import Data.Imagen;
 import Data.Marca;
 import Data.Modelos.ModImagenes;
@@ -22,6 +23,7 @@ import javax.swing.JLabel;
 public class IfrImagenes extends javax.swing.JFrame {
 
     private Marca _marca;
+    private Categoria _categoria;
     private JLabel _iconoImagen;
     private ModImagenes _modImagenes = new ModImagenes();
     public boolean bAbierto;
@@ -29,10 +31,11 @@ public class IfrImagenes extends javax.swing.JFrame {
     /**
      * Creates new form IfrImagenes
      */
-    public IfrImagenes(Marca marca, JLabel iconoImagen) throws Exception {
+    public IfrImagenes(JLabel iconoImagen, Marca marca, Categoria categoria) throws Exception {
         initComponents();
         
         _marca = marca;
+        _categoria = categoria;
         _iconoImagen = iconoImagen;
         bAbierto = true;
         
@@ -120,9 +123,16 @@ public class IfrImagenes extends javax.swing.JFrame {
         if(iIndex != -1)
         {
             try {
-                _marca.setId_Imagen(_modImagenes.getImagen(iIndex).getId());
-
-                Image image = new ImageIcon(new Imagen(_marca.getId_Imagen()).getRutaCompleta()).getImage();
+                Image image = null;
+                if(_marca != null){
+                    _marca.setId_Imagen(_modImagenes.getImagen(iIndex).getId());
+                    image = new ImageIcon(new Imagen(_marca.getId_Imagen()).getRutaCompleta()).getImage();
+                }
+                else if(_categoria != null){
+                    _categoria.setId_Imagen(_modImagenes.getImagen(iIndex).getId());
+                    image = new ImageIcon(new Imagen(_categoria.getId_Imagen()).getRutaCompleta()).getImage();
+                }
+                
                 ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,100,Image.SCALE_SMOOTH));
                 _iconoImagen.setIcon(iconoEscalado);
             } catch (Exception ex) {

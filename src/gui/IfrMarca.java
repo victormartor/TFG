@@ -166,7 +166,7 @@ public class IfrMarca extends javax.swing.JFrame {
             try {
                 frmMarca = new FrmMarca(null, _modMarcas);
             } catch (Exception ex) {
-                System.out.println("Error al buscar la marca en la base de datos. "+ ex.toString());
+                System.out.println("Error al crear una marca vacía en la base de datos. "+ ex.toString());
             }
             if(frmMarca != null){
                 frmMarca.setLocationRelativeTo(IfrMarca.this);

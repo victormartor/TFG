@@ -8,7 +8,9 @@ package gui;
 import Data.Categoria;
 import Data.Data;
 import Data.Imagen;
+import Data.Marca;
 import Data.Modelos.ModCategorias;
+import Data.Renders.ListaRender;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -27,16 +29,37 @@ public class FrmCategoria extends javax.swing.JFrame {
     private Categoria _categoria = null;
     private ModCategorias _modCategorias = null;
     private IfrImagenes _ifrImagenes = null;
-    private boolean _bModificar = true;
+    private boolean _bModificar = false;
     
     /**
      * Creates new form FrmCategoria
      */
-    public FrmCategoria() throws Exception {
+    public FrmCategoria(Categoria categoria, ModCategorias modCategorias, Marca marca) throws Exception {
         initComponents();
         
-        _categoria = new Categoria(1);
-        //cargarImagen();
+        if(categoria != null){
+            _bModificar = true;
+            _categoria = categoria;
+            txtNombre.setText(_categoria.getNombre());
+        }
+        else{
+            _categoria = Categoria.Create("", -1, marca.getId());
+        }
+        
+        _modCategorias = modCategorias;
+        cargarImagen();
+        
+        //lista de articulos
+        //_modCategorias = new ModCategorias(_marca.getId());
+        //lCategorias.setModel(_modCategorias);
+        //lCategorias.setCellRenderer(new ListaRender());
+        
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                cancelar();
+            }
+        });
     }
     
     private void cargarImagen() throws Exception{
@@ -200,7 +223,20 @@ public class FrmCategoria extends javax.swing.JFrame {
     }//GEN-LAST:event_iconoImagenMouseClicked
 
     private void butElegirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butElegirActionPerformed
-
+        java.awt.EventQueue.invokeLater(() -> {
+            if(_ifrImagenes == null || !_ifrImagenes.bAbierto){
+                try {
+                    _ifrImagenes = new IfrImagenes(iconoImagen, null, _categoria);
+                } catch (Exception ex) {
+                    System.out.println("Error al leer la lista de imágenes. "+ ex.toString());
+                }
+            }
+            
+            _ifrImagenes.setLocationRelativeTo(FrmCategoria.this);
+            _ifrImagenes.setBounds(this.getX()+this.getWidth()-10, 
+                    this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
+            _ifrImagenes.setVisible(true);
+        });
     }//GEN-LAST:event_butElegirActionPerformed
 
     private void butSubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSubirActionPerformed
@@ -287,13 +323,15 @@ public class FrmCategoria extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        /*
         java.awt.EventQueue.invokeLater(() -> {
             try {
-                new FrmCategoria().setVisible(true);
+                new FrmCategoria(null, null, null).setVisible(true);
             } catch (Exception ex) {
                 Logger.getLogger(FrmCategoria.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+        */
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -5,6 +5,7 @@
  */
 package gui;
 
+import Data.Categoria;
 import Data.Data;
 import Data.Imagen;
 import Data.Marca;
@@ -21,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -57,10 +59,37 @@ public class FrmMarca extends javax.swing.JFrame {
         lCategorias.setModel(_modCategorias);
         lCategorias.setCellRenderer(new ListaRender());
         
+        lCategorias.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                if(e.getClickCount()==2){
+                   modificarCategoria();
+                }
+           }
+        });
+        
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 cancelar();
+            }
+        });
+    }
+    
+    private void modificarCategoria(){
+        int iIndex = lCategorias.getSelectedIndex();
+        Categoria categoria = _modCategorias.getCategoria(iIndex);
+
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmCategoria = null;
+            try {
+                frmCategoria = new FrmCategoria(categoria, _modCategorias, _marca);
+            } catch (Exception ex) {
+                System.out.println("Error al buscar la categoria en la base de datos. "+ ex.toString());
+            }
+            if(frmCategoria != null){
+                frmCategoria.setLocationRelativeTo(FrmMarca.this);
+                frmCategoria.setVisible(true);
             }
         });
     }
@@ -179,8 +208,18 @@ public class FrmMarca extends javax.swing.JFrame {
         });
 
         butAgregarCat.setText("Agregar Categoría");
+        butAgregarCat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butAgregarCatActionPerformed(evt);
+            }
+        });
 
         butEliminarCat.setText("Eliminar Categoría");
+        butEliminarCat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butEliminarCatActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -324,7 +363,7 @@ public class FrmMarca extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             if(_ifrImagenes == null || !_ifrImagenes.bAbierto){
                 try {
-                    _ifrImagenes = new IfrImagenes(_marca, iconoImagen);
+                    _ifrImagenes = new IfrImagenes(iconoImagen, _marca, null);
                 } catch (Exception ex) {
                     System.out.println("Error al leer la lista de imágenes. "+ ex.toString());
                 }
@@ -336,6 +375,48 @@ public class FrmMarca extends javax.swing.JFrame {
             _ifrImagenes.setVisible(true);
         });
     }//GEN-LAST:event_butElegirActionPerformed
+
+    private void butAgregarCatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarCatActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmCategoria = null;
+            try {
+                frmCategoria = new FrmCategoria(null, _modCategorias, _marca);
+            } catch (Exception ex) {
+                System.out.println("Error al crear una categoria vacía en la base de datos. "+ ex.toString());
+            }
+            if(frmCategoria != null){
+                frmCategoria.setLocationRelativeTo(FrmMarca.this);
+                frmCategoria.setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_butAgregarCatActionPerformed
+
+    private void butEliminarCatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarCatActionPerformed
+        int index = lCategorias.getSelectedIndex();
+        
+        if(index != -1)
+        {
+            Object[] options = {"Sí",
+                                "No"};
+            int n = JOptionPane.showOptionDialog(this,
+                "¿Está seguro? Se eliminarán además todos los artículos de esta categoría.",
+                "Eliminar categoría",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+
+            if(n == 0)
+            {
+                try {
+                    _modCategorias.removeCategoria(index);
+                } catch (Exception ex) {
+                    System.out.println("Error en la eliminación de la categoria. "+ ex.toString());
+                }
+            }
+        }
+    }//GEN-LAST:event_butEliminarCatActionPerformed
 
     /**
      * @param args the command line arguments

@@ -75,7 +75,7 @@ public class Categoria {
 			con.createStatement().executeUpdate("INSERT INTO Categoria (Nombre, Id_Imagen, Id_Marca)"
 					+ " VALUES (" + Data.String2Sql(sNombre, true, false) + ", " 
                                         + iId_Imagen + ", "
-                                        + iId_Marca);
+                                        + iId_Marca + ");");
 			
 			return new Categoria(Data.LastId(con));
 		}
