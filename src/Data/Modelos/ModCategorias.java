@@ -5,7 +5,7 @@
  */
 package Data.Modelos;
 
-import Data.Categoria;
+import Data.Clases.Categoria;
 import java.util.ArrayList;
 import javax.swing.AbstractListModel;
 

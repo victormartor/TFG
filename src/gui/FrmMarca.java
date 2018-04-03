@@ -5,10 +5,10 @@
  */
 package gui;
 
-import Data.Categoria;
+import Data.Clases.Categoria;
 import Data.Data;
-import Data.Imagen;
-import Data.Marca;
+import Data.Clases.Imagen;
+import Data.Clases.Marca;
 import Data.Modelos.ModCategorias;
 import Data.Modelos.ModImagenes;
 import Data.Modelos.ModMarcas;

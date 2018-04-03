@@ -5,7 +5,7 @@
  */
 package Data.Modelos;
 
-import Data.Imagen;
+import Data.Clases.Imagen;
 import java.util.ArrayList;
 import javax.swing.AbstractListModel;
 

@@ -5,9 +5,9 @@
  */
 package gui;
 
-import Data.Categoria;
-import Data.Imagen;
-import Data.Marca;
+import Data.Clases.Categoria;
+import Data.Clases.Imagen;
+import Data.Clases.Marca;
 import Data.Modelos.ModImagenes;
 import Data.Renders.ListaImagenesRender;
 import java.awt.Image;

@@ -5,8 +5,8 @@
  */
 package gui;
 
-import Data.Imagen;
-import Data.Marca;
+import Data.Clases.Imagen;
+import Data.Clases.Marca;
 import Data.Renders.ListaRender;
 import Data.Modelos.ModMarcas;
 import java.awt.Frame;

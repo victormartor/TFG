@@ -5,7 +5,7 @@
  */
 package Data.Renders;
 
-import Data.Imagen;
+import Data.Clases.Imagen;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;

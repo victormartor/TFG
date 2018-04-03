@@ -5,11 +5,11 @@
  */
 package test;
 
-import Data.Articulo;
-import Data.Categoria;
+import Data.Clases.Articulo;
+import Data.Clases.Categoria;
 import Data.Data;
-import Data.Imagen;
-import Data.Marca;
+import Data.Clases.Imagen;
+import Data.Clases.Marca;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
