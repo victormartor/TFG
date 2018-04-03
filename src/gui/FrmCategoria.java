@@ -49,10 +49,13 @@ public class FrmCategoria extends javax.swing.JFrame {
         _modCategorias = modCategorias;
         cargarImagen();
         
-        //lista de articulos
+        //LISTA DE ARTÍCULOS
         //_modCategorias = new ModCategorias(_marca.getId());
         //lCategorias.setModel(_modCategorias);
         //lCategorias.setCellRenderer(new ListaRender());
+        
+        if(_bModificar)
+            this.setTitle("Modificar categoría");
         
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -80,7 +83,7 @@ public class FrmCategoria extends javax.swing.JFrame {
             }    
             else{
                 Categoria categoria = new Categoria(_categoria.getId());
-                _categoria.setNombre(categoria.getNombre());
+                //_categoria.setNombre(categoria.getNombre());
                 _categoria.setId_Imagen(categoria.getId_Imagen());
             }
         } catch (Exception ex) {
@@ -108,9 +111,14 @@ public class FrmCategoria extends javax.swing.JFrame {
         butCancelar = new javax.swing.JButton();
         butAceptar = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
+        lblArticulos = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(486, 519));
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Agregar categoría");
 
         lblNombre.setText("Nombre");
 
@@ -158,6 +166,19 @@ public class FrmCategoria extends javax.swing.JFrame {
             }
         });
 
+        lblArticulos.setText("Artículos");
+
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(jList1);
+
+        jButton1.setText("Agregar Artículo");
+
+        jButton2.setText("Eliminar Artículo");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -183,7 +204,16 @@ public class FrmCategoria extends javax.swing.JFrame {
                         .addComponent(butAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(butCancelar))
-                    .addComponent(jSeparator2))
+                    .addComponent(jSeparator2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblArticulos)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -202,12 +232,22 @@ public class FrmCategoria extends javax.swing.JFrame {
                         .addComponent(butSubir)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 337, Short.MAX_VALUE)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(butCancelar)
-                    .addComponent(butAceptar))
+                .addComponent(lblArticulos)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(butCancelar)
+                            .addComponent(butAceptar)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)))
                 .addContainerGap())
         );
 
@@ -340,8 +380,13 @@ public class FrmCategoria extends javax.swing.JFrame {
     private javax.swing.JButton butElegir;
     private javax.swing.JButton butSubir;
     private javax.swing.JLabel iconoImagen;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JList<String> jList1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lblArticulos;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables

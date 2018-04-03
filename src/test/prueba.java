@@ -5,6 +5,7 @@
  */
 package test;
 
+import Data.Articulo;
 import Data.Categoria;
 import Data.Data;
 import Data.Imagen;
@@ -12,6 +13,7 @@ import Data.Marca;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -20,9 +22,9 @@ import java.sql.SQLException;
 public class prueba {
     
     public static void main(String args[]) throws Exception{
-        Categoria categoria = Categoria.Create("Prueba", -1, 3);
-        
-        System.out.println(categoria);
+        Articulo a = new Articulo(2);
+        a.Delete();
+        System.out.println(a);
     
     }
 
