@@ -67,7 +67,7 @@ public class Articulo {
 
     public String toString() {
         String sMensaje = getId() + ":" + getNombre() + ":" + getPVP() + ":" + getId_Categoria() + ":" + getTallas(); 
-        return super.toString()+sMensaje; 
+        return sMensaje; 
     }
 	
     /**

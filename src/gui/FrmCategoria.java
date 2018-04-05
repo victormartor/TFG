@@ -5,12 +5,15 @@
  */
 package gui;
 
+import Data.Clases.Articulo;
 import Data.Clases.Categoria;
 import Data.Data;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
+import Data.Modelos.ModArticulos;
 import Data.Modelos.ModCategorias;
 import Data.Renders.ListaRender;
+import java.awt.Frame;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -28,6 +32,7 @@ public class FrmCategoria extends javax.swing.JFrame {
 
     private Categoria _categoria = null;
     private ModCategorias _modCategorias = null;
+    private ModArticulos _modArticulos = null;
     private IfrImagenes _ifrImagenes = null;
     private boolean _bModificar = false;
     
@@ -50,17 +55,44 @@ public class FrmCategoria extends javax.swing.JFrame {
         cargarImagen();
         
         //LISTA DE ARTÍCULOS
-        //_modCategorias = new ModCategorias(_marca.getId());
-        //lCategorias.setModel(_modCategorias);
-        //lCategorias.setCellRenderer(new ListaRender());
+        _modArticulos = new ModArticulos(_categoria.getId());
+        lArticulos.setModel(_modArticulos);
+        //lArticulos.setCellRenderer(new ListaRender());
         
         if(_bModificar)
             this.setTitle("Modificar categoría");
+        
+        lArticulos.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                if(e.getClickCount()==2){
+                   modificarArticulo();
+                }
+           }
+        });
         
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 cancelar();
+            }
+        });
+    }
+    
+    private void modificarArticulo(){
+        int iIndex = lArticulos.getSelectedIndex();
+        Articulo articulo = _modArticulos.getArticulo(iIndex);
+
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmArticulo = null;
+            try {
+                frmArticulo = new FrmArticulo(articulo, _modArticulos, _categoria);
+            } catch (Exception ex) {
+                System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
+            }
+            if(frmArticulo != null){
+                frmArticulo.setLocationRelativeTo(FrmCategoria.this);
+                frmArticulo.setVisible(true);
             }
         });
     }
@@ -113,9 +145,9 @@ public class FrmCategoria extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         lblArticulos = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        lArticulos = new javax.swing.JList<>();
+        butAgregarArt = new javax.swing.JButton();
+        butEliminarArt = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agregar categoría");
@@ -168,16 +200,26 @@ public class FrmCategoria extends javax.swing.JFrame {
 
         lblArticulos.setText("Artículos");
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+        lArticulos.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(jList1);
+        jScrollPane1.setViewportView(lArticulos);
 
-        jButton1.setText("Agregar Artículo");
+        butAgregarArt.setText("Agregar Artículo");
+        butAgregarArt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butAgregarArtActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Eliminar Artículo");
+        butEliminarArt.setText("Eliminar Artículo");
+        butEliminarArt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butEliminarArtActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -212,8 +254,8 @@ public class FrmCategoria extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(butAgregarArt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(butEliminarArt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -221,7 +263,6 @@ public class FrmCategoria extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNombre)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -229,7 +270,8 @@ public class FrmCategoria extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(butElegir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(butSubir)))
+                        .addComponent(butSubir))
+                    .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -245,9 +287,9 @@ public class FrmCategoria extends javax.swing.JFrame {
                             .addComponent(butCancelar)
                             .addComponent(butAceptar)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(butAgregarArt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)))
+                        .addComponent(butEliminarArt)))
                 .addContainerGap())
         );
 
@@ -335,6 +377,37 @@ public class FrmCategoria extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_butAceptarActionPerformed
 
+    private void butAgregarArtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarArtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_butAgregarArtActionPerformed
+
+    private void butEliminarArtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarArtActionPerformed
+        int index = lArticulos.getSelectedIndex();
+        
+        if(index != -1)
+        {
+            Object[] options = {"Sí",
+                                "No"};
+            int n = JOptionPane.showOptionDialog(this,
+                "¿Está seguro? Se eliminarán además todos los datos asociados a este artículo.",
+                "Eliminar artículo",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+
+            if(n == 0)
+            {
+                try {
+                    _modArticulos.removeArticulo(index);
+                } catch (Exception ex) {
+                    System.out.println("Error en la eliminación del artículo. "+ ex.toString());
+                }
+            }
+        }
+    }//GEN-LAST:event_butEliminarArtActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -376,16 +449,16 @@ public class FrmCategoria extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butAceptar;
+    private javax.swing.JButton butAgregarArt;
     private javax.swing.JButton butCancelar;
     private javax.swing.JButton butElegir;
+    private javax.swing.JButton butEliminarArt;
     private javax.swing.JButton butSubir;
     private javax.swing.JLabel iconoImagen;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JList<String> lArticulos;
     private javax.swing.JLabel lblArticulos;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JTextField txtNombre;

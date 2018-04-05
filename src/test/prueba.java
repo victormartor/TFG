@@ -22,8 +22,8 @@ import java.util.ArrayList;
 public class prueba {
     
     public static void main(String args[]) throws Exception{
-        Articulo a = new Articulo(2);
-        a.Delete();
+        Articulo a = Articulo.Create("camiseta", 20, 4, null);
+        //a.Delete();
         System.out.println(a);
     
     }
