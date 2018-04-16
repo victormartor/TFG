@@ -378,7 +378,18 @@ public class FrmCategoria extends javax.swing.JFrame {
     }//GEN-LAST:event_butAceptarActionPerformed
 
     private void butAgregarArtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarArtActionPerformed
-        // TODO add your handling code here:
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmArticulo = null;
+            try {
+                frmArticulo = new FrmArticulo(null, _modArticulos, _categoria);
+            } catch (Exception ex) {
+                System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
+            }
+            if(frmArticulo != null){
+                frmArticulo.setLocationRelativeTo(FrmCategoria.this);
+                frmArticulo.setVisible(true);
+            }
+        });
     }//GEN-LAST:event_butAgregarArtActionPerformed
 
     private void butEliminarArtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarArtActionPerformed

@@ -22,10 +22,10 @@ import java.util.ArrayList;
 public class prueba {
     
     public static void main(String args[]) throws Exception{
-        Articulo a = Articulo.Create("camiseta", 20, 4, null);
+        //Articulo a = Articulo.Create("camiseta", 20, 4, null);
         //a.Delete();
-        System.out.println(a);
-    
+        //System.out.println(a);
+        Articulo.Create("", 0, 5, false, null, null, null);
     }
 
 }

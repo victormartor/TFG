@@ -89,5 +89,10 @@ public class Data {
         Properties properties = Config.Properties(getPropertiesUrl());
         return properties.getProperty("jdbc.rutaImagenes");
     }
+    
+    public static double String2Double(String s){
+        s = s.replace(",", ".");
+        return Double.parseDouble(s);
+    }
 }
 

@@ -46,7 +46,7 @@ public class ModMarcas extends AbstractListModel
         
         ArrayList<Categoria> aCategorias = Categoria.Select(null, null, marca.getId());
         for(Categoria c : aCategorias){
-            ArrayList<Articulo> aArticulos = Articulo.Select(null, null, c.getId());
+            ArrayList<Articulo> aArticulos = Articulo.Select(null, null, c.getId(), null);
             for(Articulo a : aArticulos)
                 a.Delete();
             

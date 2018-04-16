@@ -19,7 +19,7 @@ public class ModArticulos extends AbstractListModel
     
     public ModArticulos(int iId_Categoria) throws Exception
     {
-        lArticulo = Articulo.Select(null, null, iId_Categoria);
+        lArticulo = Articulo.Select(null, null, iId_Categoria, null);
     }
 
     @Override

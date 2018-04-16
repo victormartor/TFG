@@ -43,7 +43,7 @@ public class ModCategorias extends AbstractListModel
     {
         Categoria categoria = lCategoria.get(index);
         
-        ArrayList<Articulo> aArticulos = Articulo.Select(null, null, categoria.getId());
+        ArrayList<Articulo> aArticulos = Articulo.Select(null, null, categoria.getId(), null);
         for(Articulo a : aArticulos){
             a.Delete();
         }

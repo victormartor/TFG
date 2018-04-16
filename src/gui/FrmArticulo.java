@@ -7,7 +7,12 @@ package gui;
 
 import Data.Clases.Articulo;
 import Data.Clases.Categoria;
+import Data.Clases.Talla;
+import Data.Data;
 import Data.Modelos.ModArticulos;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JCheckBox;
 
 /**
@@ -17,26 +22,90 @@ import javax.swing.JCheckBox;
 public class FrmArticulo extends javax.swing.JFrame {
     
     private Articulo _articulo = null;
+    private ArrayList<JCheckBox> _aCheckBoxTallas = null;
+    private ModArticulos _modArticulos = null;
+    private boolean _bModificar = false;
 
     /**
      * Creates new form FrmArticulo
      */
-    public FrmArticulo(Articulo articulo, ModArticulos modArticulos, Categoria categoria) {
+    public FrmArticulo(Articulo articulo, ModArticulos modArticulos, Categoria categoria) throws Exception {
         initComponents();
         
         if(articulo != null){
+            _bModificar = true;
             _articulo = articulo;
             txtNombre.setText(_articulo.getNombre());
             txtPVP.setText(String.format("%.2f", _articulo.getPVP()));
+            checkEs_Numero.setSelected(articulo.getTalla_Es_Numero());
+        }
+        else{
+            _articulo = Articulo.Create("", 0, categoria.getId(), false, null, null, null);
         }
         
-        JCheckBox checkbox = new JCheckBox();
-        //le asignamos una posición
-        checkbox.setBounds(80, 30, 20, 20);
-        //Decimos que esté seleccionado por defecto
-        checkbox.setSelected(true);
+        _modArticulos = modArticulos;
         
-        add(checkbox);
+        
+        
+        _aCheckBoxTallas = new ArrayList<>();
+        ArrayList<Talla> aTallas = Talla.Select(null, checkEs_Numero.isSelected());
+        ArrayList<Integer> aTallasMarcadas = new ArrayList<>();
+        if(articulo != null) aTallasMarcadas = articulo.getTallas();
+        for(Talla t : aTallas) {
+            boolean bMarcada = false;
+            for(Integer i : aTallasMarcadas)
+                if(t.getId() == i)
+                    bMarcada = true;
+            
+            JCheckBox checkbox_talla = new JCheckBox(t.toString());
+            checkbox_talla.setSelected(bMarcada);
+            panelTallas.add(checkbox_talla);
+        }
+        
+        panelTallas.updateUI();
+        
+        if(_bModificar)
+            this.setTitle("Modificar artículo");
+        
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                cancelar();
+            }
+        });
+    }
+    
+    private void cancelar(){
+        try {
+            if(!_bModificar){
+                _articulo.Delete();
+            }    
+            else{
+                Articulo articulo = new Articulo(_articulo.getId());
+                //_categoria.setNombre(categoria.getNombre());
+                //_categoria.setId_Imagen(categoria.getId_Imagen());
+            }
+        } catch (Exception ex) {
+            System.out.println("Error en la eliminación de la categoria. "+ ex.toString());
+        }
+        //if(_ifrImagenes != null) _ifrImagenes.dispose();
+        this.dispose();
+    }
+    
+    private ArrayList<Integer> getTallasMarcadas() throws Exception{
+        ArrayList<Talla> aTallas = Talla.Select(null, checkEs_Numero.isSelected());
+        ArrayList<Integer> aTallasMarcadas = new ArrayList<>();
+        
+        for(int i = 0; i < aTallas.size(); i++){
+            JCheckBox checkbox_talla = (JCheckBox)panelTallas.getComponent(i);
+            if(checkbox_talla.isSelected()){
+                int n = 0;
+                while(!checkbox_talla.getText().equals(aTallas.get(n).getNombre())) n++;
+                aTallasMarcadas.add(aTallas.get(n).getId());
+            }
+        }
+        
+        return aTallasMarcadas;
     }
 
     /**
@@ -54,8 +123,14 @@ public class FrmArticulo extends javax.swing.JFrame {
         txtPVP = new javax.swing.JTextField();
         lblEuro = new javax.swing.JLabel();
         lblTallas = new javax.swing.JLabel();
+        checkEs_Numero = new javax.swing.JCheckBox();
+        panelTallas = new javax.swing.JPanel();
+        butCancelar = new javax.swing.JButton();
+        butAceptar = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Agregar artículo");
 
         lblNombre.setText("Nombre");
 
@@ -68,25 +143,62 @@ public class FrmArticulo extends javax.swing.JFrame {
 
         lblTallas.setText("Tallas");
 
+        checkEs_Numero.setText("usar número para la talla");
+        checkEs_Numero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkEs_NumeroActionPerformed(evt);
+            }
+        });
+
+        panelTallas.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        panelTallas.setLayout(new java.awt.GridLayout(4, 0));
+
+        butCancelar.setText("Cancelar");
+        butCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butCancelarActionPerformed(evt);
+            }
+        });
+
+        butAceptar.setText("Aceptar");
+        butAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butAceptarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblNombre)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblPVP)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSeparator1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblNombre)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(lblPVP)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtPVP, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtPVP, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblEuro, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblTallas))
-                .addContainerGap(276, Short.MAX_VALUE))
+                                .addComponent(lblEuro, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(lblTallas)
+                                .addGap(18, 18, 18)
+                                .addComponent(checkEs_Numero))
+                            .addComponent(panelTallas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 281, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(butAceptar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(butCancelar)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -101,12 +213,56 @@ public class FrmArticulo extends javax.swing.JFrame {
                     .addComponent(txtPVP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblEuro))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblTallas)
-                .addContainerGap(186, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTallas)
+                    .addComponent(checkEs_Numero))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelTallas, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(butCancelar)
+                    .addComponent(butAceptar))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void checkEs_NumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkEs_NumeroActionPerformed
+        try {
+            _aCheckBoxTallas = new ArrayList<>();
+            ArrayList<Talla> aTallas = Talla.Select(null, checkEs_Numero.isSelected());
+            panelTallas.removeAll();
+            for(Talla t : aTallas){
+                panelTallas.add(new JCheckBox(t.toString()));
+            }
+            
+            panelTallas.updateUI();
+        } catch (Exception ex) {
+            Logger.getLogger(FrmArticulo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_checkEs_NumeroActionPerformed
+
+    private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
+        cancelar();
+    }//GEN-LAST:event_butCancelarActionPerformed
+
+    private void butAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAceptarActionPerformed
+        try {
+            _articulo.setNombre(txtNombre.getText());
+            _articulo.setPVP(Data.String2Double(txtPVP.getText()));
+            _articulo.setTalla_Es_Numero(checkEs_Numero.isSelected());
+            _articulo.setTallas(getTallasMarcadas());
+            _articulo.Update();
+            if(!_bModificar) _modArticulos.addArticulo(_articulo);
+        } catch (Exception ex) {
+            System.out.println("Error en la creación o modificación del artículo. "+ ex.toString());
+        }
+        
+        this.dispose();
+    }//GEN-LAST:event_butAceptarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -146,10 +302,15 @@ public class FrmArticulo extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton butAceptar;
+    private javax.swing.JButton butCancelar;
+    private javax.swing.JCheckBox checkEs_Numero;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblEuro;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblPVP;
     private javax.swing.JLabel lblTallas;
+    private javax.swing.JPanel panelTallas;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPVP;
     // End of variables declaration//GEN-END:variables
