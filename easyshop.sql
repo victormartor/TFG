@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 02-04-2018 a las 19:19:21
+-- Tiempo de generación: 16-04-2018 a las 16:14:24
 -- Versión del servidor: 5.7.17-log
 -- Versión de PHP: 5.6.30
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `tfg`
+-- Base de datos: `easyshop`
 --
 
 -- --------------------------------------------------------
@@ -28,9 +28,32 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `articulo` (
   `Id` int(11) NOT NULL,
-  `Nombre` varchar(512) COLLATE utf8_spanish_ci NOT NULL,
+  `Nombre` varchar(256) COLLATE utf8_spanish_ci NOT NULL,
   `PVP` double NOT NULL,
   `Id_Categoria` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `articulo_color`
+--
+
+CREATE TABLE `articulo_color` (
+  `Id_Articulo` int(11) NOT NULL,
+  `Id_Color` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `articulo_color_imagen`
+--
+
+CREATE TABLE `articulo_color_imagen` (
+  `Id_Articulo` int(11) NOT NULL,
+  `Id_Color` int(11) NOT NULL,
+  `Id_Imagen` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
@@ -47,12 +70,23 @@ CREATE TABLE `articulo_talla` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `art_combina_con`
+--
+
+CREATE TABLE `art_combina_con` (
+  `Id_Articulo1` int(11) NOT NULL,
+  `Id_Articulo2` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `categoria`
 --
 
 CREATE TABLE `categoria` (
   `Id` int(11) NOT NULL,
-  `Nombre` varchar(128) COLLATE utf8_spanish_ci NOT NULL,
+  `Nombre` varchar(256) COLLATE utf8_spanish_ci NOT NULL,
   `Id_Imagen` int(11) NOT NULL,
   `Id_Marca` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
@@ -65,19 +99,7 @@ CREATE TABLE `categoria` (
 
 CREATE TABLE `color` (
   `Id` int(11) NOT NULL,
-  `Nombre` varchar(256) COLLATE utf8_spanish_ci NOT NULL,
-  `Id_Articulo` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `color_imagen`
---
-
-CREATE TABLE `color_imagen` (
-  `Id_Color` int(11) NOT NULL,
-  `Id_Imagen` int(11) NOT NULL
+  `Nombre` varchar(128) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
@@ -88,7 +110,7 @@ CREATE TABLE `color_imagen` (
 
 CREATE TABLE `imagen` (
   `Id` int(11) NOT NULL,
-  `Nombre` varchar(128) COLLATE utf8_spanish_ci NOT NULL,
+  `Nombre` varchar(256) COLLATE utf8_spanish_ci NOT NULL,
   `Ruta` varchar(256) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
@@ -97,7 +119,9 @@ CREATE TABLE `imagen` (
 --
 
 INSERT INTO `imagen` (`Id`, `Nombre`, `Ruta`) VALUES
-(-1, 'Imagen vacía', '');
+(-1, 'Imagen vacía', ''),
+(1, 'Marca_Hollister.jpg', '\\Hollister\\'),
+(2, 'Articulo_Camiseta_Hollister1.1.jpg', '\\Hollister\\Camisetas\\');
 
 -- --------------------------------------------------------
 
@@ -107,7 +131,7 @@ INSERT INTO `imagen` (`Id`, `Nombre`, `Ruta`) VALUES
 
 CREATE TABLE `marca` (
   `Id` int(11) NOT NULL,
-  `Nombre` varchar(128) COLLATE utf8_spanish_ci NOT NULL,
+  `Nombre` varchar(256) COLLATE utf8_spanish_ci NOT NULL,
   `Id_Imagen` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
@@ -162,11 +186,33 @@ ALTER TABLE `articulo`
   ADD KEY `Id_Categoria` (`Id_Categoria`);
 
 --
+-- Indices de la tabla `articulo_color`
+--
+ALTER TABLE `articulo_color`
+  ADD KEY `Id_Articulo` (`Id_Articulo`,`Id_Color`),
+  ADD KEY `Id_Color` (`Id_Color`);
+
+--
+-- Indices de la tabla `articulo_color_imagen`
+--
+ALTER TABLE `articulo_color_imagen`
+  ADD KEY `Id_Articulo` (`Id_Articulo`,`Id_Color`),
+  ADD KEY `Id_Imagen` (`Id_Imagen`),
+  ADD KEY `Id_Color` (`Id_Color`);
+
+--
 -- Indices de la tabla `articulo_talla`
 --
 ALTER TABLE `articulo_talla`
   ADD KEY `Id_Articulo` (`Id_Articulo`,`Id_Talla`),
   ADD KEY `Id_Talla` (`Id_Talla`);
+
+--
+-- Indices de la tabla `art_combina_con`
+--
+ALTER TABLE `art_combina_con`
+  ADD KEY `Id_Articulo1` (`Id_Articulo1`,`Id_Articulo2`),
+  ADD KEY `Id_Articulo2` (`Id_Articulo2`);
 
 --
 -- Indices de la tabla `categoria`
@@ -180,15 +226,7 @@ ALTER TABLE `categoria`
 -- Indices de la tabla `color`
 --
 ALTER TABLE `color`
-  ADD PRIMARY KEY (`Id`),
-  ADD KEY `Id_Articulo` (`Id_Articulo`);
-
---
--- Indices de la tabla `color_imagen`
---
-ALTER TABLE `color_imagen`
-  ADD KEY `Id_Color` (`Id_Color`,`Id_Imagen`),
-  ADD KEY `Id_Imagen` (`Id_Imagen`);
+  ADD PRIMARY KEY (`Id`);
 
 --
 -- Indices de la tabla `imagen`
@@ -208,8 +246,8 @@ ALTER TABLE `marca`
 --
 ALTER TABLE `stock`
   ADD KEY `Id_Articulo` (`Id_Articulo`,`Id_Talla`,`Id_Color`),
-  ADD KEY `Id_Talla` (`Id_Talla`),
-  ADD KEY `Id_Color` (`Id_Color`);
+  ADD KEY `Id_Color` (`Id_Color`),
+  ADD KEY `Id_Talla` (`Id_Talla`);
 
 --
 -- Indices de la tabla `talla`
@@ -230,7 +268,7 @@ ALTER TABLE `articulo`
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `color`
 --
@@ -240,12 +278,12 @@ ALTER TABLE `color`
 -- AUTO_INCREMENT de la tabla `imagen`
 --
 ALTER TABLE `imagen`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `marca`
 --
 ALTER TABLE `marca`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `talla`
 --
@@ -262,31 +300,40 @@ ALTER TABLE `articulo`
   ADD CONSTRAINT `articulo_ibfk_1` FOREIGN KEY (`Id_Categoria`) REFERENCES `categoria` (`Id`);
 
 --
+-- Filtros para la tabla `articulo_color`
+--
+ALTER TABLE `articulo_color`
+  ADD CONSTRAINT `articulo_color_ibfk_1` FOREIGN KEY (`Id_Color`) REFERENCES `color` (`Id`),
+  ADD CONSTRAINT `articulo_color_ibfk_2` FOREIGN KEY (`Id_Articulo`) REFERENCES `articulo` (`Id`);
+
+--
+-- Filtros para la tabla `articulo_color_imagen`
+--
+ALTER TABLE `articulo_color_imagen`
+  ADD CONSTRAINT `articulo_color_imagen_ibfk_1` FOREIGN KEY (`Id_Articulo`) REFERENCES `articulo` (`Id`),
+  ADD CONSTRAINT `articulo_color_imagen_ibfk_2` FOREIGN KEY (`Id_Color`) REFERENCES `color` (`Id`),
+  ADD CONSTRAINT `articulo_color_imagen_ibfk_3` FOREIGN KEY (`Id_Imagen`) REFERENCES `imagen` (`Id`);
+
+--
 -- Filtros para la tabla `articulo_talla`
 --
 ALTER TABLE `articulo_talla`
-  ADD CONSTRAINT `articulo_talla_ibfk_1` FOREIGN KEY (`Id_Articulo`) REFERENCES `articulo` (`Id`),
-  ADD CONSTRAINT `articulo_talla_ibfk_2` FOREIGN KEY (`Id_Talla`) REFERENCES `talla` (`Id`);
+  ADD CONSTRAINT `articulo_talla_ibfk_1` FOREIGN KEY (`Id_Talla`) REFERENCES `talla` (`Id`),
+  ADD CONSTRAINT `articulo_talla_ibfk_2` FOREIGN KEY (`Id_Articulo`) REFERENCES `articulo` (`Id`);
+
+--
+-- Filtros para la tabla `art_combina_con`
+--
+ALTER TABLE `art_combina_con`
+  ADD CONSTRAINT `art_combina_con_ibfk_1` FOREIGN KEY (`Id_Articulo1`) REFERENCES `articulo` (`Id`),
+  ADD CONSTRAINT `art_combina_con_ibfk_2` FOREIGN KEY (`Id_Articulo2`) REFERENCES `articulo` (`Id`);
 
 --
 -- Filtros para la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  ADD CONSTRAINT `categoria_ibfk_1` FOREIGN KEY (`Id_Imagen`) REFERENCES `imagen` (`Id`),
-  ADD CONSTRAINT `categoria_ibfk_2` FOREIGN KEY (`Id_Marca`) REFERENCES `marca` (`Id`);
-
---
--- Filtros para la tabla `color`
---
-ALTER TABLE `color`
-  ADD CONSTRAINT `color_ibfk_1` FOREIGN KEY (`Id_Articulo`) REFERENCES `articulo` (`Id`);
-
---
--- Filtros para la tabla `color_imagen`
---
-ALTER TABLE `color_imagen`
-  ADD CONSTRAINT `color_imagen_ibfk_1` FOREIGN KEY (`Id_Color`) REFERENCES `color` (`Id`),
-  ADD CONSTRAINT `color_imagen_ibfk_2` FOREIGN KEY (`Id_Imagen`) REFERENCES `imagen` (`Id`);
+  ADD CONSTRAINT `categoria_ibfk_1` FOREIGN KEY (`Id_Marca`) REFERENCES `marca` (`Id`),
+  ADD CONSTRAINT `categoria_ibfk_2` FOREIGN KEY (`Id_Imagen`) REFERENCES `imagen` (`Id`);
 
 --
 -- Filtros para la tabla `marca`
@@ -299,8 +346,8 @@ ALTER TABLE `marca`
 --
 ALTER TABLE `stock`
   ADD CONSTRAINT `stock_ibfk_1` FOREIGN KEY (`Id_Articulo`) REFERENCES `articulo` (`Id`),
-  ADD CONSTRAINT `stock_ibfk_2` FOREIGN KEY (`Id_Talla`) REFERENCES `talla` (`Id`),
-  ADD CONSTRAINT `stock_ibfk_3` FOREIGN KEY (`Id_Color`) REFERENCES `color` (`Id`);
+  ADD CONSTRAINT `stock_ibfk_2` FOREIGN KEY (`Id_Color`) REFERENCES `color` (`Id`),
+  ADD CONSTRAINT `stock_ibfk_3` FOREIGN KEY (`Id_Talla`) REFERENCES `talla` (`Id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

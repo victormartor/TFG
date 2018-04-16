@@ -5,6 +5,7 @@
  */
 package Data.Modelos;
 
+import Data.Clases.Articulo;
 import Data.Clases.Categoria;
 import Data.Clases.Marca;
 import java.util.ArrayList;
@@ -45,6 +46,10 @@ public class ModMarcas extends AbstractListModel
         
         ArrayList<Categoria> aCategorias = Categoria.Select(null, null, marca.getId());
         for(Categoria c : aCategorias){
+            ArrayList<Articulo> aArticulos = Articulo.Select(null, null, c.getId());
+            for(Articulo a : aArticulos)
+                a.Delete();
+            
             c.Delete();
         }
         marca.Delete();
