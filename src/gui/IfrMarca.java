@@ -140,7 +140,8 @@ public class IfrMarca extends javax.swing.JFrame {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
-                "¿Está seguro? Se eliminarán además todos los artículos de esta marca.",
+                "¿Está seguro? Se eliminarán además todos los artículos de esta marca."
+                        + "\n Esta acción no se puede deshacer.",
                 "Eliminar marca",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,

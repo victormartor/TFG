@@ -92,6 +92,7 @@ public class Imagen {
         Connection con = null;
         try {
                 con = Data.Connection();
+                con.createStatement().executeUpdate("DELETE FROM articulo_color_imagen WHERE Id_Imagen = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM Imagen WHERE Id = " + _iId);
                 _bIsDeleted = true;
         }

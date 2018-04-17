@@ -154,6 +154,7 @@ public class FrmMarca extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agregar marca");
+        setResizable(false);
 
         lblNombre.setText("Nombre");
 
@@ -314,6 +315,7 @@ public class FrmMarca extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("Error en la creación o modificación de la marca. "+ ex.toString());
         }
+        if(_ifrImagenes != null) _ifrImagenes.dispose();
         this.dispose();
     }//GEN-LAST:event_butAceptarActionPerformed
 
@@ -402,7 +404,8 @@ public class FrmMarca extends javax.swing.JFrame {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
-                "¿Está seguro? Se eliminarán además todos los artículos de esta categoría.",
+                "¿Está seguro? Se eliminarán además todos los artículos de esta categoría."
+                        + "\n Esta acción no se puede deshacer.",
                 "Eliminar categoría",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,

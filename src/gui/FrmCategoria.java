@@ -151,6 +151,7 @@ public class FrmCategoria extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agregar categoría");
+        setResizable(false);
 
         lblNombre.setText("Nombre");
 
@@ -374,6 +375,7 @@ public class FrmCategoria extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("Error en la creación o modificación de la marca. "+ ex.toString());
         }
+        if(_ifrImagenes != null) _ifrImagenes.dispose();
         this.dispose();
     }//GEN-LAST:event_butAceptarActionPerformed
 
@@ -400,7 +402,8 @@ public class FrmCategoria extends javax.swing.JFrame {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
-                "¿Está seguro? Se eliminarán además todos los datos asociados a este artículo.",
+                "¿Está seguro? Se eliminarán además todos los datos asociados a este artículo."
+                        + "\n Esta acción no se puede deshacer.",
                 "Eliminar artículo",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,

@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -26,6 +27,7 @@ public class Articulo {
     private ArrayList<Integer> _aiTallas;
     private ArrayList<Integer> _aiColores;
     private ArrayList<Integer> _aiCombinaciones;
+    //private Map<Integer, Map<Integer, ArrayList<Integer>>> _mapArticulo_Color_Imagen;
     private boolean _bIsDeleted;
 
     //GET
@@ -319,4 +321,32 @@ public class Articulo {
 
            return sWhere;
    }
+   
+   /////////////////////////////////////////////////////////////////////////////////////
+   //RELACION CON COLORES
+   ////////////////////////////////////////////////////////////////////////////////////
+   
+   public void Delete_Color(Integer iId_Color) throws Exception{
+       
+       Connection con = null;
+        try {
+                con = Data.Connection();
+      
+                con.createStatement().executeUpdate(
+                        "DELETE FROM articulo_color WHERE Id_Color = " + iId_Color);
+                
+                con.createStatement().executeUpdate(
+                        "DELETE FROM articulo_color_imagen WHERE Id_Color = " + iId_Color);
+                
+                con.createStatement().executeUpdate(
+                        "DELETE FROM stock WHERE Id_Color = " + iId_Color);
+                
+                _aiColores.remove(iId_Color);
+        }
+        catch (SQLException ee) { throw ee; }
+        finally {
+            if (con != null) con.close();
+        }
+   }
+    
 }

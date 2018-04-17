@@ -9,11 +9,13 @@ import Data.Clases.Articulo;
 import Data.Clases.Categoria;
 import Data.Clases.Talla;
 import Data.Data;
+import Data.Modelos.ModArticulo_Color;
 import Data.Modelos.ModArticulos;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -24,6 +26,7 @@ public class FrmArticulo extends javax.swing.JFrame {
     private Articulo _articulo = null;
     private ArrayList<JCheckBox> _aCheckBoxTallas = null;
     private ModArticulos _modArticulos = null;
+    private ModArticulo_Color _modArticulo_Color = null;
     private boolean _bModificar = false;
 
     /**
@@ -46,7 +49,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         _modArticulos = modArticulos;
         
         
-        
+        //TALLAS
         _aCheckBoxTallas = new ArrayList<>();
         ArrayList<Talla> aTallas = Talla.Select(null, checkEs_Numero.isSelected());
         ArrayList<Integer> aTallasMarcadas = new ArrayList<>();
@@ -64,6 +67,10 @@ public class FrmArticulo extends javax.swing.JFrame {
         
         panelTallas.updateUI();
         
+        //COLORES
+        _modArticulo_Color = new ModArticulo_Color(_articulo.getId());
+        lColores.setModel(_modArticulo_Color);
+        
         if(_bModificar)
             this.setTitle("Modificar artículo");
         
@@ -77,14 +84,9 @@ public class FrmArticulo extends javax.swing.JFrame {
     
     private void cancelar(){
         try {
-            if(!_bModificar){
+            if(!_bModificar)
                 _articulo.Delete();
-            }    
-            else{
-                Articulo articulo = new Articulo(_articulo.getId());
-                //_categoria.setNombre(categoria.getNombre());
-                //_categoria.setId_Imagen(categoria.getId_Imagen());
-            }
+
         } catch (Exception ex) {
             System.out.println("Error en la eliminación de la categoria. "+ ex.toString());
         }
@@ -124,13 +126,21 @@ public class FrmArticulo extends javax.swing.JFrame {
         lblEuro = new javax.swing.JLabel();
         lblTallas = new javax.swing.JLabel();
         checkEs_Numero = new javax.swing.JCheckBox();
-        panelTallas = new javax.swing.JPanel();
         butCancelar = new javax.swing.JButton();
         butAceptar = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
+        jSeparator2 = new javax.swing.JSeparator();
+        txtColores = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        panelTallas = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        lColores = new javax.swing.JList<>();
+        butAgregarColor = new javax.swing.JButton();
+        butEliminarColor = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agregar artículo");
+        setResizable(false);
 
         lblNombre.setText("Nombre");
 
@@ -150,9 +160,6 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         });
 
-        panelTallas.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        panelTallas.setLayout(new java.awt.GridLayout(4, 0));
-
         butCancelar.setText("Cancelar");
         butCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,15 +174,38 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         });
 
+        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        txtColores.setText("Colores");
+
+        panelTallas.setLayout(new java.awt.GridLayout(4, 0));
+        jScrollPane1.setViewportView(panelTallas);
+
+        lColores.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(lColores);
+
+        butAgregarColor.setText("Agregar color");
+
+        butEliminarColor.setText("Eliminar color");
+        butEliminarColor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butEliminarColorActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSeparator1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -186,14 +216,26 @@ public class FrmArticulo extends javax.swing.JFrame {
                                         .addComponent(txtPVP, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblEuro, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(lblTallas)
                                 .addGap(18, 18, 18)
                                 .addComponent(checkEs_Numero))
-                            .addComponent(panelTallas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 281, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                            .addComponent(jScrollPane1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtColores)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(butAgregarColor, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(butEliminarColor, javax.swing.GroupLayout.Alignment.TRAILING)))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(butAceptar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -204,21 +246,34 @@ public class FrmArticulo extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblNombre)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblPVP)
-                    .addComponent(txtPVP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblEuro))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTallas)
-                    .addComponent(checkEs_Numero))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelTallas, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lblNombre)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(23, 23, 23)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblPVP)
+                            .addComponent(txtPVP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblEuro))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblTallas)
+                            .addComponent(checkEs_Numero))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSeparator2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txtColores)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(butAgregarColor)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(butEliminarColor)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -255,6 +310,7 @@ public class FrmArticulo extends javax.swing.JFrame {
             _articulo.setPVP(Data.String2Double(txtPVP.getText()));
             _articulo.setTalla_Es_Numero(checkEs_Numero.isSelected());
             _articulo.setTallas(getTallasMarcadas());
+            _articulo.setColores(_modArticulo_Color.getColores());
             _articulo.Update();
             if(!_bModificar) _modArticulos.addArticulo(_articulo);
         } catch (Exception ex) {
@@ -263,6 +319,35 @@ public class FrmArticulo extends javax.swing.JFrame {
         
         this.dispose();
     }//GEN-LAST:event_butAceptarActionPerformed
+
+    private void butEliminarColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarColorActionPerformed
+        int index = lColores.getSelectedIndex();
+        
+        if(index != -1)
+        {
+            Object[] options = {"Sí",
+                                "No"};
+            int n = JOptionPane.showOptionDialog(this,
+                "¿Está seguro? Se eliminarán además todos los datos y las imagenes de este"
+                        + " artículo asociados a este color."
+                        + "\n Esta acción no se puede deshacer.",
+                "Eliminar color",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+
+            if(n == 0)
+            {
+                try {
+                    _modArticulo_Color.removeColor(index);
+                } catch (Exception ex) {
+                    System.out.println("Error en la eliminación del color. "+ ex.toString());
+                }
+            }
+        }
+    }//GEN-LAST:event_butEliminarColorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -303,14 +388,21 @@ public class FrmArticulo extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butAceptar;
+    private javax.swing.JButton butAgregarColor;
     private javax.swing.JButton butCancelar;
+    private javax.swing.JButton butEliminarColor;
     private javax.swing.JCheckBox checkEs_Numero;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JList<String> lColores;
     private javax.swing.JLabel lblEuro;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblPVP;
     private javax.swing.JLabel lblTallas;
     private javax.swing.JPanel panelTallas;
+    private javax.swing.JLabel txtColores;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPVP;
     // End of variables declaration//GEN-END:variables

@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -25,7 +27,24 @@ public class prueba {
         //Articulo a = Articulo.Create("camiseta", 20, 4, null);
         //a.Delete();
         //System.out.println(a);
-        Articulo.Create("", 0, 5, false, null, null, null);
+        /*
+        Map<Integer, Map<Integer, ArrayList<Integer>>> m = new HashMap<>();
+        Map<Integer, ArrayList<Integer>> n = new HashMap<>();
+        ArrayList<Integer> a = new ArrayList<>();
+        a.add(1);
+        a.add(2);
+        a.add(3);
+        n.put(1, a);
+        m.put(1, n);
+        
+        System.out.println(m.get(1).get(1));
+        */
+        ArrayList<Integer> a = new ArrayList<>();
+        a.add(1);
+        a.add(5);
+        System.out.println(a);
+        a.remove(new Integer(5));
+        System.out.println(a);
     }
 
 }
