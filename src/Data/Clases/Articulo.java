@@ -274,7 +274,7 @@ public class Articulo {
            }
            catch (SQLException ee) { throw ee; }
            finally {
-                   if (rs != null) rs.close();
+               if (rs != null) rs.close();
                if (con != null) con.close();
            }
    }
@@ -326,6 +326,62 @@ public class Articulo {
    //RELACION CON COLORES
    ////////////////////////////////////////////////////////////////////////////////////
    
+   public ArrayList<Imagen> Get_Imagenes_Color(Integer iId_Color) throws Exception{
+       ArrayList<Imagen> aImagenes = new ArrayList<>();
+       Connection con = null;
+       ResultSet rs = null;
+        try {
+                con = Data.Connection();
+      
+                rs = con.createStatement().executeQuery(
+                        "SELECT Id_Imagen FROM articulo_color_imagen WHERE Id_Articulo = "+ _iId + " and Id_Color = " + iId_Color);
+                
+                while(rs.next()) 
+                        aImagenes.add(new Imagen(rs.getInt("Id_Imagen")));
+
+                return aImagenes;
+        }
+        catch (SQLException ee) { throw ee; }
+        finally {
+            if (rs != null) rs.close();
+            if (con != null) con.close();
+        }
+        
+
+   }
+   
+   public void Add_Imagen_Color(Integer iId_Color, Integer iId_Imagen) throws Exception{
+       Connection con = null;
+            try {
+                    con = Data.Connection();
+                    con.createStatement().executeUpdate("INSERT INTO articulo_color_imagen (Id_Articulo, Id_Color, Id_Imagen)"
+                                    + " VALUES (" + _iId + ", " 
+                                    + iId_Color + ", "
+                                    + iId_Imagen + ");");
+            }catch(SQLException ee) { throw ee; }
+        finally {
+            if (con != null) con.close();
+        }
+   }
+   
+   public void Remove_Imagen_Color(Integer iId_Color, Integer iId_Imagen) throws Exception{
+       
+       Connection con = null;
+        try {
+                con = Data.Connection();
+      
+                con.createStatement().executeUpdate(
+                        "DELETE FROM articulo_color_imagen WHERE "
+                                + "Id_Articulo = "+ _iId 
+                                + " and Id_Color = " + iId_Color
+                                + " and Id_Imagen = " + iId_Imagen);
+        }
+        catch (SQLException ee) { throw ee; }
+        finally {
+            if (con != null) con.close();
+        }
+   } 
+   
    public void Delete_Color(Integer iId_Color) throws Exception{
        
        Connection con = null;
@@ -333,13 +389,13 @@ public class Articulo {
                 con = Data.Connection();
       
                 con.createStatement().executeUpdate(
-                        "DELETE FROM articulo_color WHERE Id_Color = " + iId_Color);
+                        "DELETE FROM articulo_color WHERE Id_Articulo = "+ _iId + " and Id_Color = " + iId_Color);
                 
                 con.createStatement().executeUpdate(
-                        "DELETE FROM articulo_color_imagen WHERE Id_Color = " + iId_Color);
+                        "DELETE FROM articulo_color_imagen WHERE Id_Articulo = "+ _iId + " and Id_Color = " + iId_Color);
                 
                 con.createStatement().executeUpdate(
-                        "DELETE FROM stock WHERE Id_Color = " + iId_Color);
+                        "DELETE FROM stock WHERE Id_Articulo = "+ _iId + " and Id_Color = " + iId_Color);
                 
                 _aiColores.remove(iId_Color);
         }
@@ -347,6 +403,5 @@ public class Articulo {
         finally {
             if (con != null) con.close();
         }
-   }
-    
+   } 
 }

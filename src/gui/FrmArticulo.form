@@ -239,6 +239,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Agregar color"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butAgregarColorActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="butEliminarColor">
       <Properties>

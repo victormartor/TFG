@@ -43,13 +43,21 @@ public class ModArticulo_Color extends AbstractListModel
         return lColores.get(index);
     }
     
-    /*
-    public void addColor(int iId_Color) throws Exception
+    
+    public void addColor(Color color) throws Exception
     {
-        lColores.add(new Color(iId_Color));
+        ArrayList<Integer> lIdColores = articulo.getColores();
+        lIdColores.add(color.getId());
+        articulo.setColores(lIdColores);
+        
+        lColores.add(color);
         this.fireIntervalAdded(this, getSize(), getSize()+1);
     }
-    */
+    
+    
+    public Color getColor(int index){
+        return lColores.get(index);
+    }
     
     public void removeColor(int index) throws Exception
     {  

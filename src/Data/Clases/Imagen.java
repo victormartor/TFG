@@ -175,7 +175,7 @@ public class Imagen {
                    else 
                            sWhere += " AND ";
 
-                   sWhere += "Ruta LIKE "+ sRuta;
+                   sWhere += "Ruta LIKE "+ Data.String2Sql(sRuta, true, true);
            }
 
            return sWhere;

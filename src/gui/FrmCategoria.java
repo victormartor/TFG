@@ -347,7 +347,10 @@ public class FrmCategoria extends javax.swing.JFrame {
             try {
                 sRuta = file.getPath().replace(Data.RutaImagenes(), "");
                 sRuta = sRuta.replace(file.getName(), "");
-                imagen = Imagen.Create(file.getName(), sRuta);
+                if(Imagen.Select(file.getName(), null).size() > 0)
+                    imagen = Imagen.Select(file.getName(), null).get(0);
+                else
+                    imagen = Imagen.Create(file.getName(), sRuta);
             } catch (Exception ex) {
                 System.out.println("Error en la creación de la imagen. "+ ex.toString());
             }

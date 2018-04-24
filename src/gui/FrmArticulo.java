@@ -7,10 +7,12 @@ package gui;
 
 import Data.Clases.Articulo;
 import Data.Clases.Categoria;
+import Data.Clases.Color;
 import Data.Clases.Talla;
 import Data.Data;
 import Data.Modelos.ModArticulo_Color;
 import Data.Modelos.ModArticulos;
+import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,6 +73,15 @@ public class FrmArticulo extends javax.swing.JFrame {
         _modArticulo_Color = new ModArticulo_Color(_articulo.getId());
         lColores.setModel(_modArticulo_Color);
         
+        lColores.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                if(e.getClickCount()==2){
+                   modificarArticuloColor();
+                }
+           }
+        });
+        
         if(_bModificar)
             this.setTitle("Modificar artículo");
         
@@ -78,6 +89,24 @@ public class FrmArticulo extends javax.swing.JFrame {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 cancelar();
+            }
+        });
+    }
+    
+    private void modificarArticuloColor(){
+        int iIndex = lColores.getSelectedIndex();
+        Color color = _modArticulo_Color.getColor(iIndex);
+
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmArticuloColor = null;
+            try {
+                frmArticuloColor = new FrmArticuloColor(_articulo, color, _modArticulo_Color);
+            } catch (Exception ex) {
+                System.out.println("Error al buscar el color en la base de datos. "+ ex.toString());
+            }
+            if(frmArticuloColor != null){
+                frmArticuloColor.setLocationRelativeTo(FrmArticulo.this);
+                frmArticuloColor.setVisible(true);
             }
         });
     }
@@ -189,6 +218,11 @@ public class FrmArticulo extends javax.swing.JFrame {
         jScrollPane2.setViewportView(lColores);
 
         butAgregarColor.setText("Agregar color");
+        butAgregarColor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butAgregarColorActionPerformed(evt);
+            }
+        });
 
         butEliminarColor.setText("Eliminar color");
         butEliminarColor.addActionListener(new java.awt.event.ActionListener() {
@@ -348,6 +382,21 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_butEliminarColorActionPerformed
+
+    private void butAgregarColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarColorActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmArticuloColor = null;
+            try {
+                frmArticuloColor = new FrmArticuloColor(_articulo, null, _modArticulo_Color);
+            } catch (Exception ex) {
+                System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
+            }
+            if(frmArticuloColor != null){
+                frmArticuloColor.setLocationRelativeTo(FrmArticulo.this);
+                frmArticuloColor.setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_butAgregarColorActionPerformed
 
     /**
      * @param args the command line arguments
