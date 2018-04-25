@@ -17,9 +17,15 @@ public class ModArticulos extends AbstractListModel
 {
     private ArrayList<Articulo> lArticulo;
     
-    public ModArticulos(int iId_Categoria) throws Exception
+    public ModArticulos(Integer iId_Categoria, Integer iId_Articulo) throws Exception
     {
-        lArticulo = Articulo.Select(null, null, iId_Categoria, null);
+        if(iId_Articulo == null) lArticulo = Articulo.Select(null, null, iId_Categoria, null);
+        else{
+            Articulo articulo = new Articulo(iId_Articulo);
+            lArticulo = new ArrayList<>();
+            for(int id_combinacion : articulo.getCombinaciones())
+                lArticulo.add(new Articulo(id_combinacion));
+        }
     }
 
     @Override
@@ -48,6 +54,11 @@ public class ModArticulos extends AbstractListModel
     public Articulo getArticulo(int index)
     {
         return lArticulo.get(index);
+    }
+    
+    public void RemoveCombinacion(int index){
+        lArticulo.remove(index);
+        this.fireIntervalRemoved(index, getSize(), getSize()+1);
     }
 }
 
