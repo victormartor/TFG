@@ -57,7 +57,7 @@ public class FrmCategoria extends javax.swing.JFrame {
         //LISTA DE ARTÍCULOS
         _modArticulos = new ModArticulos(_categoria.getId());
         lArticulos.setModel(_modArticulos);
-        //lArticulos.setCellRenderer(new ListaRender());
+        lArticulos.setCellRenderer(new ListaRender());
         
         if(_bModificar)
             this.setTitle("Modificar categoría");

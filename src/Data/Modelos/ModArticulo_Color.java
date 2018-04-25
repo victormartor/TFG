@@ -46,10 +46,7 @@ public class ModArticulo_Color extends AbstractListModel
     
     public void addColor(Color color) throws Exception
     {
-        ArrayList<Integer> lIdColores = articulo.getColores();
-        lIdColores.add(color.getId());
-        articulo.setColores(lIdColores);
-        
+        articulo.Add_Color(color);
         lColores.add(color);
         this.fireIntervalAdded(this, getSize(), getSize()+1);
     }

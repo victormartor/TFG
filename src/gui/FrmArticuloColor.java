@@ -54,22 +54,75 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         _modArticulo_Color = modArticulo_Color;
         
         if(color != null){
+            _bModificar = true;
             _color = color;
             cmbColor.setSelectedIndex(((ColorListModel)cmbColor.getModel()).getIndexColor(color.getId()));
             cmbColor.setEnabled(false);
             butAgregarColor.setVisible(false);
             this.setTitle("Modificar color "+_color);
-            _bModificar = true;
+             
+            try {
+                _modArticulo_Color_Imagen = new ModArticulo_Color_Imagen(_articulo, _color);
+                lImagenes.setModel(_modArticulo_Color_Imagen);
+                lImagenes.setCellRenderer(new ListaImagenesRender());
+            } catch (Exception ex) {
+                System.out.println("Error al buscar las imágenes. "+ex.toString());
+            }
         }
         
-        try {
-            _modArticulo_Color_Imagen = new ModArticulo_Color_Imagen(_articulo, _color);
-        } catch (Exception ex) {
-            System.out.println("Error al buscar las imágenes. "+ex.toString());
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                cancelar();
+            }
+        });
+    }
+    
+    private void cancelar(){
+        
+        if(!_bModificar && _color != null){
+            try {
+                _articulo.Delete_Color(_color.getId());
+            } catch (Exception ex) {
+                System.out.println("Error al eliminar el color. "+ex.toString());
+            }
         }
+        
+        if(_ifrImagenes != null) _ifrImagenes.dispose();
+        this.dispose();
+    }
+    
+    private boolean color_esta_asociado(){
+        
+        ArrayList<Integer> lColores = _articulo.getColores();
+        boolean bEsta_asociado = false;
+        for(Integer i : lColores)
+            if(i == _color.getId()) bEsta_asociado = true;
 
-        lImagenes.setModel(_modArticulo_Color_Imagen);
-        lImagenes.setCellRenderer(new ListaImagenesRender());
+        if(bEsta_asociado){
+            JOptionPane.showMessageDialog(null, 
+                "Error, ese color ya está asociado a este artículo.", 
+                "Color ya asociado", 
+                JOptionPane.WARNING_MESSAGE);
+
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    
+    private boolean comprobar_color(){
+        if(_color == null){
+            JOptionPane.showMessageDialog(null, 
+                "Error, debe elegir primero un color.", 
+                "Elija un color", 
+                JOptionPane.WARNING_MESSAGE);
+            
+            return false;
+        }
+        else
+            return true;  
     }
 
     /**
@@ -93,12 +146,17 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         butSubir = new javax.swing.JButton();
         butEliminar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Asignar color al artículo");
 
         lblColor.setText("Color");
 
         cmbColor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbColor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbColorActionPerformed(evt);
+            }
+        });
 
         butCancelar.setText("Cancelar");
         butCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -123,11 +181,6 @@ public class FrmArticuloColor extends javax.swing.JFrame {
 
         lblImagenes.setText("Imágenes");
 
-        lImagenes.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane1.setViewportView(lImagenes);
 
         butElegir.setText("Elegir Imagen");
@@ -214,36 +267,20 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
-        this.dispose();
+        cancelar();
     }//GEN-LAST:event_butCancelarActionPerformed
 
     private void butAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAceptarActionPerformed
-        Color color = (Color)cmbColor.getSelectedItem();
-        if(!_bModificar && color != null){
-            ArrayList<Integer> lColores = _articulo.getColores();
-            boolean bEsta_asociado = false;
-            for(Integer i : lColores)
-                if(i == color.getId()) bEsta_asociado = true;
-            
-            if(bEsta_asociado){
-                JOptionPane.showMessageDialog(null, 
-                    "Error, ese color ya está asociado a este artículo.", 
-                    "Color ya asociado", 
-                    JOptionPane.WARNING_MESSAGE);
+        if(!_bModificar){
+            try {
+                _modArticulo_Color.addColor(_color);
+            } catch (Exception ex) {
+                System.out.println("Error al añadir el color. "+ex.toString());
             }
-            else{
-                try {
-                    _modArticulo_Color.addColor((Color) cmbColor.getSelectedItem());
-                } catch (Exception ex) {
-                    System.out.println("Error al añadir el color. "+ex.toString());
-                }
-                this.dispose();
-            }
-        }
-        else{
-             this.dispose();   
         }
         
+        this.dispose();  
+        if(_ifrImagenes != null) _ifrImagenes.dispose();
     }//GEN-LAST:event_butAceptarActionPerformed
 
     private void butAgregarColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarColorActionPerformed
@@ -255,60 +292,63 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     }//GEN-LAST:event_butAgregarColorActionPerformed
 
     private void butElegirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butElegirActionPerformed
-
-        java.awt.EventQueue.invokeLater(() -> {
-            if(_ifrImagenes == null || !_ifrImagenes.bAbierto){
-                try {
-                    _ifrImagenes = new IfrImagenes_Articulo_Color(_modArticulo_Color_Imagen);
-                } catch (Exception ex) {
-                    System.out.println("Error al leer la lista de imágenes. "+ ex.toString());
+        if(comprobar_color()){
+            java.awt.EventQueue.invokeLater(() -> {
+                if(_ifrImagenes == null || !_ifrImagenes.bAbierto){
+                    try {
+                        _ifrImagenes = new IfrImagenes_Articulo_Color(_modArticulo_Color_Imagen);
+                    } catch (Exception ex) {
+                        System.out.println("Error al leer la lista de imágenes. "+ ex.toString());
+                    }
                 }
-            }
-            
-            _ifrImagenes.setLocationRelativeTo(FrmArticuloColor.this);
-            _ifrImagenes.setBounds(this.getX()+this.getWidth()-10, 
-                    this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
-            _ifrImagenes.setVisible(true);
-        });
+
+                _ifrImagenes.setLocationRelativeTo(FrmArticuloColor.this);
+                _ifrImagenes.setBounds(this.getX()+this.getWidth()-10, 
+                        this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
+                _ifrImagenes.setVisible(true);
+            });
+        }
     }//GEN-LAST:event_butElegirActionPerformed
 
     private void butSubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSubirActionPerformed
-        JFileChooser archivo = new JFileChooser();
+        if(comprobar_color()){
+            JFileChooser archivo = new JFileChooser();
 
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG)", "jpg","jpeg");
-        archivo.addChoosableFileFilter(filtro);
-        archivo.setFileFilter(filtro);
-        archivo.setDialogTitle("Abrir Imagen");
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG)", "jpg","jpeg");
+            archivo.addChoosableFileFilter(filtro);
+            archivo.setFileFilter(filtro);
+            archivo.setDialogTitle("Abrir Imagen");
 
-        File ruta = null;
-        try {
-            ruta = new File(Data.RutaImagenes());
-        } catch (IOException ex) {
-            System.out.println("Error en la lectura de la ruta. "+ ex.toString());
-        }
-        archivo.setCurrentDirectory(ruta);
-
-        int ventana = archivo.showOpenDialog(null);
-        if(ventana == JFileChooser.APPROVE_OPTION)
-        {
-            File file = archivo.getSelectedFile();
-            String sRuta = null;
-            Imagen imagen = null;
+            File ruta = null;
             try {
-                sRuta = file.getPath().replace(Data.RutaImagenes(), "");
-                sRuta = sRuta.replace(file.getName(), "");
-                if(Imagen.Select(file.getName(), null).size() > 0)
-                    imagen = Imagen.Select(file.getName(), null).get(0);
-                else
-                    imagen = Imagen.Create(file.getName(), sRuta);
-            } catch (Exception ex) {
-                System.out.println("Error en la creación de la imagen. "+ ex.toString());
+                ruta = new File(Data.RutaImagenes());
+            } catch (IOException ex) {
+                System.out.println("Error en la lectura de la ruta. "+ ex.toString());
             }
-            if(imagen != null){
+            archivo.setCurrentDirectory(ruta);
+
+            int ventana = archivo.showOpenDialog(null);
+            if(ventana == JFileChooser.APPROVE_OPTION)
+            {
+                File file = archivo.getSelectedFile();
+                String sRuta = null;
+                Imagen imagen = null;
                 try {
-                    _modArticulo_Color_Imagen.addImagen(imagen);
+                    sRuta = file.getPath().replace(Data.RutaImagenes(), "");
+                    sRuta = sRuta.replace(file.getName(), "");
+                    if(Imagen.Select(file.getName(), null).size() > 0)
+                        imagen = Imagen.Select(file.getName(), null).get(0);
+                    else
+                        imagen = Imagen.Create(file.getName(), sRuta);
                 } catch (Exception ex) {
-                    System.out.println("Error al añadir la imagen. "+ ex.toString());
+                    System.out.println("Error en la creación de la imagen. "+ ex.toString());
+                }
+                if(imagen != null){
+                    try {
+                        _modArticulo_Color_Imagen.addImagen(imagen);
+                    } catch (Exception ex) {
+                        System.out.println("Error al añadir la imagen. "+ ex.toString());
+                    }
                 }
             }
         }
@@ -341,6 +381,27 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_butEliminarActionPerformed
+
+    private void cmbColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbColorActionPerformed
+        if(!_bModificar){
+            _color = (Color)cmbColor.getSelectedItem();
+            if(!color_esta_asociado()){
+                cmbColor.setEnabled(false);
+                butAgregarColor.setVisible(false);
+
+                try {
+                    _modArticulo_Color_Imagen = new ModArticulo_Color_Imagen(_articulo, _color);
+                    lImagenes.setModel(_modArticulo_Color_Imagen);
+                    lImagenes.setCellRenderer(new ListaImagenesRender());
+                } catch (Exception ex) {
+                    System.out.println("Error al buscar las imágenes. "+ex.toString());
+                }
+            } 
+            else{
+                cmbColor.setSelectedItem(null);
+            }
+        }
+    }//GEN-LAST:event_cmbColorActionPerformed
 
     /**
      * @param args the command line arguments

@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -104,8 +106,14 @@ public class Articulo {
     }
 
     public String toString() {
-        String sMensaje = getId() + ":" + getNombre() + ":" + getPVP() + ":" + getId_Categoria() + ":" + getTalla_Es_Numero() +
-                ":" + getTallas()+ ":" + getColores() + ":" + getCombinaciones(); 
+        //String sMensaje = getId() + ":" + getNombre() + ":" + getPVP() + ":" + getId_Categoria() + ":" + getTalla_Es_Numero() +
+        //        ":" + getTallas()+ ":" + getColores() + ":" + getCombinaciones(); 
+        String sMensaje = "";
+        try {
+            sMensaje = getId() + ":" + getNombre() + ":" + Get_Imagenes_Color(_aiColores.get(0)).get(0).getId();
+        } catch (Exception ex) {
+            System.out.println("Error al obtener la imagen del artículo "+_iId+" "+ex.toString());
+        }
         return sMensaje; 
     }
 	
@@ -222,6 +230,7 @@ public class Articulo {
                    }
                    
                    //ACTUALIZAR COLORES
+                   /*
                    if(_aiColores != null){
                         con.createStatement().executeUpdate("DELETE FROM articulo_color WHERE Id_Articulo = " + _iId);
                         for(Integer iId_Color : _aiColores)
@@ -229,6 +238,7 @@ public class Articulo {
                                     + "(Id_Articulo, Id_Color)"
                                     + " VALUES (" + _iId + ", " + iId_Color + ");");
                    }
+                   */
                    
                    //ACTUALIZAR COMBINACIONES
                    if(_aiCombinaciones != null){
@@ -325,6 +335,21 @@ public class Articulo {
    /////////////////////////////////////////////////////////////////////////////////////
    //RELACION CON COLORES
    ////////////////////////////////////////////////////////////////////////////////////
+   
+   public void Add_Color(Color color) throws Exception{
+       Connection con = null;
+            try {
+                    con = Data.Connection();
+                    con.createStatement().executeUpdate("INSERT INTO articulo_color (Id_Articulo, Id_Color)"
+                                    + " VALUES (" + _iId + ", " 
+                                    + color.getId() +  ");");
+            }catch(SQLException ee) { throw ee; }
+            finally {
+                if (con != null) con.close();
+            }
+        
+        _aiColores.add(color.getId());
+   }
    
    public ArrayList<Imagen> Get_Imagenes_Color(Integer iId_Color) throws Exception{
        ArrayList<Imagen> aImagenes = new ArrayList<>();
