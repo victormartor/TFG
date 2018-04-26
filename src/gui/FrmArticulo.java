@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 /**
@@ -44,7 +45,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         
         if(articulo != null){
             _bModificar = true;
-            _articulo = articulo;
+            _articulo = new Articulo(articulo.getId());
             txtNombre.setText(_articulo.getNombre());
             txtPVP.setText(String.format("%.2f", _articulo.getPVP()));
             checkEs_Numero.setSelected(articulo.getTalla_Es_Numero());
@@ -54,7 +55,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         }
         
         _modArticulos = modArticulos;
-        
+        jScrollPane3.setVisible(false);
         
         //TALLAS
         _aCheckBoxTallas = new ArrayList<>();
@@ -90,12 +91,6 @@ public class FrmArticulo extends javax.swing.JFrame {
         //COMBINACIONES
         lCombinaciones.setModel(new ModArticulos(null, _articulo.getId()));
         lCombinaciones.setCellRenderer(new ListaRender());
-        /*
-        for(Integer id : _articulo.getCombinaciones()) {
-            JLabel id_comb = new JLabel(id.toString());
-            //panelCombinaciones.add(id_comb);
-        }
-        */
         
         if(_bModificar)
             this.setTitle("Modificar artículo");
@@ -106,6 +101,18 @@ public class FrmArticulo extends javax.swing.JFrame {
                 cancelar();
             }
         });
+    }
+    
+    private void agregarComb(){
+        ModArticulos modArticulosCombinaciones = (ModArticulos)lArticulosCombinaciones.getModel();
+        Articulo articulo = modArticulosCombinaciones.getArticulo(lArticulosCombinaciones.getSelectedIndex());
+        ((ModArticulos)lCombinaciones.getModel()).addArticulo(articulo);
+
+        ArrayList<Integer> aComb = _articulo.getCombinaciones();
+        aComb.add(articulo.getId());
+        _articulo.setCombinaciones(aComb);
+        
+        ((ModArticulos)lArticulosCombinaciones.getModel()).removeCombinacion(lArticulosCombinaciones.getSelectedIndex());
     }
     
     private void modificarArticuloColor(){
@@ -186,6 +193,8 @@ public class FrmArticulo extends javax.swing.JFrame {
         butEliminarCombinacion = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         lCombinaciones = new javax.swing.JList<>();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        lArticulosCombinaciones = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agregar artículo");
@@ -274,6 +283,14 @@ public class FrmArticulo extends javax.swing.JFrame {
         });
         jScrollPane4.setViewportView(lCombinaciones);
 
+        lArticulosCombinaciones.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        lArticulosCombinaciones.setMinimumSize(new java.awt.Dimension(0, 0));
+        jScrollPane3.setViewportView(lArticulosCombinaciones);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -282,11 +299,6 @@ public class FrmArticulo extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(butAceptar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(butCancelar))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -321,12 +333,20 @@ public class FrmArticulo extends javax.swing.JFrame {
                                 .addComponent(lblCombinaciones)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(butAgregarCombinacion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(butEliminarCombinacion, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(butAgregarCombinacion, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(butEliminarCombinacion, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane3)))))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(butAceptar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(butCancelar)
+                .addGap(44, 44, 44))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -362,12 +382,13 @@ public class FrmArticulo extends javax.swing.JFrame {
                         .addComponent(lblCombinaciones)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane4)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(butAgregarCombinacion)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(butEliminarCombinacion)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane4))))
+                            .addComponent(jScrollPane3))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -460,16 +481,43 @@ public class FrmArticulo extends javax.swing.JFrame {
     }//GEN-LAST:event_butAgregarColorActionPerformed
 
     private void butAgregarCombinacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarCombinacionActionPerformed
-        
+        if(!jScrollPane3.isVisible())
+        {  
+            ModArticulos modArticulos = null;
+            try {
+                modArticulos = new ModArticulos(null,null);
+                
+            } catch (Exception ex) {
+                System.out.println("Error al crear la lista de artículos. "+ex.toString());
+            }
+            modArticulos.removeCombinacion(modArticulos.getIndexOf(_articulo));
+            lArticulosCombinaciones.setModel(modArticulos);
+            lArticulosCombinaciones.setCellRenderer(new ListaRender());
+            this.setSize(this.getWidth()+200, this.getHeight());
+            jScrollPane3.setVisible(true);
+            
+            lArticulosCombinaciones.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+            if(e.getClickCount()==2){
+               agregarComb();
+            }
+           }
+        });
+        }
+        else{
+            agregarComb();
+        }
     }//GEN-LAST:event_butAgregarCombinacionActionPerformed
 
     private void butEliminarCombinacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarCombinacionActionPerformed
         ArrayList<Integer> aCombinaciones = _articulo.getCombinaciones();
-        aCombinaciones.remove((Integer)
-                ((ModArticulos)lCombinaciones.getModel()).getArticulo(lCombinaciones.getSelectedIndex()).getId());
+        Articulo articulo = ((ModArticulos)lCombinaciones.getModel()).getArticulo(lCombinaciones.getSelectedIndex());
+        aCombinaciones.remove((Integer)articulo.getId());
         _articulo.setCombinaciones(aCombinaciones);
         
-        ((ModArticulos)lCombinaciones.getModel()).RemoveCombinacion(lCombinaciones.getSelectedIndex());
+        ((ModArticulos)lCombinaciones.getModel()).removeCombinacion(lCombinaciones.getSelectedIndex());
+        ((ModArticulos)lArticulosCombinaciones.getModel()).addArticulo(articulo);
     }//GEN-LAST:event_butEliminarCombinacionActionPerformed
 
     /**
@@ -519,9 +567,11 @@ public class FrmArticulo extends javax.swing.JFrame {
     private javax.swing.JCheckBox checkEs_Numero;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JList<String> lArticulosCombinaciones;
     private javax.swing.JList<String> lColores;
     private javax.swing.JList<String> lCombinaciones;
     private javax.swing.JLabel lblCombinaciones;

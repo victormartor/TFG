@@ -38,7 +38,7 @@ public class ModArticulos extends AbstractListModel
         return lArticulo.get(index);
     }
     
-    public void addArticulo(Articulo articulo) throws Exception
+    public void addArticulo(Articulo articulo)
     {
         lArticulo.add(articulo);
         this.fireIntervalAdded(this, getSize(), getSize()+1);
@@ -56,9 +56,15 @@ public class ModArticulos extends AbstractListModel
         return lArticulo.get(index);
     }
     
-    public void RemoveCombinacion(int index){
+    public void removeCombinacion(int index){
         lArticulo.remove(index);
         this.fireIntervalRemoved(index, getSize(), getSize()+1);
+    }
+    
+    public int getIndexOf(Articulo articulo){
+        int index = 0;
+        while(lArticulo.get(index).getId() != articulo.getId()) index++;
+        return index;
     }
 }
 
