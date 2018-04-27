@@ -29,9 +29,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="butAceptar" min="-2" max="-2" attributes="0"/>
+                      <Component id="butGuardar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="butCancelar" min="-2" max="-2" attributes="0"/>
+                      <Component id="butAtras" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -77,8 +77,8 @@
                       <Component id="jScrollPane1" pref="340" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="butCancelar" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="butAceptar" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="butAtras" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="butGuardar" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" attributes="0">
@@ -119,20 +119,20 @@
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JButton" name="butCancelar">
+    <Component class="javax.swing.JButton" name="butAtras">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Cancelar"/>
+        <Property name="text" type="java.lang.String" value="Atr&#xe1;s"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butCancelarActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butAtrasActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="butAceptar">
+    <Component class="javax.swing.JButton" name="butGuardar">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Aceptar"/>
+        <Property name="text" type="java.lang.String" value="Guardar cambios"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butAceptarActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butGuardarActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="butAgregarColor">

@@ -31,27 +31,26 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class FrmCategoria extends javax.swing.JFrame {
 
     private Categoria _categoria = null;
-    private ModCategorias _modCategorias = null;
     private ModArticulos _modArticulos = null;
     private IfrImagenes _ifrImagenes = null;
     private boolean _bModificar = false;
+    private boolean _bCambios = false;
     
     /**
      * Creates new form FrmCategoria
      */
-    public FrmCategoria(Categoria categoria, ModCategorias modCategorias, Marca marca) throws Exception {
+    public FrmCategoria(Integer iId_Categoria, Integer iId_Marca) throws Exception {
         initComponents();
         
-        if(categoria != null){
+        if(iId_Categoria != null){
             _bModificar = true;
-            _categoria = categoria;
+            _categoria = new Categoria(iId_Categoria);
             txtNombre.setText(_categoria.getNombre());
         }
         else{
-            _categoria = Categoria.Create("", -1, marca.getId());
+            _categoria = Categoria.Create("", -1, iId_Marca);
         }
         
-        _modCategorias = modCategorias;
         cargarImagen();
         
         //LISTA DE ARTÍCULOS
@@ -66,17 +65,59 @@ public class FrmCategoria extends javax.swing.JFrame {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent e) {
                 if(e.getClickCount()==2){
-                   modificarArticulo();
+                    comprobar_cambios();
+                    modificarArticulo();
                 }
            }
         });
         
+        txtNombre.requestFocus();
+        
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                cancelar();
+                salir();
+                System.exit(0);
             }
         });
+    }
+    
+    private void comprobar_cambios(){
+        if(_bCambios){
+            Object[] options = {"Sí",
+                                "No"};
+            int n = JOptionPane.showOptionDialog(this,
+                "Hay cambios sin guardar, ¿desea guardarlos antes de continuar?.",
+                "Mensaje del sistema",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+
+            if(n == 0)
+            {
+                guardar();
+            }
+        }
+    }
+    
+    private void guardar(){
+        try {
+            _categoria.setNombre(txtNombre.getText());
+            _categoria.Update();
+            
+            _bModificar = true;
+            _bCambios = false;
+
+            JOptionPane.showMessageDialog(null, 
+            "Los cambios se han guardado correctamente.", 
+            "Mensaje del sistema", 
+            JOptionPane.PLAIN_MESSAGE);
+        } catch (Exception ex) {
+            System.out.println("Error al guardar. "+ ex.toString());
+        }
+        if(_ifrImagenes != null) _ifrImagenes.dispose();
     }
     
     private void modificarArticulo(){
@@ -86,7 +127,7 @@ public class FrmCategoria extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmArticulo = null;
             try {
-                frmArticulo = new FrmArticulo(articulo, _modArticulos, _categoria);
+                frmArticulo = new FrmArticulo(articulo.getId(), _categoria.getId());
             } catch (Exception ex) {
                 System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
             }
@@ -94,6 +135,7 @@ public class FrmCategoria extends javax.swing.JFrame {
                 frmArticulo.setLocationRelativeTo(FrmCategoria.this);
                 frmArticulo.setVisible(true);
             }
+            this.dispose();
         });
     }
     
@@ -108,21 +150,16 @@ public class FrmCategoria extends javax.swing.JFrame {
         }
     }
     
-    private void cancelar(){
+    private void salir(){
+        comprobar_cambios();
         try {
             if(!_bModificar){
                 _categoria.Delete();
             }    
-            else{
-                Categoria categoria = new Categoria(_categoria.getId());
-                //_categoria.setNombre(categoria.getNombre());
-                _categoria.setId_Imagen(categoria.getId_Imagen());
-            }
         } catch (Exception ex) {
             System.out.println("Error en la eliminación de la categoria. "+ ex.toString());
         }
         if(_ifrImagenes != null) _ifrImagenes.dispose();
-        this.dispose();
     }
 
     /**
@@ -140,14 +177,16 @@ public class FrmCategoria extends javax.swing.JFrame {
         butElegir = new javax.swing.JButton();
         butSubir = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
-        butCancelar = new javax.swing.JButton();
-        butAceptar = new javax.swing.JButton();
+        butAtras = new javax.swing.JButton();
+        butGuardar = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
         lblArticulos = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lArticulos = new javax.swing.JList<>();
         butAgregarArt = new javax.swing.JButton();
         butEliminarArt = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agregar categoría");
@@ -185,17 +224,17 @@ public class FrmCategoria extends javax.swing.JFrame {
             }
         });
 
-        butCancelar.setText("Cancelar");
-        butCancelar.addActionListener(new java.awt.event.ActionListener() {
+        butAtras.setText("Atrás");
+        butAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butCancelarActionPerformed(evt);
+                butAtrasActionPerformed(evt);
             }
         });
 
-        butAceptar.setText("Aceptar");
-        butAceptar.addActionListener(new java.awt.event.ActionListener() {
+        butGuardar.setText("Guardar cambios");
+        butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butAceptarActionPerformed(evt);
+                butGuardarActionPerformed(evt);
             }
         });
 
@@ -222,6 +261,9 @@ public class FrmCategoria extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel1.setText("CATEGORÍA");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -229,6 +271,7 @@ public class FrmCategoria extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator3)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -244,25 +287,31 @@ public class FrmCategoria extends javax.swing.JFrame {
                     .addComponent(jSeparator1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(butAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(butGuardar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(butCancelar))
+                        .addComponent(butAtras))
                     .addComponent(jSeparator2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblArticulos)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(butAgregarArt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(butEliminarArt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(butEliminarArt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblArticulos)
+                            .addComponent(jLabel1))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNombre)
@@ -285,8 +334,8 @@ public class FrmCategoria extends javax.swing.JFrame {
                         .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(butCancelar)
-                            .addComponent(butAceptar)))
+                            .addComponent(butAtras)
+                            .addComponent(butGuardar)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(butAgregarArt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -320,6 +369,7 @@ public class FrmCategoria extends javax.swing.JFrame {
                     this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
             _ifrImagenes.setVisible(true);
         });
+        _bCambios = true;
     }//GEN-LAST:event_butElegirActionPerformed
 
     private void butSubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSubirActionPerformed
@@ -364,29 +414,37 @@ public class FrmCategoria extends javax.swing.JFrame {
                 }
             }
         }
+        _bCambios = true;
     }//GEN-LAST:event_butSubirActionPerformed
 
-    private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
-        cancelar();
-    }//GEN-LAST:event_butCancelarActionPerformed
-
-    private void butAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAceptarActionPerformed
-        try {
-            _categoria.setNombre(txtNombre.getText());
-            _categoria.Update();
-            if(!_bModificar) _modCategorias.addCategoria(_categoria);
-        } catch (Exception ex) {
-            System.out.println("Error en la creación o modificación de la marca. "+ ex.toString());
-        }
-        if(_ifrImagenes != null) _ifrImagenes.dispose();
+    private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
+        salir();
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmMarca = null;
+            try {
+                frmMarca = new FrmMarca(_categoria.getId_Marca());
+            } catch (Exception ex) {
+                System.out.println("Error al leer las marcas. "+ ex.toString());
+            }
+            if(frmMarca != null){
+                frmMarca.setLocationRelativeTo(FrmCategoria.this);
+                frmMarca.setVisible(true);
+            }
+        });
         this.dispose();
-    }//GEN-LAST:event_butAceptarActionPerformed
+    }//GEN-LAST:event_butAtrasActionPerformed
+
+    private void butGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butGuardarActionPerformed
+        guardar();
+    }//GEN-LAST:event_butGuardarActionPerformed
 
     private void butAgregarArtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarArtActionPerformed
+        comprobar_cambios();
+        
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmArticulo = null;
             try {
-                frmArticulo = new FrmArticulo(null, _modArticulos, _categoria);
+                frmArticulo = new FrmArticulo(null, _categoria.getId());
             } catch (Exception ex) {
                 System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
             }
@@ -394,6 +452,7 @@ public class FrmCategoria extends javax.swing.JFrame {
                 frmArticulo.setLocationRelativeTo(FrmCategoria.this);
                 frmArticulo.setVisible(true);
             }
+            this.dispose();
         });
     }//GEN-LAST:event_butAgregarArtActionPerformed
 
@@ -421,8 +480,9 @@ public class FrmCategoria extends javax.swing.JFrame {
                 } catch (Exception ex) {
                     System.out.println("Error en la eliminación del artículo. "+ ex.toString());
                 }
+                _bCambios = true;
             }
-        }
+        }    
     }//GEN-LAST:event_butEliminarArtActionPerformed
 
     /**
@@ -465,16 +525,18 @@ public class FrmCategoria extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton butAceptar;
     private javax.swing.JButton butAgregarArt;
-    private javax.swing.JButton butCancelar;
+    private javax.swing.JButton butAtras;
     private javax.swing.JButton butElegir;
     private javax.swing.JButton butEliminarArt;
+    private javax.swing.JButton butGuardar;
     private javax.swing.JButton butSubir;
     private javax.swing.JLabel iconoImagen;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JList<String> lArticulos;
     private javax.swing.JLabel lblArticulos;
     private javax.swing.JLabel lblNombre;

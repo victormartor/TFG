@@ -16,6 +16,8 @@ import Data.Modelos.ModArticulos;
 import Data.Renders.ListaRender;
 import java.awt.Frame;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,36 +34,35 @@ import javax.swing.JOptionPane;
 public class FrmArticulo extends javax.swing.JFrame {
     
     private Articulo _articulo = null;
-    private ArrayList<JCheckBox> _aCheckBoxTallas = null;
-    private ModArticulos _modArticulos = null;
     private ModArticulo_Color _modArticulo_Color = null;
+    private ModArticulos _modArticulosComb = null;
     private boolean _bModificar = false;
+    private boolean _bCambios = false;
 
     /**
      * Creates new form FrmArticulo
      */
-    public FrmArticulo(Articulo articulo, ModArticulos modArticulos, Categoria categoria) throws Exception {
+    public FrmArticulo(Integer iId_Articulo, Integer iId_Categoria) throws Exception {
         initComponents();
         
-        if(articulo != null){
+        if(iId_Articulo != null){
             _bModificar = true;
-            _articulo = new Articulo(articulo.getId());
+            _articulo = new Articulo(iId_Articulo);
             txtNombre.setText(_articulo.getNombre());
             txtPVP.setText(String.format("%.2f", _articulo.getPVP()));
-            checkEs_Numero.setSelected(articulo.getTalla_Es_Numero());
+            checkEs_Numero.setSelected(_articulo.getTalla_Es_Numero());
         }
         else{
-            _articulo = Articulo.Create("", 0, categoria.getId(), false, null, null, null);
+            _articulo = Articulo.Create("", 0, iId_Categoria, false, null, null, null);
         }
-        
-        _modArticulos = modArticulos;
+
         jScrollPane3.setVisible(false);
+        txtTodos.setVisible(false);
         
         //TALLAS
-        _aCheckBoxTallas = new ArrayList<>();
         ArrayList<Talla> aTallas = Talla.Select(null, checkEs_Numero.isSelected());
         ArrayList<Integer> aTallasMarcadas = new ArrayList<>();
-        if(articulo != null) aTallasMarcadas = articulo.getTallas();
+        aTallasMarcadas = _articulo.getTallas();
         for(Talla t : aTallas) {
             boolean bMarcada = false;
             for(Integer i : aTallasMarcadas)
@@ -70,6 +71,12 @@ public class FrmArticulo extends javax.swing.JFrame {
             
             JCheckBox checkbox_talla = new JCheckBox(t.toString());
             checkbox_talla.setSelected(bMarcada);
+            checkbox_talla.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _bCambios = true;
+                }
+            });
             panelTallas.add(checkbox_talla);
         }
         
@@ -92,27 +99,66 @@ public class FrmArticulo extends javax.swing.JFrame {
         lCombinaciones.setModel(new ModArticulos(null, _articulo.getId()));
         lCombinaciones.setCellRenderer(new ListaRender());
         
+        try {
+            _modArticulosComb = new ModArticulos(null,null);
+
+        } catch (Exception ex) {
+            System.out.println("Error al crear la lista de artículos para las combinaciones. "+ex.toString());
+        }
+        _modArticulosComb.removeCombinacion(_modArticulosComb.getIndexOf(_articulo));
+        ArrayList<Integer> aComb = _articulo.getCombinaciones();
+        for(Integer iId_Comb : aComb)
+            _modArticulosComb.removeCombinacion(_modArticulosComb.getIndexOf(new Articulo(iId_Comb)));
+        
         if(_bModificar)
             this.setTitle("Modificar artículo");
+        
+        txtNombre.requestFocus();
         
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                cancelar();
+                salir();
+                System.exit(0);
             }
         });
     }
     
-    private void agregarComb(){
-        ModArticulos modArticulosCombinaciones = (ModArticulos)lArticulosCombinaciones.getModel();
-        Articulo articulo = modArticulosCombinaciones.getArticulo(lArticulosCombinaciones.getSelectedIndex());
-        ((ModArticulos)lCombinaciones.getModel()).addArticulo(articulo);
+    private void guardar(){
+        try {
+            _articulo.setNombre(txtNombre.getText());
+            _articulo.setPVP(Data.String2Double(txtPVP.getText()));
+            _articulo.setTalla_Es_Numero(checkEs_Numero.isSelected());
+            _articulo.setTallas(getTallasMarcadas());
+            _articulo.setColores(_modArticulo_Color.getColores());
+            _articulo.Update();
+            
+            _bModificar = true;
+            _bCambios = false;
 
-        ArrayList<Integer> aComb = _articulo.getCombinaciones();
-        aComb.add(articulo.getId());
-        _articulo.setCombinaciones(aComb);
-        
-        ((ModArticulos)lArticulosCombinaciones.getModel()).removeCombinacion(lArticulosCombinaciones.getSelectedIndex());
+            JOptionPane.showMessageDialog(null, 
+            "Los cambios se han guardado correctamente.", 
+            "Mensaje del sistema", 
+            JOptionPane.PLAIN_MESSAGE);
+        } catch (Exception ex) {
+            System.out.println("Error al guardar. "+ ex.toString());
+        }
+    }
+    
+    private void agregarComb(){
+        int index = lArticulosCombinaciones.getSelectedIndex();
+        if(index != -1){
+            ModArticulos modArticulosCombinaciones = (ModArticulos)lArticulosCombinaciones.getModel();
+            Articulo articulo = modArticulosCombinaciones.getArticulo(index);
+            ((ModArticulos)lCombinaciones.getModel()).addArticulo(articulo);
+
+            ArrayList<Integer> aComb = _articulo.getCombinaciones();
+            aComb.add(articulo.getId());
+            _articulo.setCombinaciones(aComb);
+
+            ((ModArticulos)lArticulosCombinaciones.getModel()).removeCombinacion(lArticulosCombinaciones.getSelectedIndex());
+            _bCambios = true;
+        }
     }
     
     private void modificarArticuloColor(){
@@ -122,7 +168,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmArticuloColor = null;
             try {
-                frmArticuloColor = new FrmArticuloColor(_articulo, color, _modArticulo_Color);
+                frmArticuloColor = new FrmArticuloColor(_articulo.getId(), color.getId());
             } catch (Exception ex) {
                 System.out.println("Error al buscar el color en la base de datos. "+ ex.toString());
             }
@@ -130,19 +176,39 @@ public class FrmArticulo extends javax.swing.JFrame {
                 frmArticuloColor.setLocationRelativeTo(FrmArticulo.this);
                 frmArticuloColor.setVisible(true);
             }
+            this.dispose();
         });
     }
     
-    private void cancelar(){
+    private void comprobar_cambios(){
+        if(_bCambios){
+            Object[] options = {"Sí",
+                                "No"};
+            int n = JOptionPane.showOptionDialog(this,
+                "Hay cambios sin guardar, ¿desea guardarlos antes de continuar?.",
+                "Mensaje del sistema",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+
+            if(n == 0)
+            {
+                guardar();
+            }
+        }
+    }
+    
+    private void salir(){
+        comprobar_cambios();
         try {
             if(!_bModificar)
                 _articulo.Delete();
 
         } catch (Exception ex) {
-            System.out.println("Error en la eliminación de la categoria. "+ ex.toString());
+            System.out.println("Error en la eliminación del artículo. "+ ex.toString());
         }
-        //if(_ifrImagenes != null) _ifrImagenes.dispose();
-        this.dispose();
     }
     
     private ArrayList<Integer> getTallasMarcadas() throws Exception{
@@ -177,8 +243,8 @@ public class FrmArticulo extends javax.swing.JFrame {
         lblEuro = new javax.swing.JLabel();
         lblTallas = new javax.swing.JLabel();
         checkEs_Numero = new javax.swing.JCheckBox();
-        butCancelar = new javax.swing.JButton();
-        butAceptar = new javax.swing.JButton();
+        butAtras = new javax.swing.JButton();
+        butGuardar = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
         txtColores = new javax.swing.JLabel();
@@ -195,6 +261,9 @@ public class FrmArticulo extends javax.swing.JFrame {
         lCombinaciones = new javax.swing.JList<>();
         jScrollPane3 = new javax.swing.JScrollPane();
         lArticulosCombinaciones = new javax.swing.JList<>();
+        txtTodos = new javax.swing.JLabel();
+        lblArticulo = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agregar artículo");
@@ -218,17 +287,17 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         });
 
-        butCancelar.setText("Cancelar");
-        butCancelar.addActionListener(new java.awt.event.ActionListener() {
+        butAtras.setText("Atrás");
+        butAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butCancelarActionPerformed(evt);
+                butAtrasActionPerformed(evt);
             }
         });
 
-        butAceptar.setText("Aceptar");
-        butAceptar.addActionListener(new java.awt.event.ActionListener() {
+        butGuardar.setText("Guardar cambios");
+        butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butAceptarActionPerformed(evt);
+                butGuardarActionPerformed(evt);
             }
         });
 
@@ -244,6 +313,7 @@ public class FrmArticulo extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lColores.setSelectionBackground(new java.awt.Color(0, 0, 0));
         jScrollPane2.setViewportView(lColores);
 
         butAgregarColor.setText("Agregar color");
@@ -291,6 +361,11 @@ public class FrmArticulo extends javax.swing.JFrame {
         lArticulosCombinaciones.setMinimumSize(new java.awt.Dimension(0, 0));
         jScrollPane3.setViewportView(lArticulosCombinaciones);
 
+        txtTodos.setText("Todos los artículos");
+
+        lblArticulo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblArticulo.setText("ARTÍCULO");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -298,40 +373,36 @@ public class FrmArticulo extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lblNombre)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(lblPVP)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(txtPVP, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lblEuro, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(lblTallas)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(checkEs_Numero))
-                                .addComponent(jScrollPane1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblNombre)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(lblPVP)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtPVP, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblEuro, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblTallas)
+                                .addGap(18, 18, 18)
+                                .addComponent(checkEs_Numero))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
                                     .addComponent(txtColores)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(butAgregarColor)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(butEliminarColor)))))
+                                    .addGap(162, 162, 162)))
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblCombinaciones)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtTodos))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -339,21 +410,35 @@ public class FrmArticulo extends javax.swing.JFrame {
                                     .addComponent(butAgregarCombinacion, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(butEliminarCombinacion, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
-                                .addComponent(jScrollPane3)))))
+                                .addComponent(jScrollPane3))))
+                    .addComponent(jSeparator3)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblArticulo)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(butAgregarColor)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(butEliminarColor)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(butGuardar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(butAtras)
+                        .addGap(34, 34, 34))
+                    .addComponent(jSeparator1))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(butAceptar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(butCancelar)
-                .addGap(44, 44, 44))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addComponent(lblArticulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lblNombre)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -366,36 +451,39 @@ public class FrmArticulo extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTallas)
                             .addComponent(checkEs_Numero))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtColores)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(butAgregarColor)
-                            .addComponent(butEliminarColor))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jSeparator2)
+                            .addComponent(butEliminarColor)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblCombinaciones)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane4)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(butAgregarCombinacion)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblCombinaciones)
+                                    .addComponent(txtTodos))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(butEliminarCombinacion)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane3))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(butAgregarCombinacion)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(butEliminarCombinacion))
+                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane3))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(butCancelar)
-                    .addComponent(butAceptar))
-                .addContainerGap())
+                    .addComponent(butAtras)
+                    .addComponent(butGuardar))
+                .addGap(31, 31, 31))
         );
 
         pack();
@@ -403,7 +491,6 @@ public class FrmArticulo extends javax.swing.JFrame {
 
     private void checkEs_NumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkEs_NumeroActionPerformed
         try {
-            _aCheckBoxTallas = new ArrayList<>();
             ArrayList<Talla> aTallas = Talla.Select(null, checkEs_Numero.isSelected());
             panelTallas.removeAll();
             for(Talla t : aTallas){
@@ -414,27 +501,29 @@ public class FrmArticulo extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("Error al buscar las tallas. "+ex.toString());
         }
+        _bCambios = true;
     }//GEN-LAST:event_checkEs_NumeroActionPerformed
 
-    private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
-        cancelar();
-    }//GEN-LAST:event_butCancelarActionPerformed
-
-    private void butAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAceptarActionPerformed
-        try {
-            _articulo.setNombre(txtNombre.getText());
-            _articulo.setPVP(Data.String2Double(txtPVP.getText()));
-            _articulo.setTalla_Es_Numero(checkEs_Numero.isSelected());
-            _articulo.setTallas(getTallasMarcadas());
-            _articulo.setColores(_modArticulo_Color.getColores());
-            _articulo.Update();
-            if(!_bModificar) _modArticulos.addArticulo(_articulo);
-        } catch (Exception ex) {
-            System.out.println("Error en la creación o modificación del artículo. "+ ex.toString());
-        }
-        
+    private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
+        salir();
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmCategoria = null;
+            try {
+                frmCategoria = new FrmCategoria(_articulo.getId_Categoria(), null);
+            } catch (Exception ex) {
+                System.out.println("Error al leer las marcas. "+ ex.toString());
+            }
+            if(frmCategoria != null){
+                frmCategoria.setLocationRelativeTo(FrmArticulo.this);
+                frmCategoria.setVisible(true);
+            }
+        });
         this.dispose();
-    }//GEN-LAST:event_butAceptarActionPerformed
+    }//GEN-LAST:event_butAtrasActionPerformed
+
+    private void butGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butGuardarActionPerformed
+        guardar();
+    }//GEN-LAST:event_butGuardarActionPerformed
 
     private void butEliminarColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarColorActionPerformed
         int index = lColores.getSelectedIndex();
@@ -461,15 +550,17 @@ public class FrmArticulo extends javax.swing.JFrame {
                 } catch (Exception ex) {
                     System.out.println("Error en la eliminación del color. "+ ex.toString());
                 }
+                _bCambios = true;
             }
-        }
+        } 
     }//GEN-LAST:event_butEliminarColorActionPerformed
 
     private void butAgregarColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarColorActionPerformed
+        comprobar_cambios();
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmArticuloColor = null;
             try {
-                frmArticuloColor = new FrmArticuloColor(_articulo, null, _modArticulo_Color);
+                frmArticuloColor = new FrmArticuloColor(_articulo.getId(), null);
             } catch (Exception ex) {
                 System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
             }
@@ -478,30 +569,24 @@ public class FrmArticulo extends javax.swing.JFrame {
                 frmArticuloColor.setVisible(true);
             }
         });
+        this.dispose();
     }//GEN-LAST:event_butAgregarColorActionPerformed
 
     private void butAgregarCombinacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarCombinacionActionPerformed
         if(!jScrollPane3.isVisible())
         {  
-            ModArticulos modArticulos = null;
-            try {
-                modArticulos = new ModArticulos(null,null);
-                
-            } catch (Exception ex) {
-                System.out.println("Error al crear la lista de artículos. "+ex.toString());
-            }
-            modArticulos.removeCombinacion(modArticulos.getIndexOf(_articulo));
-            lArticulosCombinaciones.setModel(modArticulos);
+            lArticulosCombinaciones.setModel(_modArticulosComb);
             lArticulosCombinaciones.setCellRenderer(new ListaRender());
             this.setSize(this.getWidth()+200, this.getHeight());
             jScrollPane3.setVisible(true);
+            txtTodos.setVisible(true);
             
             lArticulosCombinaciones.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-            if(e.getClickCount()==2){
-               agregarComb();
-            }
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                if(e.getClickCount()==2){
+                   agregarComb();
+                }
            }
         });
         }
@@ -511,13 +596,17 @@ public class FrmArticulo extends javax.swing.JFrame {
     }//GEN-LAST:event_butAgregarCombinacionActionPerformed
 
     private void butEliminarCombinacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarCombinacionActionPerformed
-        ArrayList<Integer> aCombinaciones = _articulo.getCombinaciones();
-        Articulo articulo = ((ModArticulos)lCombinaciones.getModel()).getArticulo(lCombinaciones.getSelectedIndex());
-        aCombinaciones.remove((Integer)articulo.getId());
-        _articulo.setCombinaciones(aCombinaciones);
-        
-        ((ModArticulos)lCombinaciones.getModel()).removeCombinacion(lCombinaciones.getSelectedIndex());
-        ((ModArticulos)lArticulosCombinaciones.getModel()).addArticulo(articulo);
+        int index = lCombinaciones.getSelectedIndex();
+        if(index != -1){
+            ArrayList<Integer> aCombinaciones = _articulo.getCombinaciones();
+            Articulo articulo = ((ModArticulos)lCombinaciones.getModel()).getArticulo(index);
+            aCombinaciones.remove((Integer)articulo.getId());
+            _articulo.setCombinaciones(aCombinaciones);
+
+            ((ModArticulos)lCombinaciones.getModel()).removeCombinacion(lCombinaciones.getSelectedIndex());
+            _modArticulosComb.addArticulo(articulo);
+            _bCambios = true;
+        }
     }//GEN-LAST:event_butEliminarCombinacionActionPerformed
 
     /**
@@ -558,12 +647,12 @@ public class FrmArticulo extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton butAceptar;
     private javax.swing.JButton butAgregarColor;
     private javax.swing.JButton butAgregarCombinacion;
-    private javax.swing.JButton butCancelar;
+    private javax.swing.JButton butAtras;
     private javax.swing.JButton butEliminarColor;
     private javax.swing.JButton butEliminarCombinacion;
+    private javax.swing.JButton butGuardar;
     private javax.swing.JCheckBox checkEs_Numero;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -571,9 +660,11 @@ public class FrmArticulo extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JList<String> lArticulosCombinaciones;
     private javax.swing.JList<String> lColores;
     private javax.swing.JList<String> lCombinaciones;
+    private javax.swing.JLabel lblArticulo;
     private javax.swing.JLabel lblCombinaciones;
     private javax.swing.JLabel lblEuro;
     private javax.swing.JLabel lblNombre;
@@ -583,5 +674,6 @@ public class FrmArticulo extends javax.swing.JFrame {
     private javax.swing.JLabel txtColores;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPVP;
+    private javax.swing.JLabel txtTodos;
     // End of variables declaration//GEN-END:variables
 }

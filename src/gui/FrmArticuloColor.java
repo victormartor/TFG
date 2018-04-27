@@ -33,15 +33,15 @@ public class FrmArticuloColor extends javax.swing.JFrame {
 
     private Articulo _articulo = null;
     private Color _color = null;
-    private ModArticulo_Color _modArticulo_Color = null;
     private ModArticulo_Color_Imagen _modArticulo_Color_Imagen = null;
     private boolean _bModificar = false;
+    private boolean _bCambios = false;
     private IfrImagenes_Articulo_Color _ifrImagenes = null;
     
     /**
      * Creates new form FrmArticuloColor
      */
-    public FrmArticuloColor(Articulo articulo, Color color, ModArticulo_Color modArticulo_Color) {
+    public FrmArticuloColor(Integer iId_Articulo, Integer iId_Color) {
         initComponents();
         
         try {
@@ -50,13 +50,20 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             System.out.println("Error al acceder a la tabla colores\n" +ex.toString());
         }
         
-        _articulo = articulo;
-        _modArticulo_Color = modArticulo_Color;
+        try {
+            _articulo = new Articulo(iId_Articulo);
+        } catch (Exception ex) {
+            System.out.println("Error al buscar el artículo. "+ex.toString());
+        }
         
-        if(color != null){
+        if(iId_Color != null){
             _bModificar = true;
-            _color = color;
-            cmbColor.setSelectedIndex(((ColorListModel)cmbColor.getModel()).getIndexColor(color.getId()));
+            try {
+                _color = new Color(iId_Color);
+            } catch (Exception ex) {
+                System.out.println("Error al buscar el color. "+ex.toString());
+            }
+            cmbColor.setSelectedIndex(((ColorListModel)cmbColor.getModel()).getIndexColor(iId_Color));
             cmbColor.setEnabled(false);
             butAgregarColor.setVisible(false);
             this.setTitle("Modificar color "+_color);
@@ -73,13 +80,52 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                cancelar();
+                salir();
+                System.exit(0);
             }
         });
     }
     
-    private void cancelar(){
-        
+    private void guardar(){
+        if(!_bModificar){
+            try {
+                _articulo.Add_Color(_color);
+                _bModificar = true;
+                _bCambios = false;
+
+                JOptionPane.showMessageDialog(null, 
+                "Los cambios se han guardado correctamente.", 
+                "Mensaje del sistema", 
+                JOptionPane.PLAIN_MESSAGE);
+            } catch (Exception ex) {
+                System.out.println("Error al añadir el color. "+ex.toString());
+            }
+        }
+        if(_ifrImagenes != null) _ifrImagenes.dispose();
+    }
+    
+    private void comprobar_cambios(){
+        if(_bCambios){
+            Object[] options = {"Sí",
+                                "No"};
+            int n = JOptionPane.showOptionDialog(this,
+                "Hay cambios sin guardar, ¿desea guardarlos antes de continuar?.",
+                "Mensaje del sistema",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+
+            if(n == 0)
+            {
+                guardar();
+            }
+        }
+    }
+    
+    private void salir(){
+        comprobar_cambios();
         if(!_bModificar && _color != null){
             try {
                 _articulo.Delete_Color(_color.getId());
@@ -89,7 +135,6 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         }
         
         if(_ifrImagenes != null) _ifrImagenes.dispose();
-        this.dispose();
     }
     
     private boolean color_esta_asociado(){
@@ -136,8 +181,8 @@ public class FrmArticuloColor extends javax.swing.JFrame {
 
         lblColor = new javax.swing.JLabel();
         cmbColor = new javax.swing.JComboBox<>();
-        butCancelar = new javax.swing.JButton();
-        butAceptar = new javax.swing.JButton();
+        butAtras = new javax.swing.JButton();
+        butGuardar = new javax.swing.JButton();
         butAgregarColor = new javax.swing.JButton();
         lblImagenes = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -158,17 +203,17 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             }
         });
 
-        butCancelar.setText("Cancelar");
-        butCancelar.addActionListener(new java.awt.event.ActionListener() {
+        butAtras.setText("Atrás");
+        butAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butCancelarActionPerformed(evt);
+                butAtrasActionPerformed(evt);
             }
         });
 
-        butAceptar.setText("Aceptar");
-        butAceptar.addActionListener(new java.awt.event.ActionListener() {
+        butGuardar.setText("Guardar cambios");
+        butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butAceptarActionPerformed(evt);
+                butGuardarActionPerformed(evt);
             }
         });
 
@@ -213,9 +258,9 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(butAceptar)
+                        .addComponent(butGuardar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(butCancelar))
+                        .addComponent(butAtras))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblColor)
@@ -251,8 +296,8 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(butCancelar)
-                            .addComponent(butAceptar)))
+                            .addComponent(butAtras)
+                            .addComponent(butGuardar)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(butElegir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -266,22 +311,26 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
-        cancelar();
-    }//GEN-LAST:event_butCancelarActionPerformed
-
-    private void butAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAceptarActionPerformed
-        if(!_bModificar){
+    private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
+        salir();
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmArticulo = null;
             try {
-                _modArticulo_Color.addColor(_color);
+                frmArticulo = new FrmArticulo(_articulo.getId(),null);
             } catch (Exception ex) {
-                System.out.println("Error al añadir el color. "+ex.toString());
+                System.out.println("Error al leer el artículo. "+ ex.toString());
             }
-        }
-        
-        this.dispose();  
-        if(_ifrImagenes != null) _ifrImagenes.dispose();
-    }//GEN-LAST:event_butAceptarActionPerformed
+            if(frmArticulo != null){
+                frmArticulo.setLocationRelativeTo(this);
+                frmArticulo.setVisible(true);
+            }
+        });
+        this.dispose();
+    }//GEN-LAST:event_butAtrasActionPerformed
+
+    private void butGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butGuardarActionPerformed
+        guardar();
+    }//GEN-LAST:event_butGuardarActionPerformed
 
     private void butAgregarColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarColorActionPerformed
         java.awt.EventQueue.invokeLater(() -> {
@@ -307,6 +356,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                         this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
                 _ifrImagenes.setVisible(true);
             });
+            _bCambios = true;
         }
     }//GEN-LAST:event_butElegirActionPerformed
 
@@ -351,6 +401,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                     }
                 }
             }
+            _bCambios = true;
         }
     }//GEN-LAST:event_butSubirActionPerformed
 
@@ -378,6 +429,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 } catch (Exception ex) {
                     System.out.println("Error en la eliminación de la imagen. "+ ex.toString());
                 }
+                _bCambios = true;
             }
         }
     }//GEN-LAST:event_butEliminarActionPerformed
@@ -396,6 +448,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 } catch (Exception ex) {
                     System.out.println("Error al buscar las imágenes. "+ex.toString());
                 }
+                _bCambios = true;
             } 
             else{
                 cmbColor.setSelectedItem(null);
@@ -440,11 +493,11 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton butAceptar;
     private javax.swing.JButton butAgregarColor;
-    private javax.swing.JButton butCancelar;
+    private javax.swing.JButton butAtras;
     private javax.swing.JButton butElegir;
     private javax.swing.JButton butEliminar;
+    private javax.swing.JButton butGuardar;
     private javax.swing.JButton butSubir;
     private javax.swing.JComboBox<String> cmbColor;
     private javax.swing.JScrollPane jScrollPane1;

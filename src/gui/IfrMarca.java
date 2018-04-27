@@ -52,7 +52,7 @@ public class IfrMarca extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmMarca = null;
             try {
-                frmMarca = new FrmMarca(marca, _modMarcas);
+                frmMarca = new FrmMarca(marca.getId());
             } catch (Exception ex) {
                 System.out.println("Error al buscar la marca en la base de datos. "+ ex.toString());
             }
@@ -60,6 +60,7 @@ public class IfrMarca extends javax.swing.JFrame {
                 frmMarca.setLocationRelativeTo(IfrMarca.this);
                 frmMarca.setVisible(true);
             }
+            this.dispose();
         });
     }
 
@@ -161,11 +162,10 @@ public class IfrMarca extends javax.swing.JFrame {
     }//GEN-LAST:event_butRemoveMarcaActionPerformed
 
     private void butAddMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAddMarcaActionPerformed
-        
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmMarca = null;
             try {
-                frmMarca = new FrmMarca(null, _modMarcas);
+                frmMarca = new FrmMarca(null);
             } catch (Exception ex) {
                 System.out.println("Error al crear una marca vacía en la base de datos. "+ ex.toString());
             }
@@ -173,8 +173,8 @@ public class IfrMarca extends javax.swing.JFrame {
                 frmMarca.setLocationRelativeTo(IfrMarca.this);
                 frmMarca.setVisible(true);
             }
-        });
-         
+            this.dispose();
+        });  
     }//GEN-LAST:event_butAddMarcaActionPerformed
 
     /**
@@ -210,7 +210,7 @@ public class IfrMarca extends javax.swing.JFrame {
             try {
                 ifrMarca = new IfrMarca();
             } catch (Exception ex) {
-                Logger.getLogger(IfrMarca.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error al leer las marcas. "+ex.toString());
             }
             if(ifrMarca != null){
                 ifrMarca.setLocationRelativeTo(null);

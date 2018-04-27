@@ -32,27 +32,26 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class FrmMarca extends javax.swing.JFrame {
 
     private Marca _marca = null;
-    private ModMarcas _modMarcas = null;
     private IfrImagenes _ifrImagenes = null;
     private ModCategorias _modCategorias = null;
     
     private boolean _bModificar = false;
+    private boolean _bCambios = false;
     /**
      * Creates new form FrmMarca
      */
-    public FrmMarca(Marca marca, ModMarcas modMarcas) throws Exception {
+    public FrmMarca(Integer iId_Marca) throws Exception {
         initComponents();
         
-        if(marca != null){
+        if(iId_Marca != null){
             _bModificar = true;
-            _marca = marca;
+            _marca = new Marca(iId_Marca);
             txtNombre.setText(_marca.getNombre());
         }
         else{
             _marca = Marca.Create("", -1);
         }
         
-        _modMarcas = modMarcas;
         cargarImagen();
         
         _modCategorias = new ModCategorias(_marca.getId());
@@ -66,17 +65,59 @@ public class FrmMarca extends javax.swing.JFrame {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent e) {
                 if(e.getClickCount()==2){
-                   modificarCategoria();
+                    comprobar_cambios();
+                    modificarCategoria();
                 }
            }
         });
         
+        txtNombre.requestFocus();
+        
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                cancelar();
+                salir();
+                System.exit(0);
             }
         });
+    }
+    
+    private void comprobar_cambios(){
+        if(_bCambios){
+            Object[] options = {"Sí",
+                                "No"};
+            int n = JOptionPane.showOptionDialog(this,
+                "Hay cambios sin guardar, ¿desea guardarlos antes de continuar?.",
+                "Mensaje del sistema",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+
+            if(n == 0)
+            {
+                guardar();
+            }
+        }
+    }
+    
+    private void guardar(){
+        try {
+            _marca.setNombre(txtNombre.getText());
+            _marca.Update();
+            
+            _bModificar = true;
+            _bCambios = false;
+
+            JOptionPane.showMessageDialog(null, 
+            "Los cambios se han guardado correctamente.", 
+            "Mensaje del sistema", 
+            JOptionPane.PLAIN_MESSAGE);
+        } catch (Exception ex) {
+            System.out.println("Error al guardar. "+ ex.toString());
+        }
+        if(_ifrImagenes != null) _ifrImagenes.dispose();
     }
     
     private void modificarCategoria(){
@@ -86,7 +127,7 @@ public class FrmMarca extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmCategoria = null;
             try {
-                frmCategoria = new FrmCategoria(categoria, _modCategorias, _marca);
+                frmCategoria = new FrmCategoria(categoria.getId(), _marca.getId());
             } catch (Exception ex) {
                 System.out.println("Error al buscar la categoria en la base de datos. "+ ex.toString());
             }
@@ -94,6 +135,7 @@ public class FrmMarca extends javax.swing.JFrame {
                 frmCategoria.setLocationRelativeTo(FrmMarca.this);
                 frmCategoria.setVisible(true);
             }
+            this.dispose();
         });
     }
     
@@ -108,21 +150,16 @@ public class FrmMarca extends javax.swing.JFrame {
         }
     }
     
-    private void cancelar(){
+    private void salir(){
+        comprobar_cambios();
         try {
             if(!_bModificar){
                 _marca.Delete();
             }    
-            else{
-                Marca marca = new Marca(_marca.getId());
-                //_marca.setNombre(marca.getNombre());
-                _marca.setId_Imagen(marca.getId_Imagen());
-            }
         } catch (Exception ex) {
             System.out.println("Error en la eliminación de la marca. "+ ex.toString());
         }
         if(_ifrImagenes != null) _ifrImagenes.dispose();
-        this.dispose();
     }
 
     /**
@@ -137,8 +174,8 @@ public class FrmMarca extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         lblNombre = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
-        butCancelar = new javax.swing.JButton();
-        butAceptar = new javax.swing.JButton();
+        butAtras = new javax.swing.JButton();
+        butGuardar = new javax.swing.JButton();
         iconoImagen = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         lblCategorias = new javax.swing.JLabel();
@@ -149,6 +186,8 @@ public class FrmMarca extends javax.swing.JFrame {
         butAgregarCat = new javax.swing.JButton();
         butEliminarCat = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
+        txtMarca = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
 
         jButton1.setText("jButton1");
 
@@ -164,17 +203,17 @@ public class FrmMarca extends javax.swing.JFrame {
             }
         });
 
-        butCancelar.setText("Cancelar");
-        butCancelar.addActionListener(new java.awt.event.ActionListener() {
+        butAtras.setText("Atrás");
+        butAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butCancelarActionPerformed(evt);
+                butAtrasActionPerformed(evt);
             }
         });
 
-        butAceptar.setText("Aceptar");
-        butAceptar.addActionListener(new java.awt.event.ActionListener() {
+        butGuardar.setText("Guardar cambios");
+        butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butAceptarActionPerformed(evt);
+                butGuardarActionPerformed(evt);
             }
         });
 
@@ -225,6 +264,9 @@ public class FrmMarca extends javax.swing.JFrame {
             }
         });
 
+        txtMarca.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtMarca.setText("MARCA");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -232,6 +274,7 @@ public class FrmMarca extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator3)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,25 +290,31 @@ public class FrmMarca extends javax.swing.JFrame {
                             .addComponent(butSubir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(butAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(butCancelar))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(butEliminarCat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(butAgregarCat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(butEliminarCat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(butAgregarCat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jSeparator2)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(butGuardar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(butAtras))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblCategorias)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jSeparator2))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCategorias)
+                            .addComponent(txtMarca))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(txtMarca)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNombre)
@@ -289,10 +338,10 @@ public class FrmMarca extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(butCancelar)
-                    .addComponent(butAceptar))
+                    .addComponent(butAtras)
+                    .addComponent(butGuardar))
                 .addContainerGap())
         );
 
@@ -303,21 +352,26 @@ public class FrmMarca extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreActionPerformed
 
-    private void butCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butCancelarActionPerformed
-        cancelar();
-    }//GEN-LAST:event_butCancelarActionPerformed
-
-    private void butAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAceptarActionPerformed
-        try {
-                _marca.setNombre(txtNombre.getText());
-                _marca.Update();
-                if(!_bModificar) _modMarcas.addMarca(_marca);    
-        } catch (Exception ex) {
-            System.out.println("Error en la creación o modificación de la marca. "+ ex.toString());
-        }
-        if(_ifrImagenes != null) _ifrImagenes.dispose();
+    private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
+        salir();
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame ifrMarca = null;
+            try {
+                ifrMarca = new IfrMarca();
+            } catch (Exception ex) {
+                System.out.println("Error al leer las marcas. "+ ex.toString());
+            }
+            if(ifrMarca != null){
+                ifrMarca.setLocationRelativeTo(FrmMarca.this);
+                ifrMarca.setVisible(true);
+            }
+        });
         this.dispose();
-    }//GEN-LAST:event_butAceptarActionPerformed
+    }//GEN-LAST:event_butAtrasActionPerformed
+
+    private void butGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butGuardarActionPerformed
+        guardar();
+    }//GEN-LAST:event_butGuardarActionPerformed
 
     private void iconoImagenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iconoImagenMouseClicked
 
@@ -365,6 +419,8 @@ public class FrmMarca extends javax.swing.JFrame {
                 }
             }
         }
+        
+        _bCambios = true;
     }//GEN-LAST:event_butSubirActionPerformed
 
     private void butElegirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butElegirActionPerformed
@@ -382,13 +438,17 @@ public class FrmMarca extends javax.swing.JFrame {
                     this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
             _ifrImagenes.setVisible(true);
         });
+        
+        _bCambios = true;
     }//GEN-LAST:event_butElegirActionPerformed
 
     private void butAgregarCatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarCatActionPerformed
+        comprobar_cambios();
+        
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmCategoria = null;
             try {
-                frmCategoria = new FrmCategoria(null, _modCategorias, _marca);
+                frmCategoria = new FrmCategoria(null, _marca.getId());
             } catch (Exception ex) {
                 System.out.println("Error al crear una categoria vacía en la base de datos. "+ ex.toString());
             }
@@ -396,6 +456,7 @@ public class FrmMarca extends javax.swing.JFrame {
                 frmCategoria.setLocationRelativeTo(FrmMarca.this);
                 frmCategoria.setVisible(true);
             }
+            this.dispose();
         });
     }//GEN-LAST:event_butAgregarCatActionPerformed
 
@@ -423,6 +484,8 @@ public class FrmMarca extends javax.swing.JFrame {
                 } catch (Exception ex) {
                     System.out.println("Error en la eliminación de la categoria. "+ ex.toString());
                 }
+                
+                _bCambios = true;
             }
         }
     }//GEN-LAST:event_butEliminarCatActionPerformed
@@ -474,20 +537,22 @@ public class FrmMarca extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton butAceptar;
     private javax.swing.JButton butAgregarCat;
-    private javax.swing.JButton butCancelar;
+    private javax.swing.JButton butAtras;
     private javax.swing.JButton butElegir;
     private javax.swing.JButton butEliminarCat;
+    private javax.swing.JButton butGuardar;
     private javax.swing.JButton butSubir;
     private javax.swing.JLabel iconoImagen;
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JList<String> lCategorias;
     private javax.swing.JLabel lblCategorias;
     private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel txtMarca;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
 }

@@ -67,7 +67,7 @@ public class ListaRender extends JLabel implements ListCellRenderer{
 
         // check if this cell is selected
         } else if (isSelected) {
-            background = Color.LIGHT_GRAY;
+            background = Color.BLACK;
             foreground = Color.WHITE;
 
         // unselected, and not the DnD drop location
