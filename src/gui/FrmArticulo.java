@@ -129,7 +129,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                if(salir()) System.exit(0);
+                if(salir()) FrmArticulo.this.dispose();
             }
         });
     }

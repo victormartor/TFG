@@ -7,6 +7,7 @@ package gui;
 
 import Data.Clases.Articulo;
 import Data.Clases.Categoria;
+import Data.Clases.Configuracion;
 import Data.Data;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
@@ -88,7 +89,7 @@ public class FrmCategoria extends javax.swing.JFrame {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 if(salir())
-                    System.exit(0);
+                    FrmCategoria.this.dispose();
             }
         });
     }
@@ -99,15 +100,15 @@ public class FrmCategoria extends javax.swing.JFrame {
         img.setPreferredSize(new Dimension(175,175));
         ventanaElegirImagen.setAccessory(img);
 
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG)", "jpg","jpeg");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG) y PNG", "jpg","jpeg", "png");
         ventanaElegirImagen.addChoosableFileFilter(filtro);
         ventanaElegirImagen.setFileFilter(filtro);
         ventanaElegirImagen.setDialogTitle("Abrir Imagen");
         
         String rutaImagenes = null;
         try {
-            rutaImagenes = Data.RutaImagenes();
-        } catch (IOException ex) {
+            rutaImagenes = Configuracion.Select("Ruta_imagenes", null).get(0).getValor();
+        } catch (Exception ex) {
             System.out.println("Error al obtener la ruta de las imagenes. "+ex.toString());
         }
         

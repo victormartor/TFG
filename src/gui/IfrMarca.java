@@ -78,7 +78,7 @@ public class IfrMarca extends javax.swing.JFrame {
         butAddMarca = new javax.swing.JButton();
         butRemoveMarca = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Marcas");
         setResizable(false);
 
@@ -205,6 +205,7 @@ public class IfrMarca extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        /*
         java.awt.EventQueue.invokeLater(() -> {
             IfrMarca ifrMarca = null;
             try {
@@ -217,6 +218,7 @@ public class IfrMarca extends javax.swing.JFrame {
                 ifrMarca.setVisible(true);
             }
         });
+*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
