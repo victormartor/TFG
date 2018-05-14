@@ -14,15 +14,29 @@ import Data.Modelos.ModArticulo_Color;
 import Data.Modelos.ModArticulo_Color_Imagen;
 import Data.Modelos.ModImagenes;
 import Data.Renders.ListaImagenesRender;
+import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -34,9 +48,9 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     private Articulo _articulo = null;
     private Color _color = null;
     private ModArticulo_Color_Imagen _modArticulo_Color_Imagen = null;
+    private String _srutaGuardada = null;
     private boolean _bModificar = false;
     private boolean _bCambios = false;
-    private IfrImagenes_Articulo_Color _ifrImagenes = null;
     
     /**
      * Creates new form FrmArticuloColor
@@ -65,7 +79,6 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             }
             cmbColor.setSelectedIndex(((ColorListModel)cmbColor.getModel()).getIndexColor(iId_Color));
             cmbColor.setEnabled(false);
-            butAgregarColor.setVisible(false);
             this.setTitle("Modificar color "+_color);
              
             try {
@@ -80,8 +93,8 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                salir();
-                System.exit(0);
+                if(salir())
+                    System.exit(0);
             }
         });
     }
@@ -91,17 +104,16 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             try {
                 _articulo.Add_Color(_color);
                 _bModificar = true;
-                _bCambios = false;
-
-                JOptionPane.showMessageDialog(null, 
-                "Los cambios se han guardado correctamente.", 
-                "Mensaje del sistema", 
-                JOptionPane.PLAIN_MESSAGE);
             } catch (Exception ex) {
                 System.out.println("Error al añadir el color. "+ex.toString());
             }
         }
-        if(_ifrImagenes != null) _ifrImagenes.dispose();
+        
+        _bCambios = false;
+        JOptionPane.showMessageDialog(null, 
+        "Los cambios se han guardado correctamente.", 
+        "Mensaje del sistema", 
+        JOptionPane.PLAIN_MESSAGE);
     }
     
     private void comprobar_cambios(){
@@ -124,7 +136,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         }
     }
     
-    private void salir(){
+    private boolean salir(){
         comprobar_cambios();
         if(!_bModificar && _color != null){
             try {
@@ -132,9 +144,20 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             } catch (Exception ex) {
                 System.out.println("Error al eliminar el color. "+ex.toString());
             }
+            return true;
         }
-        
-        if(_ifrImagenes != null) _ifrImagenes.dispose();
+        else{
+            if(_color != null && _modArticulo_Color_Imagen.getSize() == 0){
+                JOptionPane.showMessageDialog(null,
+                "¡ATENCIÓN! Se debe asignar al menos una imagen al color.",
+                "Error",
+                JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            else{
+                return true;
+            }        
+        }  
     }
     
     private boolean color_esta_asociado(){
@@ -183,11 +206,9 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         cmbColor = new javax.swing.JComboBox<>();
         butAtras = new javax.swing.JButton();
         butGuardar = new javax.swing.JButton();
-        butAgregarColor = new javax.swing.JButton();
         lblImagenes = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lImagenes = new javax.swing.JList<>();
-        butElegir = new javax.swing.JButton();
         butSubir = new javax.swing.JButton();
         butEliminar = new javax.swing.JButton();
 
@@ -217,23 +238,9 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             }
         });
 
-        butAgregarColor.setText("+");
-        butAgregarColor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butAgregarColorActionPerformed(evt);
-            }
-        });
-
         lblImagenes.setText("Imágenes");
 
         jScrollPane1.setViewportView(lImagenes);
-
-        butElegir.setText("Elegir Imagen");
-        butElegir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butElegirActionPerformed(evt);
-            }
-        });
 
         butSubir.setText("Subir Imagen");
         butSubir.addActionListener(new java.awt.event.ActionListener() {
@@ -264,10 +271,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblColor)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(cmbColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(butAgregarColor))
+                            .addComponent(cmbColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblImagenes))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
@@ -275,7 +279,6 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(butEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(butElegir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(butSubir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
@@ -285,24 +288,20 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lblColor)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(butAgregarColor))
+                .addComponent(cmbColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(lblImagenes)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(butAtras)
                             .addComponent(butGuardar)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(butElegir)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(butSubir)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(butEliminar)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -312,86 +311,132 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
-        salir();
-        java.awt.EventQueue.invokeLater(() -> {
-            Frame frmArticulo = null;
-            try {
-                frmArticulo = new FrmArticulo(_articulo.getId(),null);
-            } catch (Exception ex) {
-                System.out.println("Error al leer el artículo. "+ ex.toString());
-            }
-            if(frmArticulo != null){
-                frmArticulo.setLocationRelativeTo(this);
-                frmArticulo.setVisible(true);
-            }
-        });
-        this.dispose();
+        if(salir()){
+            java.awt.EventQueue.invokeLater(() -> {
+                Frame frmArticulo = null;
+                try {
+                    frmArticulo = new FrmArticulo(_articulo.getId(),null);
+                } catch (Exception ex) {
+                    System.out.println("Error al leer el artículo. "+ ex.toString());
+                }
+                if(frmArticulo != null){
+                    frmArticulo.setLocationRelativeTo(this);
+                    frmArticulo.setVisible(true);
+                }
+            });
+            this.dispose();
+        }
     }//GEN-LAST:event_butAtrasActionPerformed
 
     private void butGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butGuardarActionPerformed
         guardar();
     }//GEN-LAST:event_butGuardarActionPerformed
 
-    private void butAgregarColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarColorActionPerformed
-        java.awt.EventQueue.invokeLater(() -> {
-            Frame frmColor = frmColor = new FrmColor(cmbColor);
-            frmColor.setLocationRelativeTo(FrmArticuloColor.this);
-            frmColor.setVisible(true);
-        });
-    }//GEN-LAST:event_butAgregarColorActionPerformed
-
-    private void butElegirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butElegirActionPerformed
-        if(comprobar_color()){
-            java.awt.EventQueue.invokeLater(() -> {
-                if(_ifrImagenes == null || !_ifrImagenes.bAbierto){
-                    try {
-                        _ifrImagenes = new IfrImagenes_Articulo_Color(_modArticulo_Color_Imagen);
-                    } catch (Exception ex) {
-                        System.out.println("Error al leer la lista de imágenes. "+ ex.toString());
-                    }
-                }
-
-                _ifrImagenes.setLocationRelativeTo(FrmArticuloColor.this);
-                _ifrImagenes.setBounds(this.getX()+this.getWidth()-10, 
-                        this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
-                _ifrImagenes.setVisible(true);
-            });
-            _bCambios = true;
-        }
-    }//GEN-LAST:event_butElegirActionPerformed
-
     private void butSubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSubirActionPerformed
         if(comprobar_color()){
-            JFileChooser archivo = new JFileChooser();
+            JFileChooser ventanaElegirImagen = new JFileChooser();
+            if(_srutaGuardada != null) ventanaElegirImagen.setCurrentDirectory(new File(_srutaGuardada));
+            JLabel img = new JLabel();
+            img.setPreferredSize(new Dimension(175,175));
+            ventanaElegirImagen.setAccessory(img);
 
             FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG)", "jpg","jpeg");
-            archivo.addChoosableFileFilter(filtro);
-            archivo.setFileFilter(filtro);
-            archivo.setDialogTitle("Abrir Imagen");
+            ventanaElegirImagen.addChoosableFileFilter(filtro);
+            ventanaElegirImagen.setFileFilter(filtro);
+            ventanaElegirImagen.setDialogTitle("Abrir Imagen");
 
-            File ruta = null;
+            String rutaImagenes = null;
             try {
-                ruta = new File(Data.RutaImagenes());
+                rutaImagenes = Data.RutaImagenes();
             } catch (IOException ex) {
-                System.out.println("Error en la lectura de la ruta. "+ ex.toString());
+                System.out.println("Error al obtener la ruta de las imagenes. "+ex.toString());
             }
-            archivo.setCurrentDirectory(ruta);
 
-            int ventana = archivo.showOpenDialog(null);
+            // Add property change listener
+            ventanaElegirImagen.addPropertyChangeListener(new PropertyChangeListener(){
+
+                // When any JFileChooser property changes, this handler
+                // is executed
+                public void propertyChange(final PropertyChangeEvent pe)
+                {
+                    // Create SwingWorker for smooth experience
+                    SwingWorker<Image,Void> worker=new SwingWorker<Image,Void>(){
+
+                        // The image processing method
+                        protected Image doInBackground()
+                        {
+                            // If selected file changes..
+                            if(pe.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
+                            {
+                            // Get selected file
+                            File f=ventanaElegirImagen.getSelectedFile();
+
+                                try
+                                {
+                                // Create FileInputStream for file
+                                FileInputStream fin=new FileInputStream(f);
+
+                                // Read image from fin
+                                BufferedImage bim=ImageIO.read(fin);
+
+                                // Return the scaled version of image
+                                return bim.getScaledInstance(178,170,BufferedImage.SCALE_FAST);
+
+                                }catch(Exception e){
+                                    // If there is a problem reading image,
+                                    // it might not be a valid image or unable
+                                    // to read
+                                    img.setText(" Not valid image/Unable to read");
+                                }
+                            }
+
+                        return null;
+                        }
+
+                        protected void done()
+                        {
+                            try
+                            {
+                            // Get the image
+                            Image i=get(1L,TimeUnit.NANOSECONDS);
+
+                            // If i is null, go back!
+                            if(i==null) return;
+
+                            // Set icon otherwise
+                            img.setIcon(new ImageIcon(i));
+                            }catch(Exception e){
+                                // Print error occured
+                                img.setText(" Error occured.");
+                            }
+                        }
+                    };
+
+                    // Start worker thread
+                    worker.execute();
+                }
+            });
+
+            int ventana = ventanaElegirImagen.showOpenDialog(null);
             if(ventana == JFileChooser.APPROVE_OPTION)
             {
-                File file = archivo.getSelectedFile();
+                File file = ventanaElegirImagen.getSelectedFile();
                 String sRuta = null;
                 Imagen imagen = null;
                 try {
-                    sRuta = file.getPath().replace(Data.RutaImagenes(), "");
+                    sRuta = file.getAbsolutePath();
                     sRuta = sRuta.replace(file.getName(), "");
+                    _srutaGuardada = sRuta;
                     if(Imagen.Select(file.getName(), null).size() > 0)
                         imagen = Imagen.Select(file.getName(), null).get(0);
-                    else
-                        imagen = Imagen.Create(file.getName(), sRuta);
+                    else{
+                        Files.copy(Paths.get(file.getAbsolutePath()),
+                                   Paths.get(rutaImagenes+"\\"+file.getName()), 
+                                   StandardCopyOption.REPLACE_EXISTING);
+                        imagen = Imagen.Create(file.getName(), rutaImagenes);
+                    }     
                 } catch (Exception ex) {
-                    System.out.println("Error en la creación de la imagen. "+ ex.toString());
+                    System.out.println("Error al subir la imagen. "+ ex.toString());
                 }
                 if(imagen != null){
                     try {
@@ -401,7 +446,6 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                     }
                 }
             }
-            _bCambios = true;
         }
     }//GEN-LAST:event_butSubirActionPerformed
 
@@ -429,7 +473,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 } catch (Exception ex) {
                     System.out.println("Error en la eliminación de la imagen. "+ ex.toString());
                 }
-                _bCambios = true;
+                //_bCambios = true;
             }
         }
     }//GEN-LAST:event_butEliminarActionPerformed
@@ -437,21 +481,29 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     private void cmbColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbColorActionPerformed
         if(!_bModificar){
             _color = (Color)cmbColor.getSelectedItem();
-            if(!color_esta_asociado()){
-                cmbColor.setEnabled(false);
-                butAgregarColor.setVisible(false);
-
-                try {
-                    _modArticulo_Color_Imagen = new ModArticulo_Color_Imagen(_articulo, _color);
-                    lImagenes.setModel(_modArticulo_Color_Imagen);
-                    lImagenes.setCellRenderer(new ListaImagenesRender());
-                } catch (Exception ex) {
-                    System.out.println("Error al buscar las imágenes. "+ex.toString());
-                }
-                _bCambios = true;
-            } 
+            if(_color.getId()==-1){
+                java.awt.EventQueue.invokeLater(() -> {
+                    Frame frmColor = frmColor = new FrmColor(cmbColor);
+                    frmColor.setLocationRelativeTo(FrmArticuloColor.this);
+                    frmColor.setVisible(true);
+                });
+            }
             else{
-                cmbColor.setSelectedItem(null);
+                if(!color_esta_asociado()){
+                    cmbColor.setEnabled(false);
+
+                    try {
+                        _modArticulo_Color_Imagen = new ModArticulo_Color_Imagen(_articulo, _color);
+                        lImagenes.setModel(_modArticulo_Color_Imagen);
+                        lImagenes.setCellRenderer(new ListaImagenesRender());
+                    } catch (Exception ex) {
+                        System.out.println("Error al buscar las imágenes. "+ex.toString());
+                    }
+                    _bCambios = true;
+                } 
+                else{
+                    cmbColor.setSelectedItem(null);
+                }
             }
         }
     }//GEN-LAST:event_cmbColorActionPerformed
@@ -493,9 +545,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton butAgregarColor;
     private javax.swing.JButton butAtras;
-    private javax.swing.JButton butElegir;
     private javax.swing.JButton butEliminar;
     private javax.swing.JButton butGuardar;
     private javax.swing.JButton butSubir;

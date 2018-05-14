@@ -81,15 +81,18 @@ public class FrmColor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void butAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarActionPerformed
+        Color color = null;
         if(txtNombre.getText()!= null){
            try {
-                Color.Create(txtNombre.getText());
+                color = Color.Create(txtNombre.getText());
             } catch (Exception ex) {
                 System.out.println("Error al crear el color. "+ex.toString());
             } 
         }
         try {
             _cmbColor.setModel(new ColorListModel(Color.Select(null)));
+            _cmbColor.setSelectedIndex(((ColorListModel)_cmbColor.getModel()).getIndexColor(color.getId()));
+            _cmbColor.setEnabled(false);
         } catch (Exception ex) {
             System.out.println("Error al acceder a la tabla colores\n" +ex.toString());
         }

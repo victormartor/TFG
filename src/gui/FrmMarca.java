@@ -14,15 +14,30 @@ import Data.Modelos.ModImagenes;
 import Data.Modelos.ModMarcas;
 import Data.Renders.ListaImagenesRender;
 import Data.Renders.ListaRender;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -32,7 +47,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class FrmMarca extends javax.swing.JFrame {
 
     private Marca _marca = null;
-    private IfrImagenes _ifrImagenes = null;
     private ModCategorias _modCategorias = null;
     
     private boolean _bModificar = false;
@@ -76,10 +90,127 @@ public class FrmMarca extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                salir();
-                System.exit(0);
+                if(salir())
+                    System.exit(0);
             }
         });
+    }
+    
+    private void subir_imagen(){
+        JFileChooser ventanaElegirImagen = new JFileChooser();
+        JLabel img = new JLabel();
+        img.setPreferredSize(new Dimension(175,175));
+        ventanaElegirImagen.setAccessory(img);
+
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG)", "jpg","jpeg");
+        ventanaElegirImagen.addChoosableFileFilter(filtro);
+        ventanaElegirImagen.setFileFilter(filtro);
+        ventanaElegirImagen.setDialogTitle("Abrir Imagen");
+        
+        String rutaImagenes = null;
+        try {
+            rutaImagenes = Data.RutaImagenes();
+        } catch (IOException ex) {
+            System.out.println("Error al obtener la ruta de las imagenes. "+ex.toString());
+        }
+        
+        // Add property change listener
+        ventanaElegirImagen.addPropertyChangeListener(new PropertyChangeListener(){
+       
+            // When any JFileChooser property changes, this handler
+            // is executed
+            public void propertyChange(final PropertyChangeEvent pe)
+            {
+                // Create SwingWorker for smooth experience
+                SwingWorker<Image,Void> worker=new SwingWorker<Image,Void>(){
+               
+                    // The image processing method
+                    protected Image doInBackground()
+                    {
+                        // If selected file changes..
+                        if(pe.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
+                        {
+                        // Get selected file
+                        File f=ventanaElegirImagen.getSelectedFile();
+                       
+                            try
+                            {
+                            // Create FileInputStream for file
+                            FileInputStream fin=new FileInputStream(f);
+                           
+                            // Read image from fin
+                            BufferedImage bim=ImageIO.read(fin);
+                           
+                            // Return the scaled version of image
+                            return bim.getScaledInstance(178,170,BufferedImage.SCALE_FAST);
+                           
+                            }catch(Exception e){
+                                // If there is a problem reading image,
+                                // it might not be a valid image or unable
+                                // to read
+                                img.setText(" Not valid image/Unable to read");
+                            }
+                        }
+                   
+                    return null;
+                    }
+                   
+                    protected void done()
+                    {
+                        try
+                        {
+                        // Get the image
+                        Image i=get(1L,TimeUnit.NANOSECONDS);
+                       
+                        // If i is null, go back!
+                        if(i==null) return;
+                       
+                        // Set icon otherwise
+                        img.setIcon(new ImageIcon(i));
+                        }catch(Exception e){
+                            // Print error occured
+                            img.setText(" Error occured.");
+                        }
+                    }
+                };
+               
+                // Start worker thread
+                worker.execute();
+            }
+        });
+
+        int ventana = ventanaElegirImagen.showOpenDialog(null);
+        if(ventana == JFileChooser.APPROVE_OPTION)
+        {
+            File file = ventanaElegirImagen.getSelectedFile();
+            String sRuta = null;
+            Imagen imagen = null;
+            try {
+                sRuta = file.getAbsolutePath();
+                sRuta = sRuta.replace(file.getName(), "");
+                if(Imagen.Select(file.getName(), null).size() > 0)
+                    imagen = Imagen.Select(file.getName(), null).get(0);
+                else{
+                    Files.copy(Paths.get(file.getAbsolutePath()),
+                               Paths.get(rutaImagenes+"\\"+file.getName()), 
+                               StandardCopyOption.REPLACE_EXISTING);
+                    imagen = Imagen.Create(file.getName(), rutaImagenes);
+                }     
+            } catch (Exception ex) {
+                System.out.println("Error al subir la imagen. "+ ex.toString());
+            }
+            if(imagen != null){
+                _marca.setId_Imagen(imagen.getId());
+                try {
+                    //_marca.Update();
+                    cargarImagen();
+                } catch (Exception ex) {
+                    System.out.println("Error en la actualización de la imagen de la marca. "+ ex.toString());
+                }
+            }
+        }
+        
+        _bCambios = true;
     }
     
     private void comprobar_cambios(){
@@ -117,7 +248,6 @@ public class FrmMarca extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("Error al guardar. "+ ex.toString());
         }
-        if(_ifrImagenes != null) _ifrImagenes.dispose();
     }
     
     private void modificarCategoria(){
@@ -150,16 +280,28 @@ public class FrmMarca extends javax.swing.JFrame {
         }
     }
     
-    private void salir(){
+    private boolean salir(){
         comprobar_cambios();
-        try {
-            if(!_bModificar){
+        if(!_bModificar){
+            try {
                 _marca.Delete();
-            }    
-        } catch (Exception ex) {
-            System.out.println("Error en la eliminación de la marca. "+ ex.toString());
+            } catch (Exception ex) {
+                System.out.println("Error en la eliminación de la marca. "+ ex.toString());
+            }
+            return true;
         }
-        if(_ifrImagenes != null) _ifrImagenes.dispose();
+        else{
+            if(_marca.getId_Imagen() == -1){
+                JOptionPane.showMessageDialog(null,
+                "¡ATENCIÓN! Se debe asignar una imagen a la marca.",
+                "Error",
+                JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            else{
+                return true;
+            }      
+        }
     }
 
     /**
@@ -181,7 +323,6 @@ public class FrmMarca extends javax.swing.JFrame {
         lblCategorias = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lCategorias = new javax.swing.JList<>();
-        butElegir = new javax.swing.JButton();
         butSubir = new javax.swing.JButton();
         butAgregarCat = new javax.swing.JButton();
         butEliminarCat = new javax.swing.JButton();
@@ -236,13 +377,6 @@ public class FrmMarca extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(lCategorias);
 
-        butElegir.setText("Elegir imagen");
-        butElegir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butElegirActionPerformed(evt);
-            }
-        });
-
         butSubir.setText("Subir imagen");
         butSubir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -282,15 +416,13 @@ public class FrmMarca extends javax.swing.JFrame {
                                 .addComponent(lblNombre)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(txtNombre))
-                        .addGap(18, 18, 18)
-                        .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(butElegir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(butSubir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(butSubir, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(butEliminarCat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(butAgregarCat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -317,31 +449,30 @@ public class FrmMarca extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblNombre)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(butElegir)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblNombre)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(iconoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(butSubir)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblCategorias)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(butAgregarCat)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(butEliminarCat))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(butAtras)
-                    .addComponent(butGuardar))
+                        .addComponent(lblCategorias)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(butAgregarCat)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(butEliminarCat))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(butAtras)
+                            .addComponent(butGuardar)))
+                    .addComponent(butSubir))
                 .addContainerGap())
         );
 
@@ -353,20 +484,21 @@ public class FrmMarca extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNombreActionPerformed
 
     private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
-        salir();
-        java.awt.EventQueue.invokeLater(() -> {
-            Frame ifrMarca = null;
-            try {
-                ifrMarca = new IfrMarca();
-            } catch (Exception ex) {
-                System.out.println("Error al leer las marcas. "+ ex.toString());
-            }
-            if(ifrMarca != null){
-                ifrMarca.setLocationRelativeTo(FrmMarca.this);
-                ifrMarca.setVisible(true);
-            }
-        });
-        this.dispose();
+        if(salir()){
+            java.awt.EventQueue.invokeLater(() -> {
+                Frame ifrMarca = null;
+                try {
+                    ifrMarca = new IfrMarca();
+                } catch (Exception ex) {
+                    System.out.println("Error al leer las marcas. "+ ex.toString());
+                }
+                if(ifrMarca != null){
+                    ifrMarca.setLocationRelativeTo(FrmMarca.this);
+                    ifrMarca.setVisible(true);
+                }
+            });
+            this.dispose();
+        }
     }//GEN-LAST:event_butAtrasActionPerformed
 
     private void butGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butGuardarActionPerformed
@@ -374,90 +506,37 @@ public class FrmMarca extends javax.swing.JFrame {
     }//GEN-LAST:event_butGuardarActionPerformed
 
     private void iconoImagenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_iconoImagenMouseClicked
-
+        subir_imagen();
     }//GEN-LAST:event_iconoImagenMouseClicked
 
     private void butSubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSubirActionPerformed
-        JFileChooser archivo = new JFileChooser();
-
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG)", "jpg","jpeg");
-        archivo.addChoosableFileFilter(filtro);
-        archivo.setFileFilter(filtro);
-        archivo.setDialogTitle("Abrir Imagen");
-    
-        File ruta = null;
-        try {
-            ruta = new File(Data.RutaImagenes());
-        } catch (IOException ex) {
-            System.out.println("Error en la lectura de la ruta. "+ ex.toString());
-        }
-         archivo.setCurrentDirectory(ruta);
-
-        int ventana = archivo.showOpenDialog(null);
-        if(ventana == JFileChooser.APPROVE_OPTION)
-        {
-            File file = archivo.getSelectedFile();
-            String sRuta = null;
-            Imagen imagen = null;
-            try {
-                sRuta = file.getPath().replace(Data.RutaImagenes(), "");
-                sRuta = sRuta.replace(file.getName(), "");
-                if(Imagen.Select(file.getName(), null).size() > 0)
-                    imagen = Imagen.Select(file.getName(), null).get(0);
-                else
-                    imagen = Imagen.Create(file.getName(), sRuta);
-            } catch (Exception ex) {
-                System.out.println("Error en la creación de la imagen. "+ ex.toString());
-            }
-            if(imagen != null){
-                _marca.setId_Imagen(imagen.getId());
-                try {
-                    //_marca.Update();
-                    cargarImagen();
-                } catch (Exception ex) {
-                    System.out.println("Error en la actualización de la imagen de la marca. "+ ex.toString());
-                }
-            }
-        }
-        
-        _bCambios = true;
+        subir_imagen();
     }//GEN-LAST:event_butSubirActionPerformed
-
-    private void butElegirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butElegirActionPerformed
-        java.awt.EventQueue.invokeLater(() -> {
-            if(_ifrImagenes == null || !_ifrImagenes.bAbierto){
-                try {
-                    _ifrImagenes = new IfrImagenes(iconoImagen, _marca, null);
-                } catch (Exception ex) {
-                    System.out.println("Error al leer la lista de imágenes. "+ ex.toString());
-                }
-            }
-            
-            _ifrImagenes.setLocationRelativeTo(FrmMarca.this);
-            _ifrImagenes.setBounds(this.getX()+this.getWidth()-10, 
-                    this.getY()+30, _ifrImagenes.getWidth(), _ifrImagenes.getHeight());
-            _ifrImagenes.setVisible(true);
-        });
-        
-        _bCambios = true;
-    }//GEN-LAST:event_butElegirActionPerformed
 
     private void butAgregarCatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarCatActionPerformed
         comprobar_cambios();
-        
-        java.awt.EventQueue.invokeLater(() -> {
-            Frame frmCategoria = null;
-            try {
-                frmCategoria = new FrmCategoria(null, _marca.getId());
-            } catch (Exception ex) {
-                System.out.println("Error al crear una categoria vacía en la base de datos. "+ ex.toString());
-            }
-            if(frmCategoria != null){
-                frmCategoria.setLocationRelativeTo(FrmMarca.this);
-                frmCategoria.setVisible(true);
-            }
-            this.dispose();
-        });
+        if(_marca.getId_Imagen() == -1){
+            JOptionPane.showMessageDialog(null,
+            "¡ATENCIÓN! Se debe asignar una imagen a la marca.",
+            "Error",
+            JOptionPane.WARNING_MESSAGE);
+            
+        }
+        else{
+            java.awt.EventQueue.invokeLater(() -> {
+                Frame frmCategoria = null;
+                try {
+                    frmCategoria = new FrmCategoria(null, _marca.getId());
+                } catch (Exception ex) {
+                    System.out.println("Error al crear una categoria vacía en la base de datos. "+ ex.toString());
+                }
+                if(frmCategoria != null){
+                    frmCategoria.setLocationRelativeTo(FrmMarca.this);
+                    frmCategoria.setVisible(true);
+                }
+                this.dispose();
+            });          
+        }      
     }//GEN-LAST:event_butAgregarCatActionPerformed
 
     private void butEliminarCatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarCatActionPerformed
@@ -539,7 +618,6 @@ public class FrmMarca extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butAgregarCat;
     private javax.swing.JButton butAtras;
-    private javax.swing.JButton butElegir;
     private javax.swing.JButton butEliminarCat;
     private javax.swing.JButton butGuardar;
     private javax.swing.JButton butSubir;

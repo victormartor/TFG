@@ -36,11 +36,7 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="lblColor" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="cmbColor" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="butAgregarColor" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="cmbColor" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="lblImagenes" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -50,7 +46,6 @@
                       <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="butEliminar" alignment="1" max="32767" attributes="0"/>
-                          <Component id="butElegir" alignment="1" max="32767" attributes="0"/>
                           <Component id="butSubir" alignment="1" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -65,16 +60,13 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lblColor" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="cmbColor" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="butAgregarColor" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="cmbColor" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="lblImagenes" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="jScrollPane1" pref="340" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="343" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="butAtras" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -82,10 +74,8 @@
                       </Group>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="butElegir" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="butSubir" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="butEliminar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
@@ -135,14 +125,6 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butGuardarActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="butAgregarColor">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="+"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butAgregarColorActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JLabel" name="lblImagenes">
       <Properties>
         <Property name="text" type="java.lang.String" value="Im&#xe1;genes"/>
@@ -167,14 +149,6 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="butElegir">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Elegir Imagen"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butElegirActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JButton" name="butSubir">
       <Properties>
         <Property name="text" type="java.lang.String" value="Subir Imagen"/>
