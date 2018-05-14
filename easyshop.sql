@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 16-04-2018 a las 16:14:24
+-- Tiempo de generación: 14-05-2018 a las 15:50:42
 -- Versión del servidor: 5.7.17-log
 -- Versión de PHP: 5.6.30
 
@@ -30,8 +30,10 @@ CREATE TABLE `articulo` (
   `Id` int(11) NOT NULL,
   `Nombre` varchar(256) COLLATE utf8_spanish_ci NOT NULL,
   `PVP` double NOT NULL,
-  `Id_Categoria` int(11) NOT NULL
+  `Id_Categoria` int(11) NOT NULL,
+  `Talla_Es_Numero` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
 
 -- --------------------------------------------------------
 
@@ -43,6 +45,7 @@ CREATE TABLE `articulo_color` (
   `Id_Articulo` int(11) NOT NULL,
   `Id_Color` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
 
 -- --------------------------------------------------------
 
@@ -56,6 +59,7 @@ CREATE TABLE `articulo_color_imagen` (
   `Id_Imagen` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -66,6 +70,7 @@ CREATE TABLE `articulo_talla` (
   `Id_Articulo` int(11) NOT NULL,
   `Id_Talla` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
 
 -- --------------------------------------------------------
 
@@ -91,6 +96,7 @@ CREATE TABLE `categoria` (
   `Id_Marca` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -101,6 +107,13 @@ CREATE TABLE `color` (
   `Id` int(11) NOT NULL,
   `Nombre` varchar(128) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `color`
+--
+
+INSERT INTO `color` (`Id`, `Nombre`) VALUES
+(-1, 'Nuevo color');
 
 -- --------------------------------------------------------
 
@@ -119,9 +132,7 @@ CREATE TABLE `imagen` (
 --
 
 INSERT INTO `imagen` (`Id`, `Nombre`, `Ruta`) VALUES
-(-1, 'Imagen vacía', ''),
-(1, 'Marca_Hollister.jpg', '\\Hollister\\'),
-(2, 'Articulo_Camiseta_Hollister1.1.jpg', '\\Hollister\\Camisetas\\');
+(-1, 'Imagen vacía', '');
 
 -- --------------------------------------------------------
 
@@ -134,6 +145,7 @@ CREATE TABLE `marca` (
   `Nombre` varchar(256) COLLATE utf8_spanish_ci NOT NULL,
   `Id_Imagen` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
 
 -- --------------------------------------------------------
 
@@ -172,7 +184,24 @@ INSERT INTO `talla` (`Id`, `Nombre`, `Es_Numero`) VALUES
 (5, 'L', 0),
 (6, 'XL', 0),
 (7, 'XXL', 0),
-(8, '3XL', 0);
+(8, '3XL', 0),
+(9, '30', 1),
+(10, '31', 1),
+(11, '32', 1),
+(12, '33', 1),
+(13, '34', 1),
+(14, '35', 1),
+(15, '36', 1),
+(16, '37', 1),
+(17, '38', 1),
+(18, '39', 1),
+(19, '40', 1),
+(20, '41', 1),
+(21, '42', 1),
+(22, '43', 1),
+(23, '44', 1),
+(24, '45', 1),
+(25, '46', 1);
 
 --
 -- Índices para tablas volcadas
@@ -268,7 +297,7 @@ ALTER TABLE `articulo`
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `color`
 --
@@ -278,17 +307,17 @@ ALTER TABLE `color`
 -- AUTO_INCREMENT de la tabla `imagen`
 --
 ALTER TABLE `imagen`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `marca`
 --
 ALTER TABLE `marca`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `talla`
 --
 ALTER TABLE `talla`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Restricciones para tablas volcadas
 --
