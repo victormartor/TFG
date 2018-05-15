@@ -6,6 +6,8 @@
 package gui;
 
 import Data.Clases.Configuracion;
+import Data.Clases.PedidoPendiente;
+import Data.Modelos.ModPedidos;
 import java.awt.Frame;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -22,6 +24,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private final Servidor _servidor;
     private String _sIP = null;
     private Thread _hilo;
+    private ModPedidos _modPedidos;
+    private int _numPedidos;
     
     /**
      * Creates new form IfrPrincipal
@@ -37,6 +41,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
             System.out.println("Error al obtener el nombre de la tienda. "+ex.toString());
         }
         
+        _numPedidos = 1;
+        _modPedidos = new ModPedidos();
+        listPedidosPendientes.setModel(_modPedidos);
+        
         _servidor = new Servidor();
         _servidor.encenderServidor();
         _hilo = new Thread(){
@@ -45,14 +53,30 @@ public class IfrPrincipal extends javax.swing.JFrame {
             {
                 while(_servidor.encendido())
                 {
-                    String smensaje = _servidor.obtenerMensaje();
-
-                    //if(!isInterrupted()) lista.addPedido(new Pedido(mensaje));
+                    String sMensaje = _servidor.obtenerMensaje();
+                    if(!isInterrupted()) try {
+                        _modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
+                        _numPedidos++;
+                    } catch (Exception ex) {
+                        System.out.println("Error al crear el pedido. "+ex.toString());
+                    }
                 }
             }
         };
 
         _hilo.start();
+        
+        
+        String sPedido = "23:1:4\n"
+                + "24:4:4\n"
+                + "FinTicket";
+        try {
+            _modPedidos.addPedido(new PedidoPendiente(sPedido, _numPedidos));
+            _numPedidos++;
+        } catch (Exception ex) {
+            System.out.println("Error al crear el pedido. "+ex.toString());
+        }
+        
     }
     
     private void obtenerIP()
@@ -81,7 +105,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         lblNombreTienda = new javax.swing.JLabel();
         lblIP = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        listPedidosPendientes = new javax.swing.JList<>();
         butEstadoServidor = new javax.swing.JToggleButton();
         lblEstadoServidor = new javax.swing.JLabel();
         butVerPedido = new javax.swing.JButton();
@@ -102,16 +126,19 @@ public class IfrPrincipal extends javax.swing.JFrame {
         lblIP.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblIP.setText("Dirección IP");
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+        listPedidosPendientes.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        listPedidosPendientes.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(jList1);
+        listPedidosPendientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        listPedidosPendientes.setToolTipText("Lista de pedidos");
+        jScrollPane1.setViewportView(listPedidosPendientes);
 
         butEstadoServidor.setBackground(new java.awt.Color(153, 153, 153));
         butEstadoServidor.setForeground(new java.awt.Color(255, 255, 255));
-        butEstadoServidor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Data/img/power_90.png"))); // NOI18N
+        butEstadoServidor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/power_90.png"))); // NOI18N
         butEstadoServidor.setSelected(true);
         butEstadoServidor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -356,11 +383,11 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton butEliminar;
     private javax.swing.JToggleButton butEstadoServidor;
     private javax.swing.JButton butVerPedido;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblEstadoServidor;
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblNombreTienda;
+    private javax.swing.JList<String> listPedidosPendientes;
     // End of variables declaration//GEN-END:variables
 }
