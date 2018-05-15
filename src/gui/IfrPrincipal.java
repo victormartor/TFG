@@ -89,6 +89,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         MenuGestionar = new javax.swing.JMenu();
         MenuItemBaseDatos = new javax.swing.JMenuItem();
+        MenuItemColores = new javax.swing.JMenuItem();
+        MenuItemTallas = new javax.swing.JMenuItem();
         MenuItemConfig = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -138,6 +140,22 @@ public class IfrPrincipal extends javax.swing.JFrame {
             }
         });
         MenuGestionar.add(MenuItemBaseDatos);
+
+        MenuItemColores.setText("Colores");
+        MenuItemColores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuItemColoresActionPerformed(evt);
+            }
+        });
+        MenuGestionar.add(MenuItemColores);
+
+        MenuItemTallas.setText("Tallas");
+        MenuItemTallas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuItemTallasActionPerformed(evt);
+            }
+        });
+        MenuGestionar.add(MenuItemTallas);
 
         MenuItemConfig.setText("Configuración");
         MenuItemConfig.addActionListener(new java.awt.event.ActionListener() {
@@ -270,6 +288,30 @@ public class IfrPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_butEstadoServidorActionPerformed
 
+    private void MenuItemColoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemColoresActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmColores = new FrmColores();
+            
+            if(frmColores != null){
+                frmColores.setLocationRelativeTo(this);
+                frmColores.setVisible(true);
+            }
+            //this.dispose();
+        });
+    }//GEN-LAST:event_MenuItemColoresActionPerformed
+
+    private void MenuItemTallasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemTallasActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmTallas = new FrmTallas();
+            
+            if(frmTallas != null){
+                frmTallas.setLocationRelativeTo(this);
+                frmTallas.setVisible(true);
+            }
+            //this.dispose();
+        });
+    }//GEN-LAST:event_MenuItemTallasActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -308,7 +350,9 @@ public class IfrPrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu MenuGestionar;
     private javax.swing.JMenuItem MenuItemBaseDatos;
+    private javax.swing.JMenuItem MenuItemColores;
     private javax.swing.JMenuItem MenuItemConfig;
+    private javax.swing.JMenuItem MenuItemTallas;
     private javax.swing.JButton butEliminar;
     private javax.swing.JToggleButton butEstadoServidor;
     private javax.swing.JButton butVerPedido;

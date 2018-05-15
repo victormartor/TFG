@@ -96,6 +96,13 @@ public class FrmCategoria extends javax.swing.JFrame {
     
     private void subir_imagen(){
         JFileChooser ventanaElegirImagen = new JFileChooser();
+        String rutaImagenes = null;
+        try {
+            rutaImagenes = Configuracion.Select("Ruta_imagenes", null).get(0).getValor();
+        } catch (Exception ex) {
+            System.out.println("Error al obtener la ruta de las imagenes. "+ex.toString());
+        }
+        if(rutaImagenes != null) ventanaElegirImagen.setCurrentDirectory(new File(rutaImagenes));
         JLabel img = new JLabel();
         img.setPreferredSize(new Dimension(175,175));
         ventanaElegirImagen.setAccessory(img);
@@ -104,13 +111,6 @@ public class FrmCategoria extends javax.swing.JFrame {
         ventanaElegirImagen.addChoosableFileFilter(filtro);
         ventanaElegirImagen.setFileFilter(filtro);
         ventanaElegirImagen.setDialogTitle("Abrir Imagen");
-        
-        String rutaImagenes = null;
-        try {
-            rutaImagenes = Configuracion.Select("Ruta_imagenes", null).get(0).getValor();
-        } catch (Exception ex) {
-            System.out.println("Error al obtener la ruta de las imagenes. "+ex.toString());
-        }
         
         // Add property change listener
         ventanaElegirImagen.addPropertyChangeListener(new PropertyChangeListener(){

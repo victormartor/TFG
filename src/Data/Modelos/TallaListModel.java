@@ -6,10 +6,8 @@
 package Data.Modelos;
 
 import Data.Clases.Color;
+import Data.Clases.Talla;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
@@ -17,14 +15,14 @@ import javax.swing.ComboBoxModel;
  *
  * @author victor
  */
-public class ColorListModel 
+public class TallaListModel 
     extends AbstractListModel
     implements ComboBoxModel {
 
-    private ArrayList<Color> _aData;
+    private ArrayList<Talla> _aData;
     private Object _selection = null;
 
-    public ColorListModel(ArrayList<Color> aData) {
+    public TallaListModel(ArrayList<Talla> aData) {
             _aData = aData;
     }
 
@@ -34,7 +32,7 @@ public class ColorListModel
     }
 
     @Override
-    public Color getElementAt(int index) {
+    public Talla getElementAt(int index) {
             return _aData.get(index);
     }
 
@@ -48,19 +46,19 @@ public class ColorListModel
         return _selection;
     }
 
-    public int getIndexColor(int iId_Color){
+    public int getIndexTalla(int iId_Talla){
         int index = 0;
-        while(_aData.get(index).getId() != iId_Color) index++;
+        while(_aData.get(index).getId() != iId_Talla) index++;
         return index;
     }
     
-    public void addColor(Color color) throws Exception
+    public void addTalla(Talla talla) throws Exception
     {
-        _aData.add(color);
+        _aData.add(talla);
         this.fireIntervalAdded(this, getSize(), getSize()+1);
     }
     
-    public void removeColor(int index) throws Exception
+    public void removeTalla(int index) throws Exception
     {
         _aData.get(index).Delete();
         _aData.remove(index);

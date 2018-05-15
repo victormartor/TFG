@@ -136,7 +136,8 @@ public class Color {
            try {
                    con = Data.Connection();
                    rs = con.createStatement().executeQuery("SELECT Id FROM color"
-                                   + Where(sNombre));
+                                   + Where(sNombre)+
+                                    " ORDER BY Nombre");
 
                    while(rs.next()) 
                            aColores.add(new Color(rs.getInt("Id")));
@@ -162,6 +163,13 @@ public class Color {
 
            if(sNombre != null) 
                    sWhere = " WHERE Nombre LIKE "+ Data.String2Sql(sNombre, true, true);
+           
+           if(sWhere.equals(""))
+                    sWhere = " WHERE ";
+            else 
+                    sWhere += " AND ";
+
+            sWhere += "Id != -1";
             
            return sWhere;
    }
