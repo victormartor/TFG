@@ -164,7 +164,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         lblIP.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblIP.setText("Dirección IP");
 
-        listPedidosPendientes.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        listPedidosPendientes.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         listPedidosPendientes.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
@@ -212,6 +212,11 @@ public class IfrPrincipal extends javax.swing.JFrame {
         MenuGestionar.add(MenuItemBaseDatos);
 
         MenuItemExistencias.setText("Existencias");
+        MenuItemExistencias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuItemExistenciasActionPerformed(evt);
+            }
+        });
         MenuGestionar.add(MenuItemExistencias);
         MenuGestionar.add(jSeparator1);
 
@@ -390,6 +395,22 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private void butVerPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butVerPedidoActionPerformed
         ver_pedido();
     }//GEN-LAST:event_butVerPedidoActionPerformed
+
+    private void MenuItemExistenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemExistenciasActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmExistencias = null;
+            try {
+                frmExistencias = new FrmExistencias();
+            } catch (Exception ex) {
+                System.out.println("Error al leer la base de datos. "+ ex.toString());
+            }
+            if(frmExistencias != null){
+                frmExistencias.setLocationRelativeTo(this);
+                frmExistencias.setVisible(true);
+            }
+            //this.dispose();
+        });
+    }//GEN-LAST:event_MenuItemExistenciasActionPerformed
 
     /**
      * @param args the command line arguments
