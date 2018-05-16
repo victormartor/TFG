@@ -66,6 +66,15 @@ public class IfrPrincipal extends javax.swing.JFrame {
 
         _hilo.start();
         
+        listPedidosPendientes.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                if(e.getClickCount()==2){
+                   ver_pedido();
+                 }
+           }
+        });
+        
         
         String sPedido = "23:1:4\n"
                 + "24:4:4\n"
@@ -75,8 +84,34 @@ public class IfrPrincipal extends javax.swing.JFrame {
             _numPedidos++;
         } catch (Exception ex) {
             System.out.println("Error al crear el pedido. "+ex.toString());
-        }
+        }  
+    }
+    
+    private void ver_pedido()
+    {
+        int index = listPedidosPendientes.getSelectedIndex();
         
+        if(index != -1)
+        {
+            PedidoPendiente pedido = _modPedidos.getPedido(index);
+        
+            if(!pedido.getAbierto())
+            {
+                java.awt.EventQueue.invokeLater(() -> {
+                    Frame ifrPedido = new IfrPedido(pedido);
+                    ifrPedido.setLocationRelativeTo(this);
+                    ifrPedido.setVisible(true);
+                    pedido.setFrame(ifrPedido);
+                });
+                
+                pedido.setAbierto(true);
+            }
+            else
+            {
+                pedido.getFrame().setState(NORMAL);
+                pedido.getFrame().toFront();
+            }
+        }
     }
     
     private void obtenerIP()
@@ -113,8 +148,11 @@ public class IfrPrincipal extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         MenuGestionar = new javax.swing.JMenu();
         MenuItemBaseDatos = new javax.swing.JMenuItem();
+        MenuItemExistencias = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         MenuItemColores = new javax.swing.JMenuItem();
         MenuItemTallas = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         MenuItemConfig = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -150,6 +188,11 @@ public class IfrPrincipal extends javax.swing.JFrame {
         lblEstadoServidor.setText("Encendido");
 
         butVerPedido.setText("Ver pedido");
+        butVerPedido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butVerPedidoActionPerformed(evt);
+            }
+        });
 
         butEliminar.setText("Eliminar");
 
@@ -168,6 +211,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
         });
         MenuGestionar.add(MenuItemBaseDatos);
 
+        MenuItemExistencias.setText("Existencias");
+        MenuGestionar.add(MenuItemExistencias);
+        MenuGestionar.add(jSeparator1);
+
         MenuItemColores.setText("Colores");
         MenuItemColores.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -183,6 +230,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
             }
         });
         MenuGestionar.add(MenuItemTallas);
+        MenuGestionar.add(jSeparator2);
 
         MenuItemConfig.setText("Configuración");
         MenuItemConfig.addActionListener(new java.awt.event.ActionListener() {
@@ -339,6 +387,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_MenuItemTallasActionPerformed
 
+    private void butVerPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butVerPedidoActionPerformed
+        ver_pedido();
+    }//GEN-LAST:event_butVerPedidoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -379,12 +431,15 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem MenuItemBaseDatos;
     private javax.swing.JMenuItem MenuItemColores;
     private javax.swing.JMenuItem MenuItemConfig;
+    private javax.swing.JMenuItem MenuItemExistencias;
     private javax.swing.JMenuItem MenuItemTallas;
     private javax.swing.JButton butEliminar;
     private javax.swing.JToggleButton butEstadoServidor;
     private javax.swing.JButton butVerPedido;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JLabel lblEstadoServidor;
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblNombreTienda;

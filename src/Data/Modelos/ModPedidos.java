@@ -31,7 +31,7 @@ public class ModPedidos extends AbstractListModel
     @Override
     public Object getElementAt(int index) {
         PedidoPendiente pedido = lPedidos.get(index);
-        return "Número de pedido: "+pedido.getNumPedido()+" ["+pedido.getHora()+"]";
+        return "Pedido #"+pedido.getNumPedido()+" - hora: "+pedido.getHora();
     }
     
     public void addPedido(PedidoPendiente pedido)
