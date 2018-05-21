@@ -9,6 +9,7 @@ import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import Data.Renders.ListaRender;
 import Data.Modelos.ModMarcas;
+import java.awt.Color;
 import java.awt.Frame;
 import static java.awt.Frame.NORMAL;
 import java.awt.Image;
@@ -31,6 +32,7 @@ public class IfrMarca extends javax.swing.JFrame {
      */
     public IfrMarca() throws Exception {
         initComponents();
+        //getContentPane().setBackground(Color.white);
         _modMarcas = new ModMarcas();
         listMarcas.setModel(_modMarcas);
         listMarcas.setCellRenderer(new ListaRender());
@@ -82,13 +84,18 @@ public class IfrMarca extends javax.swing.JFrame {
         setTitle("Marcas");
         setResizable(false);
 
+        listMarcas.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         listMarcas.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        listMarcas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(listMarcas);
 
+        butAddMarca.setBackground(new java.awt.Color(0, 0, 0));
+        butAddMarca.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAddMarca.setForeground(new java.awt.Color(255, 255, 255));
         butAddMarca.setText("Agregar");
         butAddMarca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,6 +103,9 @@ public class IfrMarca extends javax.swing.JFrame {
             }
         });
 
+        butRemoveMarca.setBackground(java.awt.Color.red);
+        butRemoveMarca.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butRemoveMarca.setForeground(new java.awt.Color(255, 255, 255));
         butRemoveMarca.setText("Eliminar");
         butRemoveMarca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -110,10 +120,10 @@ public class IfrMarca extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(butAddMarca, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(butRemoveMarca, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(butAddMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(butRemoveMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -126,7 +136,7 @@ public class IfrMarca extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(butRemoveMarca)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE))
                 .addContainerGap())
         );
 

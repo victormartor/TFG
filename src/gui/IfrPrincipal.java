@@ -8,6 +8,7 @@ package gui;
 import Data.Clases.Configuracion;
 import Data.Clases.PedidoPendiente;
 import Data.Modelos.ModPedidos;
+import java.awt.Color;
 import java.awt.Frame;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -32,6 +33,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
      */
     public IfrPrincipal() {
         initComponents();
+        getContentPane().setBackground(Color.white);
         
         this.setLocationRelativeTo(null);
         obtenerIP();
@@ -152,11 +154,14 @@ public class IfrPrincipal extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         MenuItemColores = new javax.swing.JMenuItem();
         MenuItemTallas = new javax.swing.JMenuItem();
+        MenuItemImagenes = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         MenuItemConfig = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("EasyShop");
+        setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(433, 414));
 
         lblNombreTienda.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblNombreTienda.setText("Nombre tienda");
@@ -172,6 +177,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         });
         listPedidosPendientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         listPedidosPendientes.setToolTipText("Lista de pedidos");
+        listPedidosPendientes.setSelectionBackground(new java.awt.Color(0, 0, 0));
         jScrollPane1.setViewportView(listPedidosPendientes);
 
         butEstadoServidor.setBackground(new java.awt.Color(153, 153, 153));
@@ -187,6 +193,9 @@ public class IfrPrincipal extends javax.swing.JFrame {
         lblEstadoServidor.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblEstadoServidor.setText("Encendido");
 
+        butVerPedido.setBackground(new java.awt.Color(0, 0, 0));
+        butVerPedido.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butVerPedido.setForeground(new java.awt.Color(255, 255, 255));
         butVerPedido.setText("Ver pedido");
         butVerPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -194,6 +203,9 @@ public class IfrPrincipal extends javax.swing.JFrame {
             }
         });
 
+        butEliminar.setBackground(java.awt.Color.red);
+        butEliminar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butEliminar.setForeground(new java.awt.Color(255, 255, 255));
         butEliminar.setText("Eliminar");
 
         MenuGestionar.setText("Gestionar");
@@ -235,6 +247,14 @@ public class IfrPrincipal extends javax.swing.JFrame {
             }
         });
         MenuGestionar.add(MenuItemTallas);
+
+        MenuItemImagenes.setText("Imágenes");
+        MenuItemImagenes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuItemImagenesActionPerformed(evt);
+            }
+        });
+        MenuGestionar.add(MenuItemImagenes);
         MenuGestionar.add(jSeparator2);
 
         MenuItemConfig.setText("Configuración");
@@ -412,6 +432,22 @@ public class IfrPrincipal extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_MenuItemExistenciasActionPerformed
 
+    private void MenuItemImagenesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemImagenesActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmImagenes = null;
+            try {
+                frmImagenes = new FrmImagenes();
+            } catch (Exception ex) {
+                System.out.println("Error al leer la base de datos. "+ ex.toString());
+            }
+            if(frmImagenes != null){
+                frmImagenes.setLocationRelativeTo(this);
+                frmImagenes.setVisible(true);
+            }
+            //this.dispose();
+        });
+    }//GEN-LAST:event_MenuItemImagenesActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -453,6 +489,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem MenuItemColores;
     private javax.swing.JMenuItem MenuItemConfig;
     private javax.swing.JMenuItem MenuItemExistencias;
+    private javax.swing.JMenuItem MenuItemImagenes;
     private javax.swing.JMenuItem MenuItemTallas;
     private javax.swing.JButton butEliminar;
     private javax.swing.JToggleButton butEstadoServidor;

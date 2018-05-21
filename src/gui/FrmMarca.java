@@ -15,6 +15,7 @@ import Data.Modelos.ModImagenes;
 import Data.Modelos.ModMarcas;
 import Data.Renders.ListaImagenesRender;
 import Data.Renders.ListaRender;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Image;
@@ -57,6 +58,7 @@ public class FrmMarca extends javax.swing.JFrame {
      */
     public FrmMarca(Integer iId_Marca) throws Exception {
         initComponents();
+        //getContentPane().setBackground(Color.white);
         
         if(iId_Marca != null){
             _bModificar = true;
@@ -339,12 +341,15 @@ public class FrmMarca extends javax.swing.JFrame {
 
         lblNombre.setText("Nombre");
 
-        txtNombre.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNombreActionPerformed(evt);
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreKeyTyped(evt);
             }
         });
 
+        butAtras.setBackground(java.awt.Color.red);
+        butAtras.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAtras.setForeground(new java.awt.Color(255, 255, 255));
         butAtras.setText("Atrás");
         butAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -352,6 +357,8 @@ public class FrmMarca extends javax.swing.JFrame {
             }
         });
 
+        butGuardar.setBackground(java.awt.Color.green);
+        butGuardar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         butGuardar.setText("Guardar cambios");
         butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -371,13 +378,18 @@ public class FrmMarca extends javax.swing.JFrame {
 
         lblCategorias.setText("Categorías");
 
+        lCategorias.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lCategorias.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lCategorias.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(lCategorias);
 
+        butSubir.setBackground(new java.awt.Color(0, 0, 0));
+        butSubir.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butSubir.setForeground(new java.awt.Color(255, 255, 255));
         butSubir.setText("Subir imagen");
         butSubir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -385,6 +397,9 @@ public class FrmMarca extends javax.swing.JFrame {
             }
         });
 
+        butAgregarCat.setBackground(new java.awt.Color(0, 0, 0));
+        butAgregarCat.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAgregarCat.setForeground(new java.awt.Color(255, 255, 255));
         butAgregarCat.setText("Agregar Categoría");
         butAgregarCat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -392,6 +407,9 @@ public class FrmMarca extends javax.swing.JFrame {
             }
         });
 
+        butEliminarCat.setBackground(java.awt.Color.red);
+        butEliminarCat.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butEliminarCat.setForeground(new java.awt.Color(255, 255, 255));
         butEliminarCat.setText("Eliminar Categoría");
         butEliminarCat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -480,10 +498,6 @@ public class FrmMarca extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNombreActionPerformed
-
     private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
         if(salir()){
             java.awt.EventQueue.invokeLater(() -> {
@@ -569,6 +583,10 @@ public class FrmMarca extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_butEliminarCatActionPerformed
+
+    private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
+        _bCambios = true;
+    }//GEN-LAST:event_txtNombreKeyTyped
 
     /**
      * @param args the command line arguments

@@ -29,6 +29,7 @@ public class IfrPedido extends javax.swing.JFrame {
      */
     public IfrPedido(PedidoPendiente pedidoP) {
         initComponents();
+        getContentPane().setBackground(java.awt.Color.white);
         
         _pedidoP = pedidoP;
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -186,6 +187,7 @@ public class IfrPedido extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Pedido ");
+        setMinimumSize(new java.awt.Dimension(710, 529));
 
         lblPedido.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         lblPedido.setText("Pedido ");
@@ -281,6 +283,9 @@ public class IfrPedido extends javax.swing.JFrame {
 
         lblEmail.setText("E-Mail");
 
+        butConfirmar.setBackground(new java.awt.Color(0, 0, 0));
+        butConfirmar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butConfirmar.setForeground(new java.awt.Color(255, 255, 255));
         butConfirmar.setText("CONFIRMAR Y ENVIAR");
         butConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

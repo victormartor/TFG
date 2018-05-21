@@ -124,6 +124,7 @@ public class FrmExistencias extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Existencias");
+        setMinimumSize(new java.awt.Dimension(800, 428));
 
         tableExistencias.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

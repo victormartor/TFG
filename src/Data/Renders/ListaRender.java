@@ -48,11 +48,11 @@ public class ListaRender extends JLabel implements ListCellRenderer{
         }else{
             setBackground(list.getBackground());
             setForeground(list.getForeground());
-        }
+        }*/
         setEnabled(true);
         setFont(list.getFont());
         setOpaque(true);
-        */
+        
         Color background;
         Color foreground;
 

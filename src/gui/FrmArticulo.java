@@ -37,7 +37,7 @@ public class FrmArticulo extends javax.swing.JFrame {
     private ModArticulo_Color _modArticulo_Color = null;
     private ModArticulos _modArticulosComb = null;
     private boolean _bModificar = false;
-    private boolean _bCambios = false;
+    private boolean _bCambios;
 
     /**
      * Creates new form FrmArticulo
@@ -125,6 +125,7 @@ public class FrmArticulo extends javax.swing.JFrame {
             this.setTitle("Modificar artículo");
         
         txtNombre.requestFocus();
+        _bCambios = false;
         
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -293,10 +294,21 @@ public class FrmArticulo extends javax.swing.JFrame {
 
         lblNombre.setText("Nombre");
 
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreKeyTyped(evt);
+            }
+        });
+
         lblPVP.setText("PVP:");
 
         txtPVP.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtPVP.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtPVP.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPVPKeyTyped(evt);
+            }
+        });
 
         lblEuro.setText("€");
 
@@ -309,6 +321,9 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         });
 
+        butAtras.setBackground(java.awt.Color.red);
+        butAtras.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAtras.setForeground(new java.awt.Color(255, 255, 255));
         butAtras.setText("Atrás");
         butAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -316,6 +331,8 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         });
 
+        butGuardar.setBackground(java.awt.Color.green);
+        butGuardar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         butGuardar.setText("Guardar cambios");
         butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -330,14 +347,19 @@ public class FrmArticulo extends javax.swing.JFrame {
         panelTallas.setLayout(new java.awt.GridLayout(4, 0));
         jScrollPane1.setViewportView(panelTallas);
 
+        lColores.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         lColores.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lColores.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         lColores.setSelectionBackground(new java.awt.Color(0, 0, 0));
         jScrollPane2.setViewportView(lColores);
 
+        butAgregarColor.setBackground(new java.awt.Color(0, 0, 0));
+        butAgregarColor.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAgregarColor.setForeground(new java.awt.Color(255, 255, 255));
         butAgregarColor.setText("Agregar color");
         butAgregarColor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -345,6 +367,9 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         });
 
+        butEliminarColor.setBackground(java.awt.Color.red);
+        butEliminarColor.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butEliminarColor.setForeground(new java.awt.Color(255, 255, 255));
         butEliminarColor.setText("Eliminar color");
         butEliminarColor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -352,6 +377,9 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         });
 
+        butAgregarCombinacion.setBackground(new java.awt.Color(0, 0, 0));
+        butAgregarCombinacion.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAgregarCombinacion.setForeground(new java.awt.Color(255, 255, 255));
         butAgregarCombinacion.setText("Añadir");
         butAgregarCombinacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -359,6 +387,9 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         });
 
+        butEliminarCombinacion.setBackground(java.awt.Color.red);
+        butEliminarCombinacion.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butEliminarCombinacion.setForeground(new java.awt.Color(255, 255, 255));
         butEliminarCombinacion.setText("Eliminar");
         butEliminarCombinacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -366,18 +397,22 @@ public class FrmArticulo extends javax.swing.JFrame {
             }
         });
 
+        lCombinaciones.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lCombinaciones.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lCombinaciones.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane4.setViewportView(lCombinaciones);
 
+        lArticulosCombinaciones.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lArticulosCombinaciones.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lArticulosCombinaciones.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         lArticulosCombinaciones.setMinimumSize(new java.awt.Dimension(0, 0));
         jScrollPane3.setViewportView(lArticulosCombinaciones);
 
@@ -408,7 +443,7 @@ public class FrmArticulo extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(lblNombre)
@@ -423,17 +458,13 @@ public class FrmArticulo extends javax.swing.JFrame {
                                         .addGap(18, 18, 18)
                                         .addComponent(checkEs_Numero))
                                     .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(butAgregarColor)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(butEliminarColor))
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(txtColores)
-                                                .addGap(162, 162, 162)))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(butAgregarColor)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(butEliminarColor))
+                                    .addComponent(txtColores)
+                                    .addComponent(jScrollPane2)
+                                    .addComponent(jScrollPane1))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -578,7 +609,6 @@ public class FrmArticulo extends javax.swing.JFrame {
                 } catch (Exception ex) {
                     System.out.println("Error en la eliminación del color. "+ ex.toString());
                 }
-                _bCambios = true;
             }
         } 
     }//GEN-LAST:event_butEliminarColorActionPerformed
@@ -625,6 +655,14 @@ public class FrmArticulo extends javax.swing.JFrame {
             _bCambios = true;
         }
     }//GEN-LAST:event_butEliminarCombinacionActionPerformed
+
+    private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
+        _bCambios = true;
+    }//GEN-LAST:event_txtNombreKeyTyped
+
+    private void txtPVPKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPVPKeyTyped
+        _bCambios = true;
+    }//GEN-LAST:event_txtPVPKeyTyped
 
     /**
      * @param args the command line arguments

@@ -340,6 +340,11 @@ public class FrmCategoria extends javax.swing.JFrame {
                 txtNombreActionPerformed(evt);
             }
         });
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreKeyTyped(evt);
+            }
+        });
 
         iconoImagen.setBackground(new java.awt.Color(255, 255, 255));
         iconoImagen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -351,6 +356,9 @@ public class FrmCategoria extends javax.swing.JFrame {
             }
         });
 
+        butSubir.setBackground(new java.awt.Color(0, 0, 0));
+        butSubir.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butSubir.setForeground(new java.awt.Color(255, 255, 255));
         butSubir.setText("Subir imagen");
         butSubir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -358,6 +366,9 @@ public class FrmCategoria extends javax.swing.JFrame {
             }
         });
 
+        butAtras.setBackground(java.awt.Color.red);
+        butAtras.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAtras.setForeground(new java.awt.Color(255, 255, 255));
         butAtras.setText("Atrás");
         butAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -365,6 +376,8 @@ public class FrmCategoria extends javax.swing.JFrame {
             }
         });
 
+        butGuardar.setBackground(java.awt.Color.green);
+        butGuardar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         butGuardar.setText("Guardar cambios");
         butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -374,13 +387,18 @@ public class FrmCategoria extends javax.swing.JFrame {
 
         lblArticulos.setText("Artículos");
 
+        lArticulos.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lArticulos.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lArticulos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(lArticulos);
 
+        butAgregarArt.setBackground(new java.awt.Color(0, 0, 0));
+        butAgregarArt.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAgregarArt.setForeground(new java.awt.Color(255, 255, 255));
         butAgregarArt.setText("Agregar Artículo");
         butAgregarArt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -388,6 +406,9 @@ public class FrmCategoria extends javax.swing.JFrame {
             }
         });
 
+        butEliminarArt.setBackground(java.awt.Color.red);
+        butEliminarArt.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butEliminarArt.setForeground(new java.awt.Color(255, 255, 255));
         butEliminarArt.setText("Eliminar Artículo");
         butEliminarArt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -417,23 +438,23 @@ public class FrmCategoria extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(butSubir, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jSeparator1)
+                    .addComponent(jSeparator2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblArticulos)
+                            .addComponent(jLabel1))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(butGuardar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(butAtras))
-                    .addComponent(jSeparator2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(butAgregarArt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(butEliminarArt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblArticulos)
-                            .addComponent(jLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(butEliminarArt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -565,6 +586,10 @@ public class FrmCategoria extends javax.swing.JFrame {
             }
         }    
     }//GEN-LAST:event_butEliminarArtActionPerformed
+
+    private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
+        _bCambios = true;
+    }//GEN-LAST:event_txtNombreKeyTyped
 
     /**
      * @param args the command line arguments

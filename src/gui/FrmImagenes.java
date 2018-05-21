@@ -5,8 +5,14 @@
  */
 package gui;
 
-import Data.Clases.Color;
-import Data.Modelos.ColorListModel;
+import Data.Clases.Categoria;
+import Data.Clases.Imagen;
+import Data.Clases.Marca;
+import Data.Modelos.ModImagenes;
+import Data.Renders.ListaImagenesRender;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -15,21 +21,16 @@ import javax.swing.JOptionPane;
  *
  * @author victor
  */
-public class FrmColores extends javax.swing.JFrame {
+public class FrmImagenes extends javax.swing.JFrame {
 
-    private ColorListModel _modColores = null;
-    
     /**
-     * Creates new form FrmColores
+     * Creates new form FrmImagenes
      */
-    public FrmColores()  {
+    public FrmImagenes() throws Exception {
         initComponents();
-        try {
-            _modColores = new ColorListModel(Color.Select(null));
-            lColores.setModel(_modColores);
-        } catch (Exception ex) {
-            System.out.println("Error al obtener la lista de colores. "+ex.toString());
-        }
+        
+        listImagenes.setModel(new ModImagenes());
+        listImagenes.setCellRenderer(new ListaImagenesRender());
     }
 
     /**
@@ -42,28 +43,20 @@ public class FrmColores extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        lColores = new javax.swing.JList<>();
-        butAgregar = new javax.swing.JButton();
+        listImagenes = new javax.swing.JList<>();
         butEliminar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Colores");
-        setMinimumSize(new java.awt.Dimension(400, 152));
+        setTitle("Imágenes");
+        setMinimumSize(new java.awt.Dimension(400, 300));
 
-        lColores.setModel(new javax.swing.AbstractListModel<String>() {
+        listImagenes.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        lColores.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(lColores);
-
-        butAgregar.setText("Agregar");
-        butAgregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                butAgregarActionPerformed(evt);
-            }
-        });
+        listImagenes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(listImagenes);
 
         butEliminar.setText("Eliminar");
         butEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -78,11 +71,9 @@ public class FrmColores extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(butAgregar, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(butEliminar, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(butEliminar)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -91,43 +82,29 @@ public class FrmColores extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(butAgregar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(butEliminar)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void butAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarActionPerformed
-        String sColor = (String)JOptionPane.showInputDialog(
-            this,
-            "Color",
-            "Nuevo color",
-            JOptionPane.PLAIN_MESSAGE);
-        
-        if(sColor != null){
-            try {
-                _modColores.addColor(Color.Create(sColor));
-            } catch (Exception ex) {
-                System.out.println("Error al crear el color. "+ex.toString());
-            }
-        }
-    }//GEN-LAST:event_butAgregarActionPerformed
-
     private void butEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarActionPerformed
-        if(lColores.getSelectedIndex() != -1){
+        int index = listImagenes.getSelectedIndex();
+        
+        if(index != -1)
+        {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
-                "¿Está seguro? Todos los artículos que tengan este color lo perderán,\n"
-                        + "asegúrese de que esos artículos tienen al menos otro color "
-                        + "asociado."
+                "¿Está seguro? \nSi la imagen pertenece a un artículo asegúrese "
+                        + "de que tiene al menos otra imagen asociada. \n"
+                        + "Si la imagen pertenece a una marca o a una categoría existentes"
+                        + " no podrá ser eliminada."
                         + "\n Esta acción no se puede deshacer.",
-                "Eliminar color",
+                "Eliminar imagen",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,     //do not use a custom Icon
@@ -136,13 +113,27 @@ public class FrmColores extends javax.swing.JFrame {
 
             if(n == 0)
             {
+                Imagen imagen = ((ModImagenes)listImagenes.getModel()).getImagen(index);
                 try {
-                    _modColores.removeColor(lColores.getSelectedIndex());
+                    if(!Marca.Select(null, imagen.getId()).isEmpty() || 
+                            !Categoria.Select(null, imagen.getId(), null).isEmpty()){
+                        JOptionPane.showMessageDialog(this,
+                        "Error, la imagen pertenece a una categoría o una marca existentes.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                    }
+                    else{
+                       Files.delete(Paths.get(imagen.getRutaCompleta()));
+                       ((ModImagenes)listImagenes.getModel()).removeImagen(index); 
+                    }
+                    
                 } catch (Exception ex) {
-                    System.out.println("Error al eliminar el color. "+ex.toString());
+                    System.out.println("Error al eliminar la imagen. "+ex.toString());
                 }
             }
-        }    
+        }
+        
+        
     }//GEN-LAST:event_butEliminarActionPerformed
 
     /**
@@ -162,28 +153,22 @@ public class FrmColores extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmColores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmImagenes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmColores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmImagenes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmColores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmImagenes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmColores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmImagenes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FrmColores().setVisible(true);
-            }
-        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton butAgregar;
     private javax.swing.JButton butEliminar;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JList<String> lColores;
+    private javax.swing.JList<String> listImagenes;
     // End of variables declaration//GEN-END:variables
 }

@@ -217,6 +217,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Asignar color al artículo");
+        setResizable(false);
 
         lblColor.setText("Color");
 
@@ -227,6 +228,9 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             }
         });
 
+        butAtras.setBackground(java.awt.Color.red);
+        butAtras.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAtras.setForeground(new java.awt.Color(255, 255, 255));
         butAtras.setText("Atrás");
         butAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -234,6 +238,8 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             }
         });
 
+        butGuardar.setBackground(java.awt.Color.green);
+        butGuardar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         butGuardar.setText("Guardar cambios");
         butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -243,8 +249,12 @@ public class FrmArticuloColor extends javax.swing.JFrame {
 
         lblImagenes.setText("Imágenes");
 
+        lImagenes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(lImagenes);
 
+        butSubir.setBackground(new java.awt.Color(0, 0, 0));
+        butSubir.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butSubir.setForeground(new java.awt.Color(255, 255, 255));
         butSubir.setText("Subir Imagen");
         butSubir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -252,6 +262,9 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             }
         });
 
+        butEliminar.setBackground(java.awt.Color.red);
+        butEliminar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butEliminar.setForeground(new java.awt.Color(255, 255, 255));
         butEliminar.setText("Eliminar Imagen");
         butEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
