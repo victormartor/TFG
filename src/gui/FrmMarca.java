@@ -196,9 +196,16 @@ public class FrmMarca extends javax.swing.JFrame {
                 System.out.println("Error al subir la imagen. "+ ex.toString());
             }
             if(imagen != null){
-                _marca.setId_Imagen(imagen.getId());
                 try {
-                    //_marca.Update();
+                    if(_marca.getId_Imagen() != -1){
+                        int id_imagen = _marca.getId_Imagen();
+                        _marca.setId_Imagen(imagen.getId());
+                        new Imagen(id_imagen).Delete();
+                    }
+                    else
+                        _marca.setId_Imagen(imagen.getId());
+                    
+                    _marca.Update();
                     cargarImagen();
                 } catch (Exception ex) {
                     System.out.println("Error en la actualización de la imagen de la marca. "+ ex.toString());
