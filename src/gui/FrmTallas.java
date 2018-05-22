@@ -74,6 +74,7 @@ public class FrmTallas extends javax.swing.JFrame {
 
         jLabel1.setText("Tallas letra");
 
+        lTallasLetra.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lTallasLetra.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
@@ -86,6 +87,7 @@ public class FrmTallas extends javax.swing.JFrame {
 
         jLabel2.setText("Tallas Número");
 
+        lTallasNumero.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lTallasNumero.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
@@ -94,6 +96,9 @@ public class FrmTallas extends javax.swing.JFrame {
         lTallasNumero.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(lTallasNumero);
 
+        butEliminarLetra.setBackground(java.awt.Color.red);
+        butEliminarLetra.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butEliminarLetra.setForeground(new java.awt.Color(255, 255, 255));
         butEliminarLetra.setText("Eliminar");
         butEliminarLetra.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -101,6 +106,9 @@ public class FrmTallas extends javax.swing.JFrame {
             }
         });
 
+        butEliminarNumero.setBackground(java.awt.Color.red);
+        butEliminarNumero.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butEliminarNumero.setForeground(new java.awt.Color(255, 255, 255));
         butEliminarNumero.setText("Eliminar");
         butEliminarNumero.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -108,6 +116,9 @@ public class FrmTallas extends javax.swing.JFrame {
             }
         });
 
+        butAgregarLetra.setBackground(new java.awt.Color(0, 0, 0));
+        butAgregarLetra.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAgregarLetra.setForeground(new java.awt.Color(255, 255, 255));
         butAgregarLetra.setText("Agregar");
         butAgregarLetra.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -115,6 +126,9 @@ public class FrmTallas extends javax.swing.JFrame {
             }
         });
 
+        butAgregarNumero.setBackground(new java.awt.Color(0, 0, 0));
+        butAgregarNumero.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAgregarNumero.setForeground(new java.awt.Color(255, 255, 255));
         butAgregarNumero.setText("Agregar");
         butAgregarNumero.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -141,7 +155,7 @@ public class FrmTallas extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)
-                        .addGap(0, 83, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(butAgregarNumero)
@@ -162,7 +176,7 @@ public class FrmTallas extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

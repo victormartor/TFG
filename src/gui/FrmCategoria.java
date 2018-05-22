@@ -186,14 +186,7 @@ public class FrmCategoria extends javax.swing.JFrame {
             try {
                 sRuta = file.getAbsolutePath();
                 sRuta = sRuta.replace(file.getName(), "");
-                if(Imagen.Select(file.getName(), null).size() > 0)
-                    imagen = Imagen.Select(file.getName(), null).get(0);
-                else{
-                    Files.copy(Paths.get(file.getAbsolutePath()),
-                               Paths.get(rutaImagenes+"\\"+file.getName()), 
-                               StandardCopyOption.REPLACE_EXISTING);
-                    imagen = Imagen.Create(file.getName(), rutaImagenes);
-                }     
+                imagen = Imagen.Create(file, rutaImagenes);
             } catch (Exception ex) {
                 System.out.println("Error al subir la imagen. "+ ex.toString());
             }
@@ -291,16 +284,21 @@ public class FrmCategoria extends javax.swing.JFrame {
             return true;
         }
         else{
-            if(_categoria.getId_Imagen() == -1){
-                JOptionPane.showMessageDialog(null,
-                "¡ATENCIÓN! Se debe asignar una imagen a la categoría.",
-                "Error",
-                JOptionPane.WARNING_MESSAGE);
+            try {
+                if(new Categoria(_categoria.getId()).getId_Imagen() == -1){
+                    JOptionPane.showMessageDialog(null,
+                            "¡ATENCIÓN! Se debe asignar una imagen a la categoría.",
+                            "Error",
+                            JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                else{
+                    return true;
+                }
+            } catch (Exception ex) {
+                System.out.println("Error al salir. "+ex.toString());
                 return false;
             }
-            else{
-                return true;
-            }      
         }
     }
 
@@ -534,28 +532,32 @@ public class FrmCategoria extends javax.swing.JFrame {
 
     private void butAgregarArtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarArtActionPerformed
         comprobar_cambios();
-        if(_categoria.getId_Imagen() == -1){
-            JOptionPane.showMessageDialog(null,
-            "¡ATENCIÓN! Se debe asignar una imagen a la categoría.",
-            "Error",
-            JOptionPane.WARNING_MESSAGE);
-            
+        try {
+            if(new Categoria(_categoria.getId()).getId_Imagen() == -1){
+                JOptionPane.showMessageDialog(null,
+                        "¡ATENCIÓN! Se debe asignar una imagen a la categoría.",
+                        "Error",
+                        JOptionPane.WARNING_MESSAGE);
+                
+            }
+            else{
+                java.awt.EventQueue.invokeLater(() -> {
+                    Frame frmArticulo = null;
+                    try {
+                        frmArticulo = new FrmArticulo(null, _categoria.getId());
+                    } catch (Exception ex) {
+                        System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
+                    }
+                    if(frmArticulo != null){
+                        frmArticulo.setLocationRelativeTo(FrmCategoria.this);
+                        frmArticulo.setVisible(true);
+                    }
+                    this.dispose();
+                });
+            }
+        } catch (Exception ex) {
+            System.out.println("Error al salir. "+ex.toString());
         }
-        else{
-            java.awt.EventQueue.invokeLater(() -> {
-                Frame frmArticulo = null;
-                try {
-                    frmArticulo = new FrmArticulo(null, _categoria.getId());
-                } catch (Exception ex) {
-                    System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
-                }
-                if(frmArticulo != null){
-                    frmArticulo.setLocationRelativeTo(FrmCategoria.this);
-                    frmArticulo.setVisible(true);
-                }
-                this.dispose();
-            });
-        }      
     }//GEN-LAST:event_butAgregarArtActionPerformed
 
     private void butEliminarArtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarArtActionPerformed

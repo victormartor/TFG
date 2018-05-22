@@ -11,7 +11,11 @@ import java.sql.SQLException;
 
 import Data.Data;
 import Data.Data;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 public class Imagen {
@@ -64,10 +68,25 @@ public class Imagen {
      * @return devuelve la imagen insertada
      * @throws Exception
      */
-    public static Imagen Create(String sNombre, String sRuta) throws Exception {
+    public static Imagen Create(File file, String sRuta) throws Exception {
 		Connection con = null;
 		try {
 			con = Data.Connection();
+                        
+                        String sNombre = file.getName();
+                        Integer i = 0;
+                        while(Imagen.Select(sNombre, null).size() > 0){
+                            String[] asNombre = sNombre.split("\\.");
+                            String sFormato = asNombre[asNombre.length-1];
+                            if(i == 0) sNombre = sNombre.replace("."+sFormato, String.valueOf(i+1))+"."+sFormato;
+                            else sNombre = sNombre.replace(i.toString()+ "."+sFormato, String.valueOf(i+1))+"."+sFormato;
+                            i++;
+                        }
+                        
+                        Files.copy(Paths.get(file.getAbsolutePath()),
+                                   Paths.get(sRuta+"\\"+sNombre), 
+                                   StandardCopyOption.REPLACE_EXISTING);
+                           
 			con.createStatement().executeUpdate("INSERT INTO Imagen (Nombre, Ruta)"
 					+ " VALUES (" + Data.String2Sql(sNombre, true, false) + ", " 
                                         + Data.String2Sql(sRuta, true, false) + ");");
@@ -94,6 +113,7 @@ public class Imagen {
                 con = Data.Connection();
                 con.createStatement().executeUpdate("DELETE FROM articulo_color_imagen WHERE Id_Imagen = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM Imagen WHERE Id = " + _iId);
+                Files.delete(Paths.get(this.getRutaCompleta()));
                 _bIsDeleted = true;
         }
         catch (SQLException ee) { throw ee; }

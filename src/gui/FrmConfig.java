@@ -61,6 +61,8 @@ public class FrmConfig extends javax.swing.JFrame {
 
         lblRuta.setText("Ruta carpeta imágenes:");
 
+        butGuardar.setBackground(java.awt.Color.green);
+        butGuardar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         butGuardar.setText("Guardar y salir");
         butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

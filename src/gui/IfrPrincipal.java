@@ -78,8 +78,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
         });
         
         
-        String sPedido = "23:1:4\n"
-                + "24:4:4\n"
+        String sPedido = "30:1:4\n"
+                + "32:4:4\n"
                 + "FinTicket";
         try {
             _modPedidos.addPedido(new PedidoPendiente(sPedido, _numPedidos));
@@ -154,7 +154,6 @@ public class IfrPrincipal extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         MenuItemColores = new javax.swing.JMenuItem();
         MenuItemTallas = new javax.swing.JMenuItem();
-        MenuItemImagenes = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         MenuItemConfig = new javax.swing.JMenuItem();
 
@@ -247,14 +246,6 @@ public class IfrPrincipal extends javax.swing.JFrame {
             }
         });
         MenuGestionar.add(MenuItemTallas);
-
-        MenuItemImagenes.setText("Imágenes");
-        MenuItemImagenes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MenuItemImagenesActionPerformed(evt);
-            }
-        });
-        MenuGestionar.add(MenuItemImagenes);
         MenuGestionar.add(jSeparator2);
 
         MenuItemConfig.setText("Configuración");
@@ -432,22 +423,6 @@ public class IfrPrincipal extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_MenuItemExistenciasActionPerformed
 
-    private void MenuItemImagenesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemImagenesActionPerformed
-        java.awt.EventQueue.invokeLater(() -> {
-            Frame frmImagenes = null;
-            try {
-                frmImagenes = new FrmImagenes();
-            } catch (Exception ex) {
-                System.out.println("Error al leer la base de datos. "+ ex.toString());
-            }
-            if(frmImagenes != null){
-                frmImagenes.setLocationRelativeTo(this);
-                frmImagenes.setVisible(true);
-            }
-            //this.dispose();
-        });
-    }//GEN-LAST:event_MenuItemImagenesActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -489,7 +464,6 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem MenuItemColores;
     private javax.swing.JMenuItem MenuItemConfig;
     private javax.swing.JMenuItem MenuItemExistencias;
-    private javax.swing.JMenuItem MenuItemImagenes;
     private javax.swing.JMenuItem MenuItemTallas;
     private javax.swing.JButton butEliminar;
     private javax.swing.JToggleButton butEstadoServidor;

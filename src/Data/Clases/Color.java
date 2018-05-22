@@ -85,10 +85,17 @@ public class Color {
         Connection con = null;
         try {
                 con = Data.Connection();
+                
                 con.createStatement().executeUpdate("DELETE FROM articulo_color WHERE Id_Color = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM articulo_color_imagen WHERE Id_Color = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM stock WHERE Id_Color = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM color WHERE Id = " + _iId);
+                
+                ResultSet rs = con.createStatement().executeQuery("SELECT Id_Imagen FROM Articulo_Color_Imagen "
+                        + "WHERE Id_Color = "+_iId);
+                while(rs.next())
+                    new Imagen(rs.getInt("Id_Imagen")).Delete();
+                
                 _bIsDeleted = true;
         }
         catch (SQLException ee) { throw ee; }

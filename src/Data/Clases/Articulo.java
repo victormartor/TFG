@@ -184,7 +184,11 @@ public class Articulo {
 
         Connection con = null;
         try {
+                
                 con = Data.Connection();
+                
+                ResultSet rs = con.createStatement().executeQuery("SELECT Id_Imagen FROM Articulo_Color_Imagen "
+                        + "WHERE Id_Articulo = "+_iId);
       
                 con.createStatement().executeUpdate("DELETE FROM articulo_talla WHERE Id_Articulo = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM articulo_color WHERE Id_Articulo = " + _iId);
@@ -193,6 +197,10 @@ public class Articulo {
                 con.createStatement().executeUpdate("DELETE FROM articulo_color_imagen WHERE Id_Articulo = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM stock WHERE Id_Articulo = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM Articulo WHERE Id = " + _iId);
+                                
+                while(rs.next())
+                    new Imagen(rs.getInt("Id_Imagen")).Delete();
+                
                 _bIsDeleted = true;
         }
         catch (SQLException ee) { throw ee; }
@@ -389,29 +397,14 @@ public class Articulo {
         }
    }
    
-   public void Remove_Imagen_Color(Integer iId_Color, Integer iId_Imagen) throws Exception{
-       
-       Connection con = null;
-        try {
-                con = Data.Connection();
-      
-                con.createStatement().executeUpdate(
-                        "DELETE FROM articulo_color_imagen WHERE "
-                                + "Id_Articulo = "+ _iId 
-                                + " and Id_Color = " + iId_Color
-                                + " and Id_Imagen = " + iId_Imagen);
-        }
-        catch (SQLException ee) { throw ee; }
-        finally {
-            if (con != null) con.close();
-        }
-   } 
-   
    public void Delete_Color(Integer iId_Color) throws Exception{
        
        Connection con = null;
         try {
                 con = Data.Connection();
+                
+                ResultSet rs = con.createStatement().executeQuery("SELECT Id_Imagen FROM Articulo_Color_Imagen "
+                        + "WHERE Id_Articulo = "+_iId+" AND Id_Color = "+iId_Color);
       
                 con.createStatement().executeUpdate(
                         "DELETE FROM articulo_color WHERE Id_Articulo = "+ _iId + " and Id_Color = " + iId_Color);
@@ -421,6 +414,9 @@ public class Articulo {
                 
                 con.createStatement().executeUpdate(
                         "DELETE FROM stock WHERE Id_Articulo = "+ _iId + " and Id_Color = " + iId_Color);
+                
+                while(rs.next())
+                    new Imagen(rs.getInt("Id_Imagen")).Delete();
                 
                 _aiColores.remove(iId_Color);
         }

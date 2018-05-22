@@ -445,14 +445,8 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                     sRuta = file.getAbsolutePath();
                     sRuta = sRuta.replace(file.getName(), "");
                     _srutaGuardada = sRuta;
-                    if(Imagen.Select(file.getName(), null).size() > 0)
-                        imagen = Imagen.Select(file.getName(), null).get(0);
-                    else{
-                        Files.copy(Paths.get(file.getAbsolutePath()),
-                                   Paths.get(rutaImagenes+"\\"+file.getName()), 
-                                   StandardCopyOption.REPLACE_EXISTING);
-                        imagen = Imagen.Create(file.getName(), rutaImagenes);
-                    }     
+                    imagen = Imagen.Create(file, rutaImagenes);
+                    
                 } catch (Exception ex) {
                     System.out.println("Error al subir la imagen. "+ ex.toString());
                 }

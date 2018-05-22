@@ -50,6 +50,7 @@ public class FrmColores extends javax.swing.JFrame {
         setTitle("Colores");
         setMinimumSize(new java.awt.Dimension(400, 152));
 
+        lColores.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lColores.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
@@ -58,6 +59,9 @@ public class FrmColores extends javax.swing.JFrame {
         lColores.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(lColores);
 
+        butAgregar.setBackground(new java.awt.Color(0, 0, 0));
+        butAgregar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAgregar.setForeground(new java.awt.Color(255, 255, 255));
         butAgregar.setText("Agregar");
         butAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -65,6 +69,9 @@ public class FrmColores extends javax.swing.JFrame {
             }
         });
 
+        butEliminar.setBackground(java.awt.Color.red);
+        butEliminar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butEliminar.setForeground(new java.awt.Color(255, 255, 255));
         butEliminar.setText("Eliminar");
         butEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -78,11 +85,11 @@ public class FrmColores extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(butAgregar, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(butEliminar, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(butAgregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(butEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

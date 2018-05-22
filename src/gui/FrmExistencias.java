@@ -10,10 +10,12 @@ import Data.Clases.Color;
 import Data.Clases.Stock;
 import Data.Clases.Talla;
 import Data.Modelos.StockTableModel;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -64,6 +66,35 @@ public class FrmExistencias extends javax.swing.JFrame {
                 cerrar();
             }
         });
+    }
+    
+    private void buscar(){
+        if(_bCambios){
+            Object[] options = {"Sí",
+                                "No"};
+            int n = JOptionPane.showOptionDialog(this,
+                "Hay cambios sin guardar, ¿desea guardarlos antes de continuar?.",
+                "Mensaje del sistema",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+
+            if(n == 0)
+            {
+                guardar();
+            }
+        }
+        
+        try {
+            tableExistencias.setModel(new StockTableModel(Stock.Search(txtBuscar.getText())));
+            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableExistencias.getModel());
+            tableExistencias.setRowSorter(sorter);
+            _bCambios = false;
+        } catch (Exception ex) {
+            System.out.println("Error al buscar en stock. "+ex.toString());
+        }
     }
     
     private void cerrar(){
@@ -156,6 +187,9 @@ public class FrmExistencias extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tableExistencias);
 
+        butAtras.setBackground(java.awt.Color.red);
+        butAtras.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAtras.setForeground(new java.awt.Color(255, 255, 255));
         butAtras.setText("Atrás");
         butAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -163,6 +197,8 @@ public class FrmExistencias extends javax.swing.JFrame {
             }
         });
 
+        butGuardar.setBackground(java.awt.Color.green);
+        butGuardar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         butGuardar.setText("Guardar cambios");
         butGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,6 +206,9 @@ public class FrmExistencias extends javax.swing.JFrame {
             }
         });
 
+        butBuscar.setBackground(new java.awt.Color(0, 0, 0));
+        butBuscar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butBuscar.setForeground(new java.awt.Color(255, 255, 255));
         butBuscar.setText("Buscar");
         butBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,6 +217,11 @@ public class FrmExistencias extends javax.swing.JFrame {
         });
 
         txtBuscar.setToolTipText("Nombre de artículo");
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyPressed(evt);
+            }
+        });
 
         jLabel1.setText("Nombre de artículo:");
 
@@ -237,33 +281,14 @@ public class FrmExistencias extends javax.swing.JFrame {
     }//GEN-LAST:event_butAtrasActionPerformed
 
     private void butBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butBuscarActionPerformed
-        if(_bCambios){
-            Object[] options = {"Sí",
-                                "No"};
-            int n = JOptionPane.showOptionDialog(this,
-                "Hay cambios sin guardar, ¿desea guardarlos antes de continuar?.",
-                "Mensaje del sistema",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,     //do not use a custom Icon
-                options,  //the titles of buttons
-                options[0]); //default button title
-
-            if(n == 0)
-            {
-                guardar();
-            }
-        }
-        
-        try {
-            tableExistencias.setModel(new StockTableModel(Stock.Search(txtBuscar.getText())));
-            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableExistencias.getModel());
-            tableExistencias.setRowSorter(sorter);
-            _bCambios = false;
-        } catch (Exception ex) {
-            System.out.println("Error al buscar en stock. "+ex.toString());
-        }
+        buscar();
     }//GEN-LAST:event_butBuscarActionPerformed
+
+    private void txtBuscarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyPressed
+        if(evt.getExtendedKeyCode() == KeyEvent.VK_ENTER){
+            buscar();
+        } 
+    }//GEN-LAST:event_txtBuscarKeyPressed
 
     /**
      * @param args the command line arguments

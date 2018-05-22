@@ -93,6 +93,7 @@ public class Marca {
         try {
                 con = Data.Connection();
                 con.createStatement().executeUpdate("DELETE FROM Marca WHERE Id = " + _iId);
+                if(_iId_Imagen != -1) new Imagen(_iId_Imagen).Delete();
                 _bIsDeleted = true;
         }
         catch (SQLException ee) { throw ee; }

@@ -191,14 +191,7 @@ public class FrmMarca extends javax.swing.JFrame {
             try {
                 sRuta = file.getAbsolutePath();
                 sRuta = sRuta.replace(file.getName(), "");
-                if(Imagen.Select(file.getName(), null).size() > 0)
-                    imagen = Imagen.Select(file.getName(), null).get(0);
-                else{
-                    Files.copy(Paths.get(file.getAbsolutePath()),
-                               Paths.get(rutaImagenes+"\\"+file.getName()), 
-                               StandardCopyOption.REPLACE_EXISTING);
-                    imagen = Imagen.Create(file.getName(), rutaImagenes);
-                }     
+                imagen = Imagen.Create(file, rutaImagenes);     
             } catch (Exception ex) {
                 System.out.println("Error al subir la imagen. "+ ex.toString());
             }
@@ -294,16 +287,21 @@ public class FrmMarca extends javax.swing.JFrame {
             return true;
         }
         else{
-            if(_marca.getId_Imagen() == -1){
-                JOptionPane.showMessageDialog(null,
-                "¡ATENCIÓN! Se debe asignar una imagen a la marca.",
-                "Error",
-                JOptionPane.WARNING_MESSAGE);
+            try {
+                if(new Marca(_marca.getId()).getId_Imagen() == -1){
+                    JOptionPane.showMessageDialog(null,
+                            "¡ATENCIÓN! Se debe asignar una imagen a la marca.",
+                            "Error",
+                            JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                else{
+                    return true;
+                }
+            } catch (Exception ex) {
+                System.out.println("Error al salir. "+ex.toString());
                 return false;
-            }
-            else{
-                return true;
-            }      
+            } 
         }
     }
 
@@ -530,28 +528,32 @@ public class FrmMarca extends javax.swing.JFrame {
 
     private void butAgregarCatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarCatActionPerformed
         comprobar_cambios();
-        if(_marca.getId_Imagen() == -1){
-            JOptionPane.showMessageDialog(null,
-            "¡ATENCIÓN! Se debe asignar una imagen a la marca.",
-            "Error",
-            JOptionPane.WARNING_MESSAGE);
-            
+        try {
+            if(new Marca(_marca.getId()).getId_Imagen() == -1){
+                JOptionPane.showMessageDialog(null,
+                        "¡ATENCIÓN! Se debe asignar una imagen a la marca.",
+                        "Error",
+                        JOptionPane.WARNING_MESSAGE);
+                
+            }
+            else{
+                java.awt.EventQueue.invokeLater(() -> {
+                    Frame frmCategoria = null;
+                    try {
+                        frmCategoria = new FrmCategoria(null, _marca.getId());
+                    } catch (Exception ex) {
+                        System.out.println("Error al crear una categoria vacía en la base de datos. "+ ex.toString());
+                    }
+                    if(frmCategoria != null){
+                        frmCategoria.setLocationRelativeTo(FrmMarca.this);
+                        frmCategoria.setVisible(true);
+                    }
+                    this.dispose();
+                });
+            }
+        } catch (Exception ex) {
+            System.out.println("Error al salir. "+ex.toString());
         }
-        else{
-            java.awt.EventQueue.invokeLater(() -> {
-                Frame frmCategoria = null;
-                try {
-                    frmCategoria = new FrmCategoria(null, _marca.getId());
-                } catch (Exception ex) {
-                    System.out.println("Error al crear una categoria vacía en la base de datos. "+ ex.toString());
-                }
-                if(frmCategoria != null){
-                    frmCategoria.setLocationRelativeTo(FrmMarca.this);
-                    frmCategoria.setVisible(true);
-                }
-                this.dispose();
-            });          
-        }      
     }//GEN-LAST:event_butAgregarCatActionPerformed
 
     private void butEliminarCatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarCatActionPerformed

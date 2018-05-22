@@ -52,7 +52,7 @@ public class ModArticulo_Color_Imagen extends AbstractListModel
     
     public void removeImagen(int index) throws Exception
     {
-        _articulo.Remove_Imagen_Color(_color.getId(), lImagen.get(index).getId());
+        lImagen.get(index).Delete();
         lImagen.remove(index);
         this.fireIntervalRemoved(index, getSize(), getSize()+1);
     }
