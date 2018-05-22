@@ -195,12 +195,12 @@ public class FrmCategoria extends javax.swing.JFrame {
                     if(_categoria.getId_Imagen() != -1){
                         int id_imagen = _categoria.getId_Imagen();
                         _categoria.setId_Imagen(imagen.getId());
+                        _categoria.Update();
                         new Imagen(id_imagen).Delete();
                     }
                     else
                         _categoria.setId_Imagen(imagen.getId());
-                
-                    _categoria.Update();
+                                   
                     cargarImagen();
                 } catch (Exception ex) {
                     System.out.println("Error en la actualización de la imagen de la marca. "+ ex.toString());
