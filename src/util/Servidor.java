@@ -12,41 +12,41 @@ import javax.swing.JPanel;
 
 public class Servidor
 {
-    private String mensaje;
-    private boolean encendido;
-    private ServerSocket miSocketConexion;
-    private SocketStream miSocketDatos;
+    private String _sMensaje;
+    private boolean _bEncendido;
+    private ServerSocket _SocketConexion;
+    private SocketStream _SocketDatos;
     
     //GET
-    public String getMensaje(){return mensaje;}
-    public boolean encendido() {return encendido;}
+    public String getMensaje(){return _sMensaje;}
+    public boolean encendido() {return _bEncendido;}
     
     public void encenderServidor()
     {
-        encendido = true;
+        _bEncendido = true;
         try
         {
-            miSocketConexion =  new ServerSocket(5000);
+            _SocketConexion =  new ServerSocket(5000);
             
         }catch(IOException e) 
         {
             e.printStackTrace();
             apagarServidor();
-        }
+        }      
     }
     
     public void apagarServidor()
     {
-        encendido = false;
+        _bEncendido = false;
         try
         {
-            if(miSocketDatos != null)
+            if(_SocketDatos != null)
             {
-                miSocketDatos.closeServer();
-                miSocketDatos.close();
+                _SocketDatos.closeServer();
+                _SocketDatos.close();
             }
             
-            miSocketConexion.close();
+            _SocketConexion.close();
         }catch(IOException e){e.printStackTrace();}
          
     }
@@ -55,25 +55,36 @@ public class Servidor
     {
         try
         {
-            miSocketDatos = new SocketStream   (miSocketConexion.accept( ));         
-            mensaje = miSocketDatos.recibeMensaje();
+            _SocketDatos = new SocketStream   (_SocketConexion.accept( ));         
+            _sMensaje = _SocketDatos.recibeMensaje();
         
         }catch(IOException e)
         {
             apagarServidor();
         }
         
-        return mensaje;
+        return _sMensaje;
     }
     
+    public void enviarMensaje(String sMensaje)
+    {
+        try
+        {     
+            _SocketDatos.enviaMensaje(sMensaje);
+        
+        }catch(IOException e)
+        {
+            apagarServidor();
+        } 
+    }
+    
+    /*
   public String conectar()
   {
      
     int puertoServidor = 5000; // puerto por defecto
-    
-       mensaje = "";
+     _sMensaje = "";
 
-    
     try {
       // instancia un socket stream para aceptar las conexiones
       ServerSocket miSocketConexion =  new ServerSocket(puertoServidor);
@@ -91,6 +102,7 @@ public class Servidor
     return mensaje;
 
   }
+*/
 
 } // fin de class
 

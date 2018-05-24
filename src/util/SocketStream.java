@@ -35,7 +35,7 @@ package util;
     } // fin de enviaMensaje
 
     public String recibeMensaje( )  throws IOException {
-      
+      /*
       String mensaje = "";//entrada.readLine();
       String lectura;
       // lee una l�nea del flujo de datos
@@ -47,8 +47,9 @@ package util;
         //System.out.println(mensaje);
 
         //try{lectura = entrada.readLine();}catch(IOException e){lectura = null;}
-      }
-      return mensaje;
+      }*/
+      String sMensaje = entrada.readLine();
+      return sMensaje;
     } // fin de recibeMensaje
     
     public void closeServer() throws IOException {

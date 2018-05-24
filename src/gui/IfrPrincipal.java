@@ -56,9 +56,15 @@ public class IfrPrincipal extends javax.swing.JFrame {
                 while(_servidor.encendido())
                 {
                     String sMensaje = _servidor.obtenerMensaje();
+                    
                     if(!isInterrupted()) try {
-                        _modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
-                        _numPedidos++;
+                        System.out.println(sMensaje);
+                        
+                        if(sMensaje.equals("conectar")){
+                            _servidor.enviarMensaje("conectado");
+                        }
+                        //_modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
+                        //_numPedidos++;
                     } catch (Exception ex) {
                         System.out.println("Error al crear el pedido. "+ex.toString());
                     }
