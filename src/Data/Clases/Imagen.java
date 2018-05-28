@@ -84,8 +84,9 @@ public class Imagen {
                             i++;
                         }
                         
+                        sRuta += "\\"+sNombre;
                         Files.copy(Paths.get(file.getAbsolutePath()),
-                                   Paths.get(sRuta+"\\"+sNombre), 
+                                   Paths.get(sRuta), 
                                    StandardCopyOption.REPLACE_EXISTING);
                            
 			con.createStatement().executeUpdate("INSERT INTO Imagen (Nombre, Ruta)"
@@ -114,7 +115,7 @@ public class Imagen {
                 con = Data.Connection();
                 con.createStatement().executeUpdate("DELETE FROM articulo_color_imagen WHERE Id_Imagen = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM Imagen WHERE Id = " + _iId);
-                Files.delete(Paths.get(this.getRutaCompleta()));
+                Files.delete(Paths.get(_sRuta));
                 _bIsDeleted = true;
         }
         catch (SQLException ee) { throw ee; }
@@ -200,9 +201,5 @@ public class Imagen {
            }
 
            return sWhere;
-   }
-   
-   public String getRutaCompleta() throws IOException{
-       return _sRuta+"\\"+_sNombre;
    }
 }

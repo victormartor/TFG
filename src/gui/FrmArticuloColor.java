@@ -353,7 +353,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             JFileChooser ventanaElegirImagen = new JFileChooser();
             String rutaImagenes = null;
             try {
-                rutaImagenes = Configuracion.Select("Ruta_imagenes", null).get(0).getValor();
+                rutaImagenes = Data.getRutaImagenes();
             } catch (Exception ex) {
                 System.out.println("Error al obtener la ruta de las imagenes. "+ex.toString());
             }
@@ -391,14 +391,15 @@ public class FrmArticuloColor extends javax.swing.JFrame {
 
                                 try
                                 {
-                                // Create FileInputStream for file
-                                FileInputStream fin=new FileInputStream(f);
+                                    img.setText("");
+                                    // Create FileInputStream for file
+                                    FileInputStream fin=new FileInputStream(f);
 
-                                // Read image from fin
-                                BufferedImage bim=ImageIO.read(fin);
+                                    // Read image from fin
+                                    BufferedImage bim=ImageIO.read(fin);
 
-                                // Return the scaled version of image
-                                return bim.getScaledInstance(178,170,BufferedImage.SCALE_FAST);
+                                    // Return the scaled version of image
+                                    return bim.getScaledInstance(-1,170,BufferedImage.SCALE_FAST);
 
                                 }catch(Exception e){
                                     // If there is a problem reading image,

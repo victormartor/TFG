@@ -1,5 +1,7 @@
 package util;
 
+import Data.Clases.Articulo;
+import Data.Clases.Categoria;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import java.awt.Font;
@@ -35,8 +37,7 @@ public class Servidor
             
         }catch(IOException e) 
         {
-            e.printStackTrace();
-            apagarServidor();
+            System.out.println("Error al encender el Servidor. "+e.toString());
         }      
     }
     
@@ -52,7 +53,9 @@ public class Servidor
             }
             
             _SocketConexion.close();
-        }catch(IOException e){e.printStackTrace();}
+        }catch(IOException e){
+            System.out.println("Error al apagar el Servidor. "+e.toString());
+        }
          
     }
     
@@ -65,7 +68,7 @@ public class Servidor
         
         }catch(IOException e)
         {
-            apagarServidor();
+            System.out.println("Error al obtener el mensaje. "+e.toString());
         }
         
         return _sMensaje;
@@ -79,7 +82,7 @@ public class Servidor
         
         }catch(IOException e)
         {
-            apagarServidor();
+            System.out.println("Error al enviar el mensaje. "+e.toString());
         } 
     }
     
@@ -96,35 +99,45 @@ public class Servidor
             _SocketDatos.enviaMensaje("FinMarcas");
         }catch(Exception ex)
         {
-            apagarServidor();
+            System.out.println("Error al enviar las marcas. "+ex.toString());
         } 
     }
     
-    /*
-  public String conectar()
-  {
-     
-    int puertoServidor = 5000; // puerto por defecto
-     _sMensaje = "";
-
-    try {
-      // instancia un socket stream para aceptar las conexiones
-      ServerSocket miSocketConexion =  new ServerSocket(puertoServidor);
-      
-      SocketStream miSocketDatos = new SocketStream   (miSocketConexion.accept( ));
-
-      mensaje += miSocketDatos.recibeMensaje();
-      miSocketDatos.close( );
-      miSocketConexion.close();
-    }catch (Exception ex) 
+    public void enviarCategorias(int iId_Marca)
     {
-      ex.printStackTrace( );
+        try
+        {     
+            ArrayList<Categoria> aCategorias = Categoria.Select(null, null, iId_Marca);
+            for(Categoria categoria : aCategorias){
+                _SocketDatos.enviaMensaje(categoria.toString());
+                Imagen imagen = new Imagen(categoria.getId_Imagen());
+                _SocketDatos.enviaMensaje(imagen.getNombre());
+            }
+            _SocketDatos.enviaMensaje("FinCategorias");
+        }catch(Exception ex)
+        {
+            System.out.println("Error al enviar las categorias. "+ex.toString());
+        } 
     }
     
-    return mensaje;
-
-  }
-*/
+    public void enviarArticulos(int iId_Categoria)
+    {
+        try
+        {     
+            ArrayList<Articulo> aArticulos = Articulo.Select(null, null, iId_Categoria, null);
+            for(Articulo articulo : aArticulos){
+                String sArticulo = articulo.toString();
+                _SocketDatos.enviaMensaje(sArticulo);
+                String sPartes[] = sArticulo.split(":");
+                Imagen imagen = new Imagen(Integer.parseInt(sPartes[2]));
+                _SocketDatos.enviaMensaje(imagen.getNombre());
+            }
+            _SocketDatos.enviaMensaje("FinArticulos");
+        }catch(Exception ex)
+        {
+            System.out.println("Error al enviar las categorias. "+ex.toString());
+        } 
+    }
 
 } // fin de class
 

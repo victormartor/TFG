@@ -98,7 +98,7 @@ public class FrmCategoria extends javax.swing.JFrame {
         JFileChooser ventanaElegirImagen = new JFileChooser();
         String rutaImagenes = null;
         try {
-            rutaImagenes = Configuracion.Select("Ruta_imagenes", null).get(0).getValor();
+            rutaImagenes = Data.getRutaImagenes();
         } catch (Exception ex) {
             System.out.println("Error al obtener la ruta de las imagenes. "+ex.toString());
         }
@@ -133,14 +133,15 @@ public class FrmCategoria extends javax.swing.JFrame {
                        
                             try
                             {
-                            // Create FileInputStream for file
-                            FileInputStream fin=new FileInputStream(f);
-                           
-                            // Read image from fin
-                            BufferedImage bim=ImageIO.read(fin);
-                           
-                            // Return the scaled version of image
-                            return bim.getScaledInstance(178,170,BufferedImage.SCALE_FAST);
+                                img.setText("");
+                                // Create FileInputStream for file
+                                FileInputStream fin=new FileInputStream(f);
+
+                                // Read image from fin
+                                BufferedImage bim=ImageIO.read(fin);
+
+                                // Return the scaled version of image
+                                return bim.getScaledInstance(-1,170,BufferedImage.SCALE_FAST);
                            
                             }catch(Exception e){
                                 // If there is a problem reading image,
@@ -269,8 +270,9 @@ public class FrmCategoria extends javax.swing.JFrame {
     
     private void cargarImagen() throws Exception{
         if(_categoria.getId_Imagen() != -1){
-            Image image = new ImageIcon(new Imagen(_categoria.getId_Imagen()).getRutaCompleta()).getImage();
-            ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,100,Image.SCALE_SMOOTH));
+            iconoImagen.setText("");
+            Image image = new ImageIcon(new Imagen(_categoria.getId_Imagen()).getRuta()).getImage();
+            ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(-1,100,Image.SCALE_SMOOTH));
             iconoImagen.setIcon(iconoEscalado);
         }
         else{

@@ -60,7 +60,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
            }
         });
         
-        
+        /*
         String sPedido = "30:1:4\n"
                 + "32:4:4\n"
                 + "FinTicket";
@@ -70,6 +70,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("Error al crear el pedido. "+ex.toString());
         }  
+        */
     }
     
     private void ver_pedido()
@@ -356,6 +357,14 @@ public class IfrPrincipal extends javax.swing.JFrame {
                                 case "marcas":
                                     _servidor.enviarMarcas();
                                     break;
+                                case "categorias":
+                                    int iId_Marca = Integer.parseInt(_servidor.obtenerMensaje());
+                                    _servidor.enviarCategorias(iId_Marca);
+                                    break;
+                                case "articulos":
+                                    int iId_Categoria = Integer.parseInt(_servidor.obtenerMensaje());
+                                    _servidor.enviarArticulos(iId_Categoria);
+                                    break;
                             }
 
                             //_modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
@@ -380,24 +389,17 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private void MenuItemColoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemColoresActionPerformed
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmColores = new FrmColores();
-            
-            if(frmColores != null){
-                frmColores.setLocationRelativeTo(this);
-                frmColores.setVisible(true);
-            }
-            //this.dispose();
+            frmColores.setLocationRelativeTo(this);
+            frmColores.setVisible(true);
+
         });
     }//GEN-LAST:event_MenuItemColoresActionPerformed
 
     private void MenuItemTallasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemTallasActionPerformed
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmTallas = new FrmTallas();
-            
-            if(frmTallas != null){
-                frmTallas.setLocationRelativeTo(this);
-                frmTallas.setVisible(true);
-            }
-            //this.dispose();
+            frmTallas.setLocationRelativeTo(this);
+            frmTallas.setVisible(true);
         });
     }//GEN-LAST:event_MenuItemTallasActionPerformed
 

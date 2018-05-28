@@ -90,5 +90,13 @@ public class Data {
         s = s.replace(",", ".");
         return Double.parseDouble(s);
     }
+    
+    public static String getRutaImagenes() throws Exception{
+        try {
+            Properties properties = Config.Properties(getPropertiesUrl());
+            return properties.getProperty("jdbc.rutaImagenes");
+       }
+       catch (Exception ee) { throw ee; }
+    }
 }
 

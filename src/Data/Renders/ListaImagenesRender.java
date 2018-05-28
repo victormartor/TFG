@@ -36,8 +36,8 @@ public class ListaImagenesRender extends JLabel implements ListCellRenderer{
         }
 
         try {
-            Image image = new ImageIcon(imagen.getRutaCompleta()).getImage();
-            iconoEscalado = new ImageIcon (image.getScaledInstance(100,100,Image.SCALE_SMOOTH));
+            Image image = new ImageIcon(imagen.getRuta()).getImage();
+            iconoEscalado = new ImageIcon (image.getScaledInstance(-1,100,Image.SCALE_SMOOTH));
         } catch (Exception ex) {
             Logger.getLogger(ListaRender.class.getName()).log(Level.SEVERE, null, ex);
         }

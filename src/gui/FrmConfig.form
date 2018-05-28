@@ -5,7 +5,7 @@
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" value="Configuraci&#xf3;n"/>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[600, 150]"/>
+      <Dimension value="[600, 120]"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -35,15 +35,9 @@
                       <Component id="butGuardar" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lblRuta" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="lblNombreTienda" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="txtNombreTienda" pref="461" max="32767" attributes="0"/>
-                          <Component id="txtRuta" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="lblNombreTienda" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                      <Component id="txtNombreTienda" pref="379" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -58,12 +52,7 @@
                   <Component id="lblNombreTienda" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="txtNombreTienda" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="lblRuta" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtRuta" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="7" max="32767" attributes="0"/>
               <Component id="butGuardar" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -77,13 +66,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtNombreTienda">
-    </Component>
-    <Component class="javax.swing.JLabel" name="lblRuta">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Ruta carpeta im&#xe1;genes:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="txtRuta">
     </Component>
     <Component class="javax.swing.JButton" name="butGuardar">
       <Properties>

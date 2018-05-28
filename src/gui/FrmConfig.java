@@ -35,7 +35,6 @@ public class FrmConfig extends javax.swing.JFrame {
         }
         
         txtNombreTienda.setText(_aConfig.get(0).getValor());
-        txtRuta.setText(_aConfig.get(1).getValor());
     }
 
     /**
@@ -49,17 +48,13 @@ public class FrmConfig extends javax.swing.JFrame {
 
         lblNombreTienda = new javax.swing.JLabel();
         txtNombreTienda = new javax.swing.JTextField();
-        lblRuta = new javax.swing.JLabel();
-        txtRuta = new javax.swing.JTextField();
         butGuardar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Configuración");
-        setMinimumSize(new java.awt.Dimension(600, 150));
+        setMinimumSize(new java.awt.Dimension(600, 120));
 
         lblNombreTienda.setText("Nombre de la tienda:");
-
-        lblRuta.setText("Ruta carpeta imágenes:");
 
         butGuardar.setBackground(java.awt.Color.green);
         butGuardar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -81,13 +76,9 @@ public class FrmConfig extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(butGuardar))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblRuta)
-                            .addComponent(lblNombreTienda))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNombreTienda, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
-                            .addComponent(txtRuta))))
+                        .addComponent(lblNombreTienda)
+                        .addGap(19, 19, 19)
+                        .addComponent(txtNombreTienda, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -97,11 +88,7 @@ public class FrmConfig extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNombreTienda)
                     .addComponent(txtNombreTienda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRuta)
-                    .addComponent(txtRuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addComponent(butGuardar)
                 .addContainerGap())
         );
@@ -112,7 +99,6 @@ public class FrmConfig extends javax.swing.JFrame {
     private void butGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butGuardarActionPerformed
         _lblNombreTienda.setText(txtNombreTienda.getText());
         _aConfig.get(0).setValor(txtNombreTienda.getText());
-        _aConfig.get(1).setValor(txtRuta.getText());
         
         try{
             for(Configuracion c : _aConfig){
@@ -164,8 +150,6 @@ public class FrmConfig extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butGuardar;
     private javax.swing.JLabel lblNombreTienda;
-    private javax.swing.JLabel lblRuta;
     private javax.swing.JTextField txtNombreTienda;
-    private javax.swing.JTextField txtRuta;
     // End of variables declaration//GEN-END:variables
 }
