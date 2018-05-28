@@ -48,31 +48,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
         listPedidosPendientes.setModel(_modPedidos);
         
         _servidor = new Servidor();
-        _servidor.encenderServidor();
-        _hilo = new Thread(){
-        @Override
-        public void run()
-            {
-                while(_servidor.encendido())
-                {
-                    String sMensaje = _servidor.obtenerMensaje();
-                    
-                    if(!isInterrupted()) try {
-                        System.out.println(sMensaje);
-                        
-                        if(sMensaje.equals("conectar")){
-                            _servidor.enviarMensaje("conectado");
-                        }
-                        //_modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
-                        //_numPedidos++;
-                    } catch (Exception ex) {
-                        System.out.println("Error al crear el pedido. "+ex.toString());
-                    }
-                }
-            }
-        };
-
-        _hilo.start();
+        butEstadoServidor.doClick();
+        
         
         listPedidosPendientes.addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
@@ -188,7 +165,6 @@ public class IfrPrincipal extends javax.swing.JFrame {
         butEstadoServidor.setBackground(new java.awt.Color(153, 153, 153));
         butEstadoServidor.setForeground(new java.awt.Color(255, 255, 255));
         butEstadoServidor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/power_90.png"))); // NOI18N
-        butEstadoServidor.setSelected(true);
         butEstadoServidor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 butEstadoServidorActionPerformed(evt);
@@ -196,7 +172,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         });
 
         lblEstadoServidor.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lblEstadoServidor.setText("Encendido");
+        lblEstadoServidor.setText("Apagado");
 
         butVerPedido.setBackground(new java.awt.Color(0, 0, 0));
         butVerPedido.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -279,19 +255,19 @@ public class IfrPrincipal extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(butEstadoServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(lblEstadoServidor)
-                                .addGap(22, 22, 22))))
+                        .addComponent(butEstadoServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(butVerPedido, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(butEliminar, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addContainerGap())))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(butVerPedido, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(butEliminar, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(lblEstadoServidor)
+                                .addGap(29, 29, 29))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -368,9 +344,25 @@ public class IfrPrincipal extends javax.swing.JFrame {
                 {
                     while(_servidor.encendido())
                     {
-                        String smensaje = _servidor.obtenerMensaje();
-    
-                        //if(!isInterrupted()) lista.addPedido(new Pedido(mensaje));
+                        String sMensaje = _servidor.obtenerMensaje();
+
+                        if(!isInterrupted()) try {
+                            System.out.println(sMensaje);
+                            
+                            switch(sMensaje){
+                                case "conectar": 
+                                    _servidor.enviarMensaje("conectado");
+                                    break;
+                                case "marcas":
+                                    _servidor.enviarMarcas();
+                                    break;
+                            }
+
+                            //_modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
+                            //_numPedidos++;
+                        } catch (Exception ex) {
+                            System.out.println("Error al crear el pedido. "+ex.toString());
+                        }
                     }
                 }
             };

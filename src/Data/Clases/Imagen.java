@@ -74,6 +74,7 @@ public class Imagen {
 			con = Data.Connection();
                         
                         String sNombre = file.getName();
+                        sNombre = sNombre.replace(" ", "_");
                         Integer i = 0;
                         while(Imagen.Select(sNombre, null).size() > 0){
                             String[] asNombre = sNombre.split("\\.");

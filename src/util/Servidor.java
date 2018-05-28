@@ -1,9 +1,14 @@
 package util;
 
+import Data.Clases.Imagen;
+import Data.Clases.Marca;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 import java.util.Scanner;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import javax.imageio.ImageIO;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -73,6 +78,23 @@ public class Servidor
             _SocketDatos.enviaMensaje(sMensaje);
         
         }catch(IOException e)
+        {
+            apagarServidor();
+        } 
+    }
+    
+    public void enviarMarcas()
+    {
+        try
+        {     
+            ArrayList<Marca> aMarcas = Marca.Select(null, null);
+            for(Marca marca : aMarcas){
+                _SocketDatos.enviaMensaje(marca.toString());
+                Imagen imagen = new Imagen(marca.getId_Imagen());
+                _SocketDatos.enviaMensaje(imagen.getNombre());
+            }
+            _SocketDatos.enviaMensaje("FinMarcas");
+        }catch(Exception ex)
         {
             apagarServidor();
         } 
