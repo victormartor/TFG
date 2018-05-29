@@ -345,10 +345,13 @@ public class IfrPrincipal extends javax.swing.JFrame {
                 {
                     while(_servidor.encendido())
                     {
+                        _servidor.conectar();
                         String sMensaje = _servidor.obtenerMensaje();
 
                         if(!isInterrupted()) try {
                             System.out.println(sMensaje);
+                            int iId_Marca;
+                            int iId_Categoria;
                             
                             switch(sMensaje){
                                 case "conectar": 
@@ -357,12 +360,16 @@ public class IfrPrincipal extends javax.swing.JFrame {
                                 case "marcas":
                                     _servidor.enviarMarcas();
                                     break;
+                                case "marca":
+                                    iId_Marca = Integer.parseInt(_servidor.obtenerMensaje());
+                                    _servidor.enviarMarca(iId_Marca);    
+                                    break;
                                 case "categorias":
-                                    int iId_Marca = Integer.parseInt(_servidor.obtenerMensaje());
+                                    iId_Marca = Integer.parseInt(_servidor.obtenerMensaje());
                                     _servidor.enviarCategorias(iId_Marca);
                                     break;
                                 case "articulos":
-                                    int iId_Categoria = Integer.parseInt(_servidor.obtenerMensaje());
+                                    iId_Categoria = Integer.parseInt(_servidor.obtenerMensaje());
                                     _servidor.enviarArticulos(iId_Categoria);
                                     break;
                             }
@@ -370,7 +377,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
                             //_modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
                             //_numPedidos++;
                         } catch (Exception ex) {
-                            System.out.println("Error al crear el pedido. "+ex.toString());
+                            System.out.println("Error al conectar. "+ex.toString());
                         }
                     }
                 }

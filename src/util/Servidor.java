@@ -41,6 +41,18 @@ public class Servidor
         }      
     }
     
+    public void conectar()
+    {
+        try
+        {
+            _SocketDatos = new SocketStream   (_SocketConexion.accept( ));
+            
+        }catch(IOException e) 
+        {
+            System.out.println("Error al conectar. "+e.toString());
+        }      
+    }
+    
     public void apagarServidor()
     {
         _bEncendido = false;
@@ -62,8 +74,7 @@ public class Servidor
     public String obtenerMensaje()
     {
         try
-        {
-            _SocketDatos = new SocketStream   (_SocketConexion.accept( ));         
+        {                    
             _sMensaje = _SocketDatos.recibeMensaje();
         
         }catch(IOException e)
@@ -100,6 +111,22 @@ public class Servidor
         }catch(Exception ex)
         {
             System.out.println("Error al enviar las marcas. "+ex.toString());
+        } 
+    }
+    
+    public void enviarMarca(int iId_Marca)
+    {
+        try
+        {     
+            Marca marca = new Marca(iId_Marca);
+            
+            _SocketDatos.enviaMensaje(marca.toString());
+            Imagen imagen = new Imagen(marca.getId_Imagen());
+            _SocketDatos.enviaMensaje(imagen.getNombre());
+
+        }catch(Exception ex)
+        {
+            System.out.println("Error al enviar la marca. "+ex.toString());
         } 
     }
     
