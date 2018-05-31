@@ -2,8 +2,10 @@ package util;
 
 import Data.Clases.Articulo;
 import Data.Clases.Categoria;
+import Data.Clases.Color;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
+import Data.Clases.Talla;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.util.Scanner;
@@ -163,6 +165,56 @@ public class Servidor
         }catch(Exception ex)
         {
             System.out.println("Error al enviar las categorias. "+ex.toString());
+        } 
+    }
+    
+    public void enviarUnArticulo(int iId_Articulo)
+    {
+        try
+        {     
+            Articulo articulo = new Articulo(iId_Articulo);
+            _SocketDatos.enviaMensaje(articulo.toString());
+        }catch(Exception ex)
+        {
+            System.out.println("Error al enviar el artículo. "+ex.toString());
+        } 
+    }
+    
+    public void enviarColoresArticulo(int iId_Articulo)
+    {
+        try
+        {     
+            Articulo articulo = new Articulo(iId_Articulo);
+            for(Integer i : articulo.getColores()){
+                Color color = new Color(i);
+                String sColor = color.getId()+":"+color.getNombre();
+                _SocketDatos.enviaMensaje(sColor);
+                for(Imagen imagen : articulo.Get_Imagenes_Color(color.getId())){
+                    _SocketDatos.enviaMensaje(imagen.getNombre());
+                }
+                _SocketDatos.enviaMensaje("FinImagenes");
+            }
+            _SocketDatos.enviaMensaje("FinColores");
+        }catch(Exception ex)
+        {
+            System.out.println("Error al enviar los colores. "+ex.toString());
+        } 
+    }
+    
+    public void enviarTallasArticulo(int iId_Articulo)
+    {
+        try
+        {     
+            Articulo articulo = new Articulo(iId_Articulo);
+            for(Integer i : articulo.getTallas()){
+                Talla talla = new Talla(i);
+                String sTalla = talla.getId()+":"+talla.getNombre();
+                _SocketDatos.enviaMensaje(sTalla);
+            }
+            _SocketDatos.enviaMensaje("FinTallas");
+        }catch(Exception ex)
+        {
+            System.out.println("Error al enviar las tallas. "+ex.toString());
         } 
     }
 

@@ -110,7 +110,8 @@ public class Articulo {
         //        ":" + getTallas()+ ":" + getColores() + ":" + getCombinaciones(); 
         String sMensaje = "";
         try {
-            sMensaje = getId() + ":" + getNombre() + ":" + Get_Imagenes_Color(_aiColores.get(0)).get(0).getId();
+            sMensaje = getId() + ":" + getNombre() + ":" + Get_Imagenes_Color(_aiColores.get(0)).get(0).getId()
+                    +":"+getPVP()+":"+getTalla_Es_Numero();
         } catch (Exception ex) {
             System.out.println("Error al obtener la imagen del artículo "+_iId+" "+ex.toString());
         }

@@ -352,6 +352,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
                             System.out.println(sMensaje);
                             int iId_Marca;
                             int iId_Categoria;
+                            int iId_Articulo;
                             
                             switch(sMensaje){
                                 case "conectar": 
@@ -371,6 +372,18 @@ public class IfrPrincipal extends javax.swing.JFrame {
                                 case "articulos":
                                     iId_Categoria = Integer.parseInt(_servidor.obtenerMensaje());
                                     _servidor.enviarArticulos(iId_Categoria);
+                                    break;
+                                case "articulo":
+                                    iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
+                                    _servidor.enviarUnArticulo(iId_Articulo);
+                                    break;
+                                case "colores":
+                                    iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
+                                    _servidor.enviarColoresArticulo(iId_Articulo);
+                                    break;
+                                case "tallas":
+                                    iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
+                                    _servidor.enviarTallasArticulo(iId_Articulo);
                                     break;
                             }
 
