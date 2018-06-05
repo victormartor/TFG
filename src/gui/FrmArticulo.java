@@ -104,7 +104,10 @@ public class FrmArticulo extends javax.swing.JFrame {
             _modArticulosComb = new ModArticulos(null,null);
 
         } catch (Exception ex) {
-            System.out.println("Error al crear la lista de artículos para las combinaciones. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al crear lista de artículos para combinaciones.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
         _modArticulosComb.removeCombinacion(_modArticulosComb.getIndexOf(_articulo));
         ArrayList<Integer> aComb = _articulo.getCombinaciones();
@@ -159,7 +162,10 @@ public class FrmArticulo extends javax.swing.JFrame {
             "Mensaje del sistema", 
             JOptionPane.PLAIN_MESSAGE);
         } catch (Exception ex) {
-            System.out.println("Error al guardar. "+ ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al guardar.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -188,7 +194,10 @@ public class FrmArticulo extends javax.swing.JFrame {
             try {
                 frmArticuloColor = new FrmArticuloColor(_articulo.getId(), color.getId());
             } catch (Exception ex) {
-                System.out.println("Error al buscar el color en la base de datos. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al buscar color.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             if(frmArticuloColor != null){
                 frmArticuloColor.setLocationRelativeTo(FrmArticulo.this);
@@ -224,7 +233,10 @@ public class FrmArticulo extends javax.swing.JFrame {
             try {
                 _articulo.Delete();
             } catch (Exception ex) {
-                System.out.println("Error en la eliminación del artículo. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al eliminar artículo.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             return true;
         }
@@ -565,7 +577,10 @@ public class FrmArticulo extends javax.swing.JFrame {
             
             panelTallas.updateUI();
         } catch (Exception ex) {
-            System.out.println("Error al buscar las tallas. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al buscar tallas.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
         _bCambios = true;
     }//GEN-LAST:event_checkEs_NumeroActionPerformed
@@ -577,7 +592,10 @@ public class FrmArticulo extends javax.swing.JFrame {
                 try {
                     frmCategoria = new FrmCategoria(_articulo.getId_Categoria(), null);
                 } catch (Exception ex) {
-                    System.out.println("Error al leer las marcas. "+ ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al leer marcas.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
                 if(frmCategoria != null){
                     frmCategoria.setLocationRelativeTo(FrmArticulo.this);
@@ -615,7 +633,10 @@ public class FrmArticulo extends javax.swing.JFrame {
                 try {
                     _modArticulo_Color.removeColor(index);
                 } catch (Exception ex) {
-                    System.out.println("Error en la eliminación del color. "+ ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al eliminar color.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
             }
         } 
@@ -628,7 +649,10 @@ public class FrmArticulo extends javax.swing.JFrame {
             try {
                 frmArticuloColor = new FrmArticuloColor(_articulo.getId(), null);
             } catch (Exception ex) {
-                System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al buscar artículo.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             if(frmArticuloColor != null){
                 frmArticuloColor.setLocationRelativeTo(FrmArticulo.this);

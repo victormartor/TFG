@@ -43,195 +43,120 @@ public class Servidor
         }      
     }
     
-    public void conectar()
+    public void conectar() throws Exception
     {
-        try
-        {
-            _SocketDatos = new SocketStream   (_SocketConexion.accept( ));
-            
-        }catch(IOException e) 
-        {
-            System.out.println("Error al conectar. "+e.toString());
-        }      
+      _SocketDatos = new SocketStream   (_SocketConexion.accept( ));            
     }
     
-    public void apagarServidor()
+    public void apagarServidor() throws Exception
     {
         _bEncendido = false;
-        try
+ 
+        if(_SocketDatos != null)
         {
-            if(_SocketDatos != null)
-            {
-                _SocketDatos.closeServer();
-                _SocketDatos.close();
-            }
-            
-            _SocketConexion.close();
-        }catch(IOException e){
-            System.out.println("Error al apagar el Servidor. "+e.toString());
+            _SocketDatos.closeServer();
+            _SocketDatos.close();
         }
+
+        _SocketConexion.close();
          
     }
     
-    public String obtenerMensaje()
+    public String obtenerMensaje() throws Exception
     {
-        try
-        {                    
-            _sMensaje = _SocketDatos.recibeMensaje();
-        
-        }catch(IOException e)
-        {
-            System.out.println("Error al obtener el mensaje. "+e.toString());
-        }
-        
-        return _sMensaje;
+        return _SocketDatos.recibeMensaje();
     }
     
-    public void enviarMensaje(String sMensaje)
+    public void enviarMensaje(String sMensaje) throws Exception
     {
-        try
-        {     
-            _SocketDatos.enviaMensaje(sMensaje);
-        
-        }catch(IOException e)
-        {
-            System.out.println("Error al enviar el mensaje. "+e.toString());
-        } 
+        _SocketDatos.enviaMensaje(sMensaje);    
     }
     
-    public void enviarMarcas()
+    public void enviarMarcas() throws Exception
     {
-        try
-        {     
-            ArrayList<Marca> aMarcas = Marca.Select(null, null);
-            for(Marca marca : aMarcas){
-                _SocketDatos.enviaMensaje(marca.toString());
-                Imagen imagen = new Imagen(marca.getId_Imagen());
-                _SocketDatos.enviaMensaje(imagen.getNombre());
-            }
-            _SocketDatos.enviaMensaje("FinMarcas");
-        }catch(Exception ex)
-        {
-            System.out.println("Error al enviar las marcas. "+ex.toString());
-        } 
-    }
-    
-    public void enviarMarca(int iId_Marca)
-    {
-        try
-        {     
-            Marca marca = new Marca(iId_Marca);
-            
+        ArrayList<Marca> aMarcas = Marca.Select(null, null);
+        for(Marca marca : aMarcas){
             _SocketDatos.enviaMensaje(marca.toString());
             Imagen imagen = new Imagen(marca.getId_Imagen());
             _SocketDatos.enviaMensaje(imagen.getNombre());
+        }
+        _SocketDatos.enviaMensaje("FinMarcas");
+    }
+    
+    public void enviarMarca(int iId_Marca) throws Exception
+    {    
+        Marca marca = new Marca(iId_Marca);
 
-        }catch(Exception ex)
-        {
-            System.out.println("Error al enviar la marca. "+ex.toString());
-        } 
+        _SocketDatos.enviaMensaje(marca.toString());
+        Imagen imagen = new Imagen(marca.getId_Imagen());
+        _SocketDatos.enviaMensaje(imagen.getNombre());
     }
     
-    public void enviarCategorias(int iId_Marca)
+    public void enviarCategorias(int iId_Marca) throws Exception
     {
-        try
-        {     
-            ArrayList<Categoria> aCategorias = Categoria.Select(null, null, iId_Marca);
-            for(Categoria categoria : aCategorias){
-                _SocketDatos.enviaMensaje(categoria.toString());
-                Imagen imagen = new Imagen(categoria.getId_Imagen());
+        ArrayList<Categoria> aCategorias = Categoria.Select(null, null, iId_Marca);
+        for(Categoria categoria : aCategorias){
+            _SocketDatos.enviaMensaje(categoria.toString());
+            Imagen imagen = new Imagen(categoria.getId_Imagen());
+            _SocketDatos.enviaMensaje(imagen.getNombre());
+        }
+        _SocketDatos.enviaMensaje("FinCategorias");
+    }
+    
+    public void enviarArticulos(int iId_Categoria) throws Exception
+    {
+    
+        ArrayList<Articulo> aArticulos = Articulo.Select(null, null, iId_Categoria, null);
+        for(Articulo articulo : aArticulos){
+            String sArticulo = articulo.toString();
+            _SocketDatos.enviaMensaje(sArticulo);
+            String sPartes[] = sArticulo.split(":");
+            Imagen imagen = new Imagen(Integer.parseInt(sPartes[2]));
+            _SocketDatos.enviaMensaje(imagen.getNombre());
+        }
+        _SocketDatos.enviaMensaje("FinArticulos"); 
+    }
+    
+    public void enviarUnArticulo(int iId_Articulo) throws Exception
+    { 
+        Articulo articulo = new Articulo(iId_Articulo);
+        _SocketDatos.enviaMensaje(articulo.toString());
+    }
+    
+    public void enviarColoresArticulo(int iId_Articulo) throws Exception
+    {
+        Articulo articulo = new Articulo(iId_Articulo);
+        for(Integer i : articulo.getColores()){
+            Color color = new Color(i);
+            String sColor = color.getId()+":"+color.getNombre();
+            _SocketDatos.enviaMensaje(sColor);
+            for(Imagen imagen : articulo.Get_Imagenes_Color(color.getId())){
                 _SocketDatos.enviaMensaje(imagen.getNombre());
             }
-            _SocketDatos.enviaMensaje("FinCategorias");
-        }catch(Exception ex)
-        {
-            System.out.println("Error al enviar las categorias. "+ex.toString());
-        } 
+            _SocketDatos.enviaMensaje("FinImagenes");
+        }
+        _SocketDatos.enviaMensaje("FinColores");
     }
     
-    public void enviarArticulos(int iId_Categoria)
-    {
-        try
-        {     
-            ArrayList<Articulo> aArticulos = Articulo.Select(null, null, iId_Categoria, null);
-            for(Articulo articulo : aArticulos){
-                String sArticulo = articulo.toString();
-                _SocketDatos.enviaMensaje(sArticulo);
-                String sPartes[] = sArticulo.split(":");
-                Imagen imagen = new Imagen(Integer.parseInt(sPartes[2]));
-                _SocketDatos.enviaMensaje(imagen.getNombre());
-            }
-            _SocketDatos.enviaMensaje("FinArticulos");
-        }catch(Exception ex)
-        {
-            System.out.println("Error al enviar las categorias. "+ex.toString());
-        } 
+    public void enviarTallasArticulo(int iId_Articulo) throws Exception
+    {    
+        Articulo articulo = new Articulo(iId_Articulo);
+        for(Integer i : articulo.getTallas()){
+            Talla talla = new Talla(i);
+            String sTalla = talla.getId()+":"+talla.getNombre();
+            _SocketDatos.enviaMensaje(sTalla);
+        }
+        _SocketDatos.enviaMensaje("FinTallas"); 
     }
     
-    public void enviarUnArticulo(int iId_Articulo)
-    {
-        try
-        {     
-            Articulo articulo = new Articulo(iId_Articulo);
-            _SocketDatos.enviaMensaje(articulo.toString());
-        }catch(Exception ex)
-        {
-            System.out.println("Error al enviar el artículo. "+ex.toString());
-        } 
-    }
-    
-    public void enviarColoresArticulo(int iId_Articulo)
-    {
-        try
-        {     
-            Articulo articulo = new Articulo(iId_Articulo);
-            for(Integer i : articulo.getColores()){
-                Color color = new Color(i);
-                String sColor = color.getId()+":"+color.getNombre();
-                _SocketDatos.enviaMensaje(sColor);
-                for(Imagen imagen : articulo.Get_Imagenes_Color(color.getId())){
-                    _SocketDatos.enviaMensaje(imagen.getNombre());
-                }
-                _SocketDatos.enviaMensaje("FinImagenes");
-            }
-            _SocketDatos.enviaMensaje("FinColores");
-        }catch(Exception ex)
-        {
-            System.out.println("Error al enviar los colores. "+ex.toString());
-        } 
-    }
-    
-    public void enviarTallasArticulo(int iId_Articulo)
-    {
-        try
-        {     
-            Articulo articulo = new Articulo(iId_Articulo);
-            for(Integer i : articulo.getTallas()){
-                Talla talla = new Talla(i);
-                String sTalla = talla.getId()+":"+talla.getNombre();
-                _SocketDatos.enviaMensaje(sTalla);
-            }
-            _SocketDatos.enviaMensaje("FinTallas");
-        }catch(Exception ex)
-        {
-            System.out.println("Error al enviar las tallas. "+ex.toString());
-        } 
-    }
-    
-    public void enviarCombinacionesArticulo(int iId_Articulo)
-    {
-        try
-        {     
-            Articulo articulo = new Articulo(iId_Articulo);
-            for(Integer i : articulo.getCombinaciones()){
-                Articulo a = new Articulo(i);
-                _SocketDatos.enviaMensaje(a.toString());
-            }
-            _SocketDatos.enviaMensaje("FinComb");
-        }catch(Exception ex)
-        {
-            System.out.println("Error al enviar las combinaciones. "+ex.toString());
-        } 
+    public void enviarCombinacionesArticulo(int iId_Articulo) throws Exception
+    {  
+        Articulo articulo = new Articulo(iId_Articulo);
+        for(Integer i : articulo.getCombinaciones()){
+            Articulo a = new Articulo(i);
+            _SocketDatos.enviaMensaje(a.toString());
+        }
+        _SocketDatos.enviaMensaje("FinComb");
     }
 
 } // fin de class

@@ -10,6 +10,7 @@ package Data;
  * @author victor
  */
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -18,16 +19,19 @@ import java.util.Properties;
 import util.Config;
 
 public class Data {
-    public static String getPropertiesUrl() { return "./src/db.properties"; }
+    public static URL getPropertiesUrl() { 
+        //return "./src/db.properties"; 
+        return ClassLoader.getSystemResource("db.properties");
+    }
     public static Connection Connection() throws Exception {
-        try {
+            /*
             Properties properties = Config.Properties(getPropertiesUrl());
             return DriverManager.getConnection(
                 properties.getProperty("jdbc.url"),
                 properties.getProperty("jdbc.username"),
                 properties.getProperty("jdbc.password"));
-       }
-       catch (Exception ee) { throw ee; }
+            */
+            return DriverManager.getConnection("jdbc:mysql://localhost/easyshop?useSSL=false", "root", "password");
 	}
     
     public static void LoadDriver() 
@@ -74,15 +78,10 @@ public class Data {
      * @throws Exception
      */
     public static int LastId(Connection con) throws Exception{
-	    	try {
-	    		Properties properties = Config.Properties(getPropertiesUrl());
-	    		ResultSet rs = con.createStatement().executeQuery(properties.getProperty("jdbc.lastIdSentence"));
-	    		
-	    		rs.next(); 
-	    		
-	    		return rs.getInt(1);
-	       }
-	       catch (Exception ee) { throw ee; }
+        
+        ResultSet rs = con.createStatement().executeQuery("SELECT LAST_INSERT_ID()");	    		
+        rs.next(); 	    		
+        return rs.getInt(1);
     }
     
     
@@ -91,12 +90,8 @@ public class Data {
         return Double.parseDouble(s);
     }
     
-    public static String getRutaImagenes() throws Exception{
-        try {
-            Properties properties = Config.Properties(getPropertiesUrl());
-            return properties.getProperty("jdbc.rutaImagenes");
-       }
-       catch (Exception ee) { throw ee; }
+    public static String getRutaImagenes() {
+       return "C:\\AppServ\\www\\EasyShop\\Imagenes";
     }
 }
 

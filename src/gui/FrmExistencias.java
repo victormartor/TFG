@@ -101,7 +101,10 @@ public class FrmExistencias extends javax.swing.JFrame {
             tableExistencias.setRowSorter(sorter);
             _bCambios = false;
         } catch (Exception ex) {
-            System.out.println("Error al buscar en stock. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al buscar stock.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -140,7 +143,10 @@ public class FrmExistencias extends javax.swing.JFrame {
             "Mensaje del sistema", 
             JOptionPane.PLAIN_MESSAGE);
         }catch(Exception ex){
-            System.out.println("Error al actualizar la tabla existencias. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al actualizar.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 

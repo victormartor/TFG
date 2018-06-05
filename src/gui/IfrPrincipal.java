@@ -18,6 +18,7 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import util.Servidor;
 
 /**
@@ -44,7 +45,11 @@ public class IfrPrincipal extends javax.swing.JFrame {
         try {
             lblNombreTienda.setText(Configuracion.Select("Nombre_tienda", null).get(0).getValor());
         } catch (Exception ex) {
-            System.out.println("Error al obtener el nombre de la tienda. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al obtener el nombre de la tienda.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            //System.out.println("Error al obtener el nombre de la tienda. "+ex.toString());
         }
         
         _numPedidos = 1;
@@ -64,7 +69,14 @@ public class IfrPrincipal extends javax.swing.JFrame {
            }
         });
         
-        Image image = new ImageIcon("./src/img/ES.PNG").getImage();
+        /*
+        JOptionPane.showMessageDialog(null, 
+                ClassLoader.getSystemResource("img/ES.PNG")+"\n"+ClassLoader.getSystemResource("db.properties"), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        */
+        
+        Image image = new ImageIcon(ClassLoader.getSystemResource("img/ES.PNG")).getImage();
         ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,-1,Image.SCALE_SMOOTH));
         icono_logo.setIcon(iconoEscalado);
         
@@ -119,7 +131,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
         try{
             _sIP = InetAddress.getLocalHost().getHostAddress();
         }catch(UnknownHostException ex){
-            System.out.println("Error al obtener la ip. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al obtener la ip.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
         
         if(!_sIP.equals("127.0.0.1"))
@@ -146,6 +161,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
         butVerPedido = new javax.swing.JButton();
         butEliminar = new javax.swing.JButton();
         icono_logo = new javax.swing.JLabel();
+        lblException = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
         jMenuBar1 = new javax.swing.JMenuBar();
         MenuGestionar = new javax.swing.JMenu();
         MenuItemBaseDatos = new javax.swing.JMenuItem();
@@ -209,6 +226,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
         icono_logo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         icono_logo.setMaximumSize(new java.awt.Dimension(100, 100));
 
+        lblException.setText(" ");
+
         MenuGestionar.setText("Gestionar");
         MenuGestionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -269,9 +288,9 @@ public class IfrPrincipal extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
                     .addComponent(lblNombreTienda)
-                    .addComponent(lblIP)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE))
+                    .addComponent(lblIP))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -285,17 +304,22 @@ public class IfrPrincipal extends javax.swing.JFrame {
                                 .addComponent(lblEstadoServidor)
                                 .addGap(29, 29, 29))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(icono_logo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(butEstadoServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(butEstadoServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(icono_logo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap())))
+            .addComponent(jSeparator3)
+            .addComponent(lblException, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(butEstadoServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -304,7 +328,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
                         .addComponent(butVerPedido)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(butEliminar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                        .addGap(41, 41, 41)
                         .addComponent(icono_logo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNombreTienda)
@@ -312,7 +336,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
                         .addComponent(lblIP)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1)))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(lblException))
         );
 
         pack();
@@ -328,7 +355,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
             try {
                 ifrMarca = new IfrMarca();
             } catch (Exception ex) {
-                System.out.println("Error al leer la base de datos. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al leer la base de datos.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             if(ifrMarca != null){
                 ifrMarca.setLocationRelativeTo(this);
@@ -344,7 +374,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
             try {
                 frmConfig = new FrmConfig(lblNombreTienda);
             } catch (Exception ex) {
-                System.out.println("Error al leer la base de datos. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al leer la base de datos.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             if(frmConfig != null){
                 frmConfig.setLocationRelativeTo(this);
@@ -358,6 +391,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         
         if(butEstadoServidor.isSelected())
         {
+            lblException.setText(" ");
             _servidor.encenderServidor();
             lblEstadoServidor.setText("Encendido");
 
@@ -367,56 +401,58 @@ public class IfrPrincipal extends javax.swing.JFrame {
                 {
                     while(_servidor.encendido())
                     {
-                        _servidor.conectar();
-                        String sMensaje = _servidor.obtenerMensaje();
+                        try {
+                            _servidor.conectar();
+                            String sMensaje = _servidor.obtenerMensaje();
 
-                        if(!isInterrupted()) try {
-                            System.out.println(sMensaje);
-                            int iId_Marca;
-                            int iId_Categoria;
-                            int iId_Articulo;
-                            
-                            switch(sMensaje){
-                                case "conectar": 
-                                    _servidor.enviarMensaje("conectado");
-                                    break;
-                                case "marcas":
-                                    _servidor.enviarMarcas();
-                                    break;
-                                case "marca":
-                                    iId_Marca = Integer.parseInt(_servidor.obtenerMensaje());
-                                    _servidor.enviarMarca(iId_Marca);    
-                                    break;
-                                case "categorias":
-                                    iId_Marca = Integer.parseInt(_servidor.obtenerMensaje());
-                                    _servidor.enviarCategorias(iId_Marca);
-                                    break;
-                                case "articulos":
-                                    iId_Categoria = Integer.parseInt(_servidor.obtenerMensaje());
-                                    _servidor.enviarArticulos(iId_Categoria);
-                                    break;
-                                case "articulo":
-                                    iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
-                                    _servidor.enviarUnArticulo(iId_Articulo);
-                                    break;
-                                case "colores":
-                                    iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
-                                    _servidor.enviarColoresArticulo(iId_Articulo);
-                                    break;
-                                case "tallas":
-                                    iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
-                                    _servidor.enviarTallasArticulo(iId_Articulo);
-                                    break;
-                                case "combinaciones":
-                                    iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
-                                    _servidor.enviarCombinacionesArticulo(iId_Articulo);
-                                    break;
-                            }
+                            if(!isInterrupted()) {
+                                System.out.println(sMensaje);
+                                int iId_Marca;
+                                int iId_Categoria;
+                                int iId_Articulo;
 
-                            //_modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
-                            //_numPedidos++;
-                        } catch (Exception ex) {
-                            System.out.println("Error al conectar. "+ex.toString());
+                                switch(sMensaje){
+                                    case "conectar": 
+                                        _servidor.enviarMensaje("conectado");
+                                        break;
+                                    case "marcas":
+                                        _servidor.enviarMarcas();
+                                        break;
+                                    case "marca":
+                                        iId_Marca = Integer.parseInt(_servidor.obtenerMensaje());
+                                        _servidor.enviarMarca(iId_Marca);    
+                                        break;
+                                    case "categorias":
+                                        iId_Marca = Integer.parseInt(_servidor.obtenerMensaje());
+                                        _servidor.enviarCategorias(iId_Marca);
+                                        break;
+                                    case "articulos":
+                                        iId_Categoria = Integer.parseInt(_servidor.obtenerMensaje());
+                                        _servidor.enviarArticulos(iId_Categoria);
+                                        break;
+                                    case "articulo":
+                                        iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
+                                        _servidor.enviarUnArticulo(iId_Articulo);
+                                        break;
+                                    case "colores":
+                                        iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
+                                        _servidor.enviarColoresArticulo(iId_Articulo);
+                                        break;
+                                    case "tallas":
+                                        iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
+                                        _servidor.enviarTallasArticulo(iId_Articulo);
+                                        break;
+                                    case "combinaciones":
+                                        iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
+                                        _servidor.enviarCombinacionesArticulo(iId_Articulo);
+                                        break;
+                                }
+
+                                //_modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
+                                //_numPedidos++;
+                            } 
+                        }catch(Exception ex){ 
+                            lblException.setText(" "+ex.toString());
                         }
                     }
                 }
@@ -426,9 +462,13 @@ public class IfrPrincipal extends javax.swing.JFrame {
         }
         else
         {
-            _servidor.apagarServidor();
-            _hilo.interrupt();
-            lblEstadoServidor.setText("Apagado");
+            try{
+                _servidor.apagarServidor();
+                _hilo.interrupt();
+                lblEstadoServidor.setText("Apagado");
+            }catch(Exception ex){ 
+                lblException.setText(" "+ex.toString());
+            }
         }
     }//GEN-LAST:event_butEstadoServidorActionPerformed
 
@@ -459,7 +499,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
             try {
                 frmExistencias = new FrmExistencias();
             } catch (Exception ex) {
-                System.out.println("Error al leer la base de datos. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al leer la base de datos.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             if(frmExistencias != null){
                 frmExistencias.setLocationRelativeTo(this);
@@ -519,7 +562,9 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JLabel lblEstadoServidor;
+    private javax.swing.JLabel lblException;
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblNombreTienda;
     private javax.swing.JList<String> listPedidosPendientes;

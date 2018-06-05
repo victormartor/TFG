@@ -8,13 +8,14 @@ package util;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 public class Config {
-    public static Properties Properties(String sFile) throws IOException {
+    public static Properties Properties(URL sFile) throws IOException {
         InputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(sFile);
+            inputStream = new FileInputStream(sFile.getPath());
             Properties result = new Properties();
             result.load(inputStream);
             return result;

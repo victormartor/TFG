@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -33,7 +34,10 @@ public class FrmConfig extends javax.swing.JFrame {
         try {
             _aConfig = Configuracion.Select(null, null);
         } catch (Exception ex) {
-            System.out.println("Error al leer la configuración. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al leer la configuración.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
         
         txtNombreTienda.setText(_aConfig.get(0).getValor());
@@ -114,7 +118,10 @@ public class FrmConfig extends javax.swing.JFrame {
                 c.Update();
             }
         }catch(Exception ex){
-            System.out.println("Error al guardar la configuración. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al guardar.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
         this.dispose();
     }//GEN-LAST:event_butGuardarActionPerformed

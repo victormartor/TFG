@@ -57,7 +57,10 @@ public class IfrPedido extends javax.swing.JFrame {
                 color = new Color(art_col_tal.getId_Color());
                 talla = new Talla(art_col_tal.getId_Talla());
             } catch (Exception ex) {
-                System.out.println("Error al obtener el artículo, el color y la talla. "+ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al obtener el artículo, el color y la talla.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             
             if(articulo != null && marca != null && color != null && talla != null){

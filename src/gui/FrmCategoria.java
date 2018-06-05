@@ -103,12 +103,8 @@ public class FrmCategoria extends javax.swing.JFrame {
     
     private void subir_imagen(){
         JFileChooser ventanaElegirImagen = new JFileChooser();
-        String rutaImagenes = null;
-        try {
-            rutaImagenes = Data.getRutaImagenes();
-        } catch (Exception ex) {
-            System.out.println("Error al obtener la ruta de las imagenes. "+ex.toString());
-        }
+        String rutaImagenes = Data.getRutaImagenes();
+        
         if(rutaImagenes != null) ventanaElegirImagen.setCurrentDirectory(new File(rutaImagenes));
         JLabel img = new JLabel();
         img.setPreferredSize(new Dimension(175,175));
@@ -196,7 +192,10 @@ public class FrmCategoria extends javax.swing.JFrame {
                 sRuta = sRuta.replace(file.getName(), "");
                 imagen = Imagen.Create(file, rutaImagenes);
             } catch (Exception ex) {
-                System.out.println("Error al subir la imagen. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al subir imagen.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             if(imagen != null){
                 try{
@@ -211,7 +210,10 @@ public class FrmCategoria extends javax.swing.JFrame {
                                    
                     cargarImagen();
                 } catch (Exception ex) {
-                    System.out.println("Error en la actualización de la imagen de la marca. "+ ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al actualizar la imagen.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -252,7 +254,10 @@ public class FrmCategoria extends javax.swing.JFrame {
             "Mensaje del sistema", 
             JOptionPane.PLAIN_MESSAGE);
         } catch (Exception ex) {
-            System.out.println("Error al guardar. "+ ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al guardar.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -265,7 +270,10 @@ public class FrmCategoria extends javax.swing.JFrame {
             try {
                 frmArticulo = new FrmArticulo(articulo.getId(), _categoria.getId());
             } catch (Exception ex) {
-                System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al buscar artículo.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             if(frmArticulo != null){
                 frmArticulo.setLocationRelativeTo(FrmCategoria.this);
@@ -295,7 +303,10 @@ public class FrmCategoria extends javax.swing.JFrame {
                     _categoria.Delete();
                 }    
             } catch (Exception ex) {
-                System.out.println("Error en la eliminación de la categoria. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al eliminar categoría.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             return true;
         }
@@ -312,7 +323,10 @@ public class FrmCategoria extends javax.swing.JFrame {
                     return true;
                 }
             } catch (Exception ex) {
-                System.out.println("Error al salir. "+ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al salir.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
@@ -532,7 +546,10 @@ public class FrmCategoria extends javax.swing.JFrame {
                 try {
                     frmMarca = new FrmMarca(_categoria.getId_Marca());
                 } catch (Exception ex) {
-                    System.out.println("Error al leer las marcas. "+ ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al leer marcas.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
                 if(frmMarca != null){
                     frmMarca.setLocationRelativeTo(FrmCategoria.this);
@@ -563,7 +580,10 @@ public class FrmCategoria extends javax.swing.JFrame {
                     try {
                         frmArticulo = new FrmArticulo(null, _categoria.getId());
                     } catch (Exception ex) {
-                        System.out.println("Error al buscar el artículo en la base de datos. "+ ex.toString());
+                        JOptionPane.showMessageDialog(null, 
+                        "Error al buscar artículo.\n"+ex.toString(), 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
                     }
                     if(frmArticulo != null){
                         frmArticulo.setLocationRelativeTo(FrmCategoria.this);
@@ -573,7 +593,10 @@ public class FrmCategoria extends javax.swing.JFrame {
                 });
             }
         } catch (Exception ex) {
-            System.out.println("Error al salir. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al salir.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_butAgregarArtActionPerformed
 
@@ -599,7 +622,10 @@ public class FrmCategoria extends javax.swing.JFrame {
                 try {
                     _modArticulos.removeArticulo(index);
                 } catch (Exception ex) {
-                    System.out.println("Error en la eliminación del artículo. "+ ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al eliminar artículo.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
                 _bCambios = true;
             }

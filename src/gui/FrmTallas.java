@@ -33,7 +33,10 @@ public class FrmTallas extends javax.swing.JFrame {
             _modLetras = new TallaListModel(Talla.Select(null, false));
             _modNumeros = new TallaListModel(Talla.Select(null, true));
         } catch (Exception ex) {
-            System.out.println("Error al obtener las tallas. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al obtener las tallas.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
         
         lTallasLetra.setModel(_modLetras);
@@ -215,7 +218,10 @@ public class FrmTallas extends javax.swing.JFrame {
                 try {
                     _modLetras.addTalla(Talla.Create(sTalla, false));
                 } catch (Exception ex) {
-                    System.out.println("Error al crear la talla. "+ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al crear la talla.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
             }
             else{
@@ -246,7 +252,10 @@ public class FrmTallas extends javax.swing.JFrame {
                 try {
                     _modLetras.removeTalla(lTallasLetra.getSelectedIndex());
                 } catch (Exception ex) {
-                    System.out.println("Error al eliminar la talla. "+ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al eliminar la talla.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -264,7 +273,10 @@ public class FrmTallas extends javax.swing.JFrame {
                 try {
                     _modLetras.addTalla(Talla.Create(sTalla, true));
                 } catch (Exception ex) {
-                    System.out.println("Error al crear la talla. "+ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al crear la talla.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
             }
             else{
@@ -295,7 +307,10 @@ public class FrmTallas extends javax.swing.JFrame {
                 try {
                     _modNumeros.removeTalla(lTallasNumero.getSelectedIndex());
                 } catch (Exception ex) {
-                    System.out.println("Error al eliminar la talla. "+ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al eliminar la talla.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

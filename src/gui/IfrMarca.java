@@ -63,7 +63,10 @@ public class IfrMarca extends javax.swing.JFrame {
             try {
                 frmMarca = new FrmMarca(marca.getId());
             } catch (Exception ex) {
-                System.out.println("Error al buscar la marca en la base de datos. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al buscar la marca.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             if(frmMarca != null){
                 frmMarca.setLocationRelativeTo(IfrMarca.this);
@@ -173,7 +176,10 @@ public class IfrMarca extends javax.swing.JFrame {
                 try {
                     _modMarcas.removeMarca(index);
                 } catch (Exception ex) {
-                    System.out.println("Error en la eliminación de la marca. "+ ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al eliminar la marca.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -185,7 +191,10 @@ public class IfrMarca extends javax.swing.JFrame {
             try {
                 frmMarca = new FrmMarca(null);
             } catch (Exception ex) {
-                System.out.println("Error al crear una marca vacía en la base de datos. "+ ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al crear una marca vacía.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             if(frmMarca != null){
                 frmMarca.setLocationRelativeTo(IfrMarca.this);

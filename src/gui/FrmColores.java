@@ -30,7 +30,10 @@ public class FrmColores extends javax.swing.JFrame {
             _modColores = new ColorListModel(Color.Select(null));
             lColores.setModel(_modColores);
         } catch (Exception ex) {
-            System.out.println("Error al obtener la lista de colores. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al obtener colores.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -129,7 +132,10 @@ public class FrmColores extends javax.swing.JFrame {
             try {
                 _modColores.addColor(Color.Create(sColor));
             } catch (Exception ex) {
-                System.out.println("Error al crear el color. "+ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al crear color.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_butAgregarActionPerformed
@@ -155,7 +161,10 @@ public class FrmColores extends javax.swing.JFrame {
                 try {
                     _modColores.removeColor(lColores.getSelectedIndex());
                 } catch (Exception ex) {
-                    System.out.println("Error al eliminar el color. "+ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al eliminar color.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
             }
         }    

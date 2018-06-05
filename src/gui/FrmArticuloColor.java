@@ -65,13 +65,19 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             lColores.add(new Color(-1));
             cmbColor.setModel(new ColorListModel(lColores));
         } catch (Exception ex) {
-            System.out.println("Error al acceder a la tabla colores\n" +ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al leer colores.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
         
         try {
             _articulo = new Articulo(iId_Articulo);
         } catch (Exception ex) {
-            System.out.println("Error al buscar el artículo. "+ex.toString());
+            JOptionPane.showMessageDialog(null, 
+                "Error al buscar artículo.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
         
         if(iId_Color != null){
@@ -79,7 +85,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             try {
                 _color = new Color(iId_Color);
             } catch (Exception ex) {
-                System.out.println("Error al buscar el color. "+ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al buscar color.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             cmbColor.setSelectedIndex(((ColorListModel)cmbColor.getModel()).getIndexColor(iId_Color));
             cmbColor.setEnabled(false);
@@ -90,7 +99,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 lImagenes.setModel(_modArticulo_Color_Imagen);
                 lImagenes.setCellRenderer(new ListaImagenesRender());
             } catch (Exception ex) {
-                System.out.println("Error al buscar las imágenes. "+ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al buscar imágenes.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
         }
         
@@ -115,7 +127,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 _articulo.Add_Color(_color);
                 _bModificar = true;
             } catch (Exception ex) {
-                System.out.println("Error al añadir el color. "+ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al añadir color.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
         }
         
@@ -152,7 +167,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             try {
                 _articulo.Delete_Color(_color.getId());
             } catch (Exception ex) {
-                System.out.println("Error al eliminar el color. "+ex.toString());
+                JOptionPane.showMessageDialog(null, 
+                "Error al eliminar color.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
             return true;
         }
@@ -341,7 +359,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 try {
                     frmArticulo = new FrmArticulo(_articulo.getId(),null);
                 } catch (Exception ex) {
-                    System.out.println("Error al leer el artículo. "+ ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al leer artículo.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
                 if(frmArticulo != null){
                     frmArticulo.setLocationRelativeTo(this);
@@ -359,12 +380,8 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     private void butSubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSubirActionPerformed
         if(comprobar_color()){
             JFileChooser ventanaElegirImagen = new JFileChooser();
-            String rutaImagenes = null;
-            try {
-                rutaImagenes = Data.getRutaImagenes();
-            } catch (Exception ex) {
-                System.out.println("Error al obtener la ruta de las imagenes. "+ex.toString());
-            }
+            String rutaImagenes = Data.getRutaImagenes();
+ 
             if(rutaImagenes != null) ventanaElegirImagen.setCurrentDirectory(new File(rutaImagenes));
             if(_srutaGuardada != null) ventanaElegirImagen.setCurrentDirectory(new File(_srutaGuardada));
             JLabel img = new JLabel();
@@ -457,13 +474,19 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                     imagen = Imagen.Create(file, rutaImagenes);
                     
                 } catch (Exception ex) {
-                    System.out.println("Error al subir la imagen. "+ ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al subir imagen.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
                 if(imagen != null){
                     try {
                         _modArticulo_Color_Imagen.addImagen(imagen);
                     } catch (Exception ex) {
-                        System.out.println("Error al añadir la imagen. "+ ex.toString());
+                        JOptionPane.showMessageDialog(null, 
+                        "Error al añadir imagen.\n"+ex.toString(), 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -492,7 +515,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 try {
                     _modArticulo_Color_Imagen.removeImagen(index);
                 } catch (Exception ex) {
-                    System.out.println("Error en la eliminación de la imagen. "+ ex.toString());
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al eliminar imagen.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
                 //_bCambios = true;
             }
@@ -514,7 +540,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                    try {
                         color = Color.Create(sColor);
                     } catch (Exception ex) {
-                        System.out.println("Error al crear el color. "+ex.toString());
+                        JOptionPane.showMessageDialog(null, 
+                        "Error al crear color.\n"+ex.toString(), 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
                     } 
                 
                     try {
@@ -522,7 +551,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                         cmbColor.setSelectedIndex(((ColorListModel)cmbColor.getModel()).getIndexColor(color.getId()));
                         cmbColor.setEnabled(false);
                     } catch (Exception ex) {
-                        System.out.println("Error al acceder a la tabla colores\n" +ex.toString());
+                        JOptionPane.showMessageDialog(null, 
+                        "Error al leer colores.\n"+ex.toString(), 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
                     }
                     _color = color;
                     
@@ -531,7 +563,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                         lImagenes.setModel(_modArticulo_Color_Imagen);
                         lImagenes.setCellRenderer(new ListaImagenesRender());
                     } catch (Exception ex) {
-                        System.out.println("Error al buscar las imágenes. "+ex.toString());
+                        JOptionPane.showMessageDialog(null, 
+                        "Error al buscar imágenes.\n"+ex.toString(), 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
                     }
                     _bCambios = true;
                 }
@@ -545,7 +580,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                         lImagenes.setModel(_modArticulo_Color_Imagen);
                         lImagenes.setCellRenderer(new ListaImagenesRender());
                     } catch (Exception ex) {
-                        System.out.println("Error al buscar las imágenes. "+ex.toString());
+                        JOptionPane.showMessageDialog(null, 
+                        "Error al buscar imágenes.\n"+ex.toString(), 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
                     }
                     _bCambios = true;
                 } 
