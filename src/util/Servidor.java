@@ -217,6 +217,22 @@ public class Servidor
             System.out.println("Error al enviar las tallas. "+ex.toString());
         } 
     }
+    
+    public void enviarCombinacionesArticulo(int iId_Articulo)
+    {
+        try
+        {     
+            Articulo articulo = new Articulo(iId_Articulo);
+            for(Integer i : articulo.getCombinaciones()){
+                Articulo a = new Articulo(i);
+                _SocketDatos.enviaMensaje(a.toString());
+            }
+            _SocketDatos.enviaMensaje("FinComb");
+        }catch(Exception ex)
+        {
+            System.out.println("Error al enviar las combinaciones. "+ex.toString());
+        } 
+    }
 
 } // fin de class
 

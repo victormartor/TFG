@@ -6,14 +6,18 @@
 package gui;
 
 import Data.Clases.Configuracion;
+import Data.Clases.Imagen;
 import Data.Clases.PedidoPendiente;
 import Data.Modelos.ModPedidos;
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import util.Servidor;
 
 /**
@@ -60,6 +64,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
            }
         });
         
+        Image image = new ImageIcon("./src/img/ES.PNG").getImage();
+        ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,-1,Image.SCALE_SMOOTH));
+        icono_logo.setIcon(iconoEscalado);
+        
         /*
         String sPedido = "30:1:4\n"
                 + "32:4:4\n"
@@ -71,6 +79,12 @@ public class IfrPrincipal extends javax.swing.JFrame {
             System.out.println("Error al crear el pedido. "+ex.toString());
         }  
         */
+    }
+    
+    @Override
+     public Image getIconImage() {
+        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
+        return retValue;
     }
     
     private void ver_pedido()
@@ -131,6 +145,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         lblEstadoServidor = new javax.swing.JLabel();
         butVerPedido = new javax.swing.JButton();
         butEliminar = new javax.swing.JButton();
+        icono_logo = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         MenuGestionar = new javax.swing.JMenu();
         MenuItemBaseDatos = new javax.swing.JMenuItem();
@@ -144,6 +159,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("EasyShop");
         setBackground(new java.awt.Color(255, 255, 255));
+        setIconImage(getIconImage());
         setMinimumSize(new java.awt.Dimension(433, 414));
 
         lblNombreTienda.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -189,6 +205,9 @@ public class IfrPrincipal extends javax.swing.JFrame {
         butEliminar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         butEliminar.setForeground(new java.awt.Color(255, 255, 255));
         butEliminar.setText("Eliminar");
+
+        icono_logo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        icono_logo.setMaximumSize(new java.awt.Dimension(100, 100));
 
         MenuGestionar.setText("Gestionar");
         MenuGestionar.addActionListener(new java.awt.event.ActionListener() {
@@ -254,10 +273,6 @@ public class IfrPrincipal extends javax.swing.JFrame {
                     .addComponent(lblIP)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(butEstadoServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -268,7 +283,13 @@ public class IfrPrincipal extends javax.swing.JFrame {
                                 .addContainerGap())
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(lblEstadoServidor)
-                                .addGap(29, 29, 29))))))
+                                .addGap(29, 29, 29))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(icono_logo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(butEstadoServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -283,7 +304,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
                         .addComponent(butVerPedido)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(butEliminar)
-                        .addGap(0, 125, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                        .addComponent(icono_logo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNombreTienda)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -384,6 +406,10 @@ public class IfrPrincipal extends javax.swing.JFrame {
                                 case "tallas":
                                     iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
                                     _servidor.enviarTallasArticulo(iId_Articulo);
+                                    break;
+                                case "combinaciones":
+                                    iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
+                                    _servidor.enviarCombinacionesArticulo(iId_Articulo);
                                     break;
                             }
 
@@ -488,6 +514,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton butEliminar;
     private javax.swing.JToggleButton butEstadoServidor;
     private javax.swing.JButton butVerPedido;
+    private javax.swing.JLabel icono_logo;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;

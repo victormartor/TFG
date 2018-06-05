@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.awt.Frame;
 import static java.awt.Frame.NORMAL;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -45,6 +46,12 @@ public class IfrMarca extends javax.swing.JFrame {
                 }
            }
         });
+    }
+    
+    @Override
+     public Image getIconImage() {
+        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
+        return retValue;
     }
     
     private void modificarMarca(){
@@ -82,6 +89,7 @@ public class IfrMarca extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Marcas");
+        setIconImage(getIconImage());
         setResizable(false);
 
         listMarcas.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -96,7 +104,7 @@ public class IfrMarca extends javax.swing.JFrame {
         butAddMarca.setBackground(new java.awt.Color(0, 0, 0));
         butAddMarca.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         butAddMarca.setForeground(new java.awt.Color(255, 255, 255));
-        butAddMarca.setText("Agregar");
+        butAddMarca.setText("Agregar marca");
         butAddMarca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 butAddMarcaActionPerformed(evt);
@@ -106,7 +114,7 @@ public class IfrMarca extends javax.swing.JFrame {
         butRemoveMarca.setBackground(java.awt.Color.red);
         butRemoveMarca.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         butRemoveMarca.setForeground(new java.awt.Color(255, 255, 255));
-        butRemoveMarca.setText("Eliminar");
+        butRemoveMarca.setText("Eliminar marca");
         butRemoveMarca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 butRemoveMarcaActionPerformed(evt);
@@ -186,50 +194,6 @@ public class IfrMarca extends javax.swing.JFrame {
             this.dispose();
         });  
     }//GEN-LAST:event_butAddMarcaActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(IfrMarca.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(IfrMarca.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(IfrMarca.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(IfrMarca.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        /*
-        java.awt.EventQueue.invokeLater(() -> {
-            IfrMarca ifrMarca = null;
-            try {
-                ifrMarca = new IfrMarca();
-            } catch (Exception ex) {
-                System.out.println("Error al leer las marcas. "+ex.toString());
-            }
-            if(ifrMarca != null){
-                ifrMarca.setLocationRelativeTo(null);
-                ifrMarca.setVisible(true);
-            }
-        });
-*/
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butAddMarca;
