@@ -153,8 +153,14 @@ public class Servidor
     {  
         Articulo articulo = new Articulo(iId_Articulo);
         for(Integer i : articulo.getCombinaciones()){
-            Articulo a = new Articulo(i);
-            _SocketDatos.enviaMensaje(a.toString());
+            Articulo art = new Articulo(i);
+            String sArticulo = art.toString();
+            Categoria categoria = new Categoria(art.getId_Categoria());
+            sArticulo += ":"+categoria.getId_Marca();
+            _SocketDatos.enviaMensaje(sArticulo);
+            String sPartes[] = sArticulo.split(":");
+            Imagen imagen = new Imagen(Integer.parseInt(sPartes[2]));
+            _SocketDatos.enviaMensaje(imagen.getNombre());
         }
         _SocketDatos.enviaMensaje("FinComb");
     }
