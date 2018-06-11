@@ -6,20 +6,23 @@
 package gui;
 
 import Data.Clases.Articulo;
+import Data.Clases.Articulo_Color_Talla;
 import Data.Clases.Categoria;
 import Data.Clases.Color;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import Data.Clases.Pedido;
 import Data.Clases.PedidoPendiente;
-import Data.Clases.PedidoPendiente.Articulo_Color_Talla;
 import Data.Clases.Stock;
 import Data.Clases.Talla;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -37,22 +40,47 @@ public class IfrPedido extends javax.swing.JFrame {
     /**
      * Creates new form IfrPedido
      */
-    public IfrPedido(PedidoPendiente pedidoP) {
+    public IfrPedido(PedidoPendiente pedidoP, Pedido pedidoR) throws Exception {
         initComponents();
         getContentPane().setBackground(java.awt.Color.white);
         
-        _pedidoP = pedidoP;
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                cerrar();
+        ArrayList<Articulo_Color_Talla> aACT = null;
+        
+        if(pedidoP != null){
+            _pedidoP = pedidoP;
+        
+            setTitle(getTitle()+_pedidoP.getNumPedido());
+            lblPedido.setText(lblPedido.getText()+"#"+_pedidoP.getNumPedido());
+            lblNumArt.setText(lblNumArt.getText()+_pedidoP.getNumArticulos());
+            lblTotal.setText(lblTotal.getText()+String.format("%.2f", _pedidoP.getTotal())+" €");
+            
+            aACT = pedidoP.getTicketPedido();
+            butAtras.setVisible(false);
+        }
+        else{
+            setTitle(getTitle()+pedidoR.getId());
+            lblPedido.setText(lblPedido.getText()+"#"+pedidoR.getId()+" - "+pedidoR.getFecha());
+            lblNumArt.setText(lblNumArt.getText()+pedidoR.getNumArticulos());
+            lblTotal.setText(lblTotal.getText()+String.format("%.2f", pedidoR.getTotal())+" €");
+            
+            aACT = new ArrayList();
+            for(Integer iId_Stock : pedidoR.getArticulosStock()){
+                Stock stock = new Stock(iId_Stock);
+                Articulo_Color_Talla act = new Articulo_Color_Talla(
+                        stock.getId_Articulo(), stock.getId_Color(),
+                        stock.getId_Talla());
+                aACT.add(act);
             }
-        });
-        
-        setTitle(getTitle()+_pedidoP.getNumPedido());
-        lblPedido.setText(lblPedido.getText()+"#"+_pedidoP.getNumPedido());
-        
-        for(PedidoPendiente.Articulo_Color_Talla art_col_tal : _pedidoP.getTicketPedido()){
+            
+            txtCodPostal.setText(String.format("%d", pedidoR.getCodPostal()));
+            txtCodPostal.setEditable(false);
+            if(pedidoR.getDirEnvio().equals("Domicilio")) cmbDireccion.setSelectedIndex(1);
+            cmbDireccion.setEnabled(false);
+            butConfirmar.setVisible(false);
+        }
+        setDireccion(0);
+          
+        for(Articulo_Color_Talla art_col_tal : aACT){
             
             Articulo articulo = null;
             Marca marca = null;
@@ -118,10 +146,14 @@ public class IfrPedido extends javax.swing.JFrame {
             }
         }
         
-        lblNumArt.setText(lblNumArt.getText()+_pedidoP.getNumArticulos());
-        lblTotal.setText(lblTotal.getText()+String.format("%.2f", _pedidoP.getTotal())+" €");
         
-        setDireccion();
+        
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                cerrar();
+            }
+        });
     }
     
     @Override
@@ -129,10 +161,29 @@ public class IfrPedido extends javax.swing.JFrame {
         Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
         return retValue;
     }
+     
+    private void atras(){
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame ifrPedidos = null;
+            try {
+                ifrPedidos = new IfrPedidosRealizados();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, 
+                "Error al leer la base de datos.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            }
+            if(ifrPedidos != null){
+                ifrPedidos.setLocationRelativeTo(this);
+                ifrPedidos.setVisible(true);
+            }
+            this.dispose();
+        });
+    }
     
-    private void setDireccion()
+    private void setDireccion(int direccion)
     {
-        if(cmbDireccion.getSelectedIndex() == 0)
+        if(direccion == 0)
         {
             lblNombre.setVisible(false);
             txtNombre.setVisible(false);
@@ -170,8 +221,13 @@ public class IfrPedido extends javax.swing.JFrame {
     
     private void cerrar()
     {
-        _pedidoP.setAbierto(false);
-        this.dispose();
+        if(_pedidoP != null){
+            _pedidoP.setAbierto(false);
+            this.dispose();
+        }
+        else{
+            atras();
+        }
     }
 
     /**
@@ -216,6 +272,7 @@ public class IfrPedido extends javax.swing.JFrame {
         butConfirmar = new javax.swing.JButton();
         lblCiudad = new javax.swing.JLabel();
         txtCiudad = new javax.swing.JTextField();
+        butAtras = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -339,6 +396,16 @@ public class IfrPedido extends javax.swing.JFrame {
 
         lblCiudad.setText("Ciudad");
 
+        butAtras.setBackground(java.awt.Color.red);
+        butAtras.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butAtras.setForeground(new java.awt.Color(255, 255, 255));
+        butAtras.setText("Atrás");
+        butAtras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butAtrasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -353,9 +420,6 @@ public class IfrPedido extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jSeparator4)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(butConfirmar))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblDireccion)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -395,7 +459,12 @@ public class IfrPedido extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblEmail)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtEmail))))
+                                .addComponent(txtEmail))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(butConfirmar, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(butAtras, javax.swing.GroupLayout.Alignment.TRAILING)))))
                     .addComponent(lblPedido))
                 .addContainerGap())
         );
@@ -406,8 +475,7 @@ public class IfrPedido extends javax.swing.JFrame {
                 .addComponent(lblPedido)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator3)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -448,7 +516,10 @@ public class IfrPedido extends javax.swing.JFrame {
                             .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(butConfirmar)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(butAtras)
+                        .addGap(0, 109, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -456,7 +527,7 @@ public class IfrPedido extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmbDireccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbDireccionActionPerformed
-        setDireccion();
+        setDireccion(cmbDireccion.getSelectedIndex());
     }//GEN-LAST:event_cmbDireccionActionPerformed
 
     private void butConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butConfirmarActionPerformed
@@ -474,9 +545,49 @@ public class IfrPedido extends javax.swing.JFrame {
         if(n==0){
             try {
                 ArrayList<Integer> aiArticulosStock = new ArrayList();
+                Map<Integer, Integer> map = new HashMap<Integer, Integer>();
                 for(Articulo_Color_Talla act : _pedidoP.getTicketPedido()){
-                    aiArticulosStock.add(Stock.Select(act.getId_Articulo(), act.getId_Color(),
-                            act.getId_Talla(), null).get(0).getId());
+                    Stock stock = Stock.Select(act.getId_Articulo(), act.getId_Color(),
+                            act.getId_Talla(), null).get(0);
+                    /*
+                    if(stock.getExistencias()>0) aiArticulosStock.add(stock.getId());
+                    else throw new Exception(){
+                        @Override
+                        public String toString(){
+                            return "No hay existencias.";
+                        }
+                    };   
+                    */
+                    aiArticulosStock.add(stock.getId());
+                    
+                    if(!map.containsKey(stock.getId())) map.put(stock.getId(), 1);
+                    else map.put(stock.getId(), map.get(stock.getId())+1);
+                }
+                
+                //COMPROBAR SI HAY EXISTENCIAS PARA TODOS LOS ARTICULOS DEL PEDIDO
+                for(Integer iId_Stock : aiArticulosStock){
+                    Stock stock = new Stock(iId_Stock);
+                    if(stock.getExistencias()-map.get(iId_Stock) < 0){
+                        Articulo articulo = new Articulo(stock.getId_Articulo());
+                        Color color = new Color(stock.getId_Color());
+                        Talla talla = new Talla(stock.getId_Talla());
+                        throw new Exception(){
+                            @Override
+                            public String toString(){
+                                return "No hay existencias de:\n"+
+                                        articulo.getNombre()+"\n"+
+                                        "Color: "+color.getNombre()+"\n"+
+                                        "Talla: "+talla.getNombre();
+                            }
+                        };
+                    }  
+                }
+                
+                //REALIZAR LA RESTA EN EXISTENCIAS
+                for(Integer iId_Stock : aiArticulosStock){
+                    Stock s = new Stock(iId_Stock);
+                    s.setExistencias(s.getExistencias()-1);
+                    s.Update();
                 }
                 
                 Integer codPostal = null;
@@ -485,14 +596,24 @@ public class IfrPedido extends javax.swing.JFrame {
                 Pedido.Create(new Date(System.currentTimeMillis()), _pedidoP.getNumArticulos(),
                         _pedidoP.getTotal(), codPostal,
                         cmbDireccion.getSelectedItem().toString(), aiArticulosStock);
+                
+                cerrar();
             } catch (Exception ex) {
-                Logger.getLogger(IfrPedido.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, 
+                    "Error al aceptar el pedido.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
             }
-           cerrar();
+           
         }
     }//GEN-LAST:event_butConfirmarActionPerformed
 
+    private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
+        atras();
+    }//GEN-LAST:event_butAtrasActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton butAtras;
     private javax.swing.JButton butConfirmar;
     private javax.swing.JComboBox<String> cmbDireccion;
     private javax.swing.JLabel jLabel1;

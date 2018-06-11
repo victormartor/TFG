@@ -108,13 +108,16 @@ public class IfrPrincipal extends javax.swing.JFrame {
             if(!pedido.getAbierto())
             {
                 java.awt.EventQueue.invokeLater(() -> {
-                    Frame ifrPedido = new IfrPedido(pedido);
-                    ifrPedido.setLocationRelativeTo(this);
-                    ifrPedido.setVisible(true);
-                    pedido.setFrame(ifrPedido);
-                });
-                
-                pedido.setAbierto(true);
+                    try {
+                        Frame ifrPedido = new IfrPedido(pedido, null);
+                        ifrPedido.setLocationRelativeTo(this);
+                        ifrPedido.setVisible(true);
+                        pedido.setFrame(ifrPedido);
+                        pedido.setAbierto(true);
+                    } catch (Exception ex) {
+                        Logger.getLogger(IfrPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });  
             }
             else
             {
@@ -170,6 +173,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
         MenuItemTallas = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         MenuItemConfig = new javax.swing.JMenuItem();
+        MenuVer = new javax.swing.JMenu();
+        MenuItemPedidos = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("EasyShop");
@@ -276,6 +281,18 @@ public class IfrPrincipal extends javax.swing.JFrame {
         MenuGestionar.add(MenuItemConfig);
 
         jMenuBar1.add(MenuGestionar);
+
+        MenuVer.setText("Ver");
+
+        MenuItemPedidos.setText("Pedidos realizados");
+        MenuItemPedidos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuItemPedidosActionPerformed(evt);
+            }
+        });
+        MenuVer.add(MenuItemPedidos);
+
+        jMenuBar1.add(MenuVer);
 
         setJMenuBar(jMenuBar1);
 
@@ -513,6 +530,25 @@ public class IfrPrincipal extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_MenuItemExistenciasActionPerformed
 
+    private void MenuItemPedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemPedidosActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame ifrPedidos = null;
+            try {
+                ifrPedidos = new IfrPedidosRealizados();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, 
+                "Error al leer la base de datos.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            }
+            if(ifrPedidos != null){
+                ifrPedidos.setLocationRelativeTo(this);
+                ifrPedidos.setVisible(true);
+            }
+            //this.dispose();
+        });
+    }//GEN-LAST:event_MenuItemPedidosActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -554,7 +590,9 @@ public class IfrPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem MenuItemColores;
     private javax.swing.JMenuItem MenuItemConfig;
     private javax.swing.JMenuItem MenuItemExistencias;
+    private javax.swing.JMenuItem MenuItemPedidos;
     private javax.swing.JMenuItem MenuItemTallas;
+    private javax.swing.JMenu MenuVer;
     private javax.swing.JButton butEliminar;
     private javax.swing.JToggleButton butEstadoServidor;
     private javax.swing.JButton butVerPedido;
