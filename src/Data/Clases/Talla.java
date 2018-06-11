@@ -137,9 +137,11 @@ public class Talla {
            Connection con = null;
            ResultSet rs = null;
            try {
+                   String sQuery = "SELECT Id FROM Talla"
+                                   + Where(sNombre, Es_Numero);
+                   if(Es_Numero) sQuery += " ORDER BY Nombre";
                    con = Data.Connection();
-                   rs = con.createStatement().executeQuery("SELECT Id FROM Talla"
-                                   + Where(sNombre, Es_Numero));
+                   rs = con.createStatement().executeQuery(sQuery);
 
                    while(rs.next()) 
                            aTallas.add(new Talla(rs.getInt("Id")));

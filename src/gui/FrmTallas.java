@@ -93,6 +93,7 @@ public class FrmTallas extends javax.swing.JFrame {
             public String getElementAt(int i) { return strings[i]; }
         });
         lTallasLetra.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lTallasLetra.setSelectionBackground(new java.awt.Color(0, 0, 0));
         jScrollPane1.setViewportView(lTallasLetra);
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
@@ -106,6 +107,7 @@ public class FrmTallas extends javax.swing.JFrame {
             public String getElementAt(int i) { return strings[i]; }
         });
         lTallasNumero.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lTallasNumero.setSelectionBackground(new java.awt.Color(0, 0, 0));
         jScrollPane2.setViewportView(lTallasNumero);
 
         butEliminarLetra.setBackground(java.awt.Color.red);
@@ -271,7 +273,9 @@ public class FrmTallas extends javax.swing.JFrame {
         if(sTalla != null){
             if(isNumeric(sTalla)){
                 try {
-                    _modLetras.addTalla(Talla.Create(sTalla, true));
+                    Talla.Create(sTalla, true);
+                    _modNumeros = new TallaListModel(Talla.Select(null, true));
+                    lTallasNumero.setModel(_modNumeros);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, 
                     "Error al crear la talla.\n"+ex.toString(), 

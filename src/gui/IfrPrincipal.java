@@ -177,7 +177,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         setTitle("EasyShop");
         setBackground(new java.awt.Color(255, 255, 255));
         setIconImage(getIconImage());
-        setMinimumSize(new java.awt.Dimension(433, 414));
+        setMinimumSize(new java.awt.Dimension(433, 490));
 
         lblNombreTienda.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblNombreTienda.setText("Nombre tienda");
@@ -319,7 +319,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(butEstadoServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -335,7 +335,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblIP)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
@@ -406,7 +406,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
                             String sMensaje = _servidor.obtenerMensaje();
 
                             if(!isInterrupted()) {
-                                System.out.println(sMensaje);
+                                //System.out.println(sMensaje);
                                 int iId_Marca;
                                 int iId_Categoria;
                                 int iId_Articulo;
@@ -446,10 +446,13 @@ public class IfrPrincipal extends javax.swing.JFrame {
                                         iId_Articulo = Integer.parseInt(_servidor.obtenerMensaje());
                                         _servidor.enviarCombinacionesArticulo(iId_Articulo);
                                         break;
+                                    case "pedido":
+                                        sMensaje = _servidor.obtenerPedido();
+                                        _modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
+                                        _servidor.enviarMensaje(String.format("%d",_numPedidos));
+                                        _numPedidos++;
+                                        break;
                                 }
-
-                                //_modPedidos.addPedido(new PedidoPendiente(sMensaje, _numPedidos));
-                                //_numPedidos++;
                             } 
                         }catch(Exception ex){ 
                             lblException.setText(" "+ex.toString());
@@ -497,7 +500,7 @@ public class IfrPrincipal extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmExistencias = null;
             try {
-                frmExistencias = new FrmExistencias();
+                frmExistencias = new FrmExistencias(null);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, 
                 "Error al leer la base de datos.\n"+ex.toString(), 

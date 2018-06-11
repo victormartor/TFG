@@ -33,7 +33,7 @@ public class FrmExistencias extends javax.swing.JFrame {
     /**
      * Creates new form FrmStock
      */
-    public FrmExistencias() throws Exception {
+    public FrmExistencias(String sNombre_Articulo) throws Exception {
         initComponents();
         
         _aStock = new ArrayList();
@@ -68,6 +68,11 @@ public class FrmExistencias extends javax.swing.JFrame {
                 cerrar();
             }
         });
+        
+        if(sNombre_Articulo != null){
+            txtBuscar.setText(sNombre_Articulo);
+            buscar();
+        }
     }
     
     @Override

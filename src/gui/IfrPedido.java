@@ -8,6 +8,7 @@ package gui;
 import Data.Clases.Articulo;
 import Data.Clases.Categoria;
 import Data.Clases.Color;
+import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import Data.Clases.PedidoPendiente;
 import Data.Clases.Talla;
@@ -15,6 +16,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -64,13 +66,37 @@ public class IfrPedido extends javax.swing.JFrame {
             }
             
             if(articulo != null && marca != null && color != null && talla != null){
-                String nombre = null;
-                if(articulo.getNombre().length()>30) nombre = articulo.getNombre().substring(0, 30)+"...";
-                else nombre = articulo.getNombre();
+                
+                JLabel iconoArticulo = new JLabel();
+                Image image = null;
+                try {
+                    image = new ImageIcon(articulo.Get_Imagenes_Color(color.getId()).get(0).getRuta()).getImage();
+                } catch (Exception ex) {
+                    Logger.getLogger(IfrPedido.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if(image != null){
+                    ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(-1,100,Image.SCALE_SMOOTH));
+                    iconoArticulo.setIcon(iconoEscalado);
+                }
+                iconoArticulo.setVerticalAlignment(SwingConstants.TOP);
+                panelTicket.add(iconoArticulo);
+                
+                String sNombre = null;
+                if(articulo.getNombre().length()>20) sNombre = articulo.getNombre().substring(0, 20)+"...";
+                else sNombre = articulo.getNombre();
+                
+                String sMarca = null;
+                if(marca.getNombre().length()>20) sMarca = marca.getNombre().substring(0, 20)+"...";
+                else sMarca = marca.getNombre();
+                
+                String sColor = null;
+                if(color.getNombre().length()>10) sColor = color.getNombre().substring(0, 10)+"...";
+                else sColor = color.getNombre();
+                
                 JLabel pedido = new JLabel();
-                pedido.setText("<html>"+nombre+" <br> "
-                        + "Marca: "+marca.getNombre()+" <br> "
-                        + "Color: "+color.getNombre()+" <br> "
+                pedido.setText("<html>"+sNombre+" <br> "
+                        + sMarca+" <br> "
+                        + "Color: "+sColor+" <br> "
                         + "Talla: "+talla.getNombre()+"</html>");
                 pedido.setVerticalAlignment(SwingConstants.TOP);
                 pedido.setFont(panelTicket.getFont());
@@ -224,7 +250,7 @@ public class IfrPedido extends javax.swing.JFrame {
 
         panelTicket.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         panelTicket.setMaximumSize(new java.awt.Dimension(537, 358));
-        panelTicket.setLayout(new java.awt.GridLayout(0, 2, 0, 20));
+        panelTicket.setLayout(new java.awt.GridLayout(0, 3, 0, 20));
         jScrollPane1.setViewportView(panelTicket);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);

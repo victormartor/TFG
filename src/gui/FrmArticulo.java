@@ -306,6 +306,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         lblArticulo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jSeparator4 = new javax.swing.JSeparator();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agregar artículo");
@@ -443,6 +444,16 @@ public class FrmArticulo extends javax.swing.JFrame {
 
         jLabel1.setText("Artículos relacionados");
 
+        jButton1.setBackground(new java.awt.Color(0, 0, 0));
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Gestionar existencias");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -451,7 +462,8 @@ public class FrmArticulo extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(butGuardar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(butAtras)
@@ -501,7 +513,7 @@ public class FrmArticulo extends javax.swing.JFrame {
                                     .addComponent(butAgregarCombinacion, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(butEliminarCombinacion, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))))
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -553,7 +565,8 @@ public class FrmArticulo extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(butAtras)
-                            .addComponent(butGuardar)))
+                            .addComponent(butGuardar)
+                            .addComponent(jButton1)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
@@ -696,6 +709,26 @@ public class FrmArticulo extends javax.swing.JFrame {
         _bCambios = true;
     }//GEN-LAST:event_txtPVPKeyTyped
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        comprobar_cambios();
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmExistencias = null;
+            try {
+                frmExistencias = new FrmExistencias(_articulo.getNombre());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, 
+                "Error al leer la base de datos.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            }
+            if(frmExistencias != null){
+                frmExistencias.setLocationRelativeTo(this);
+                frmExistencias.setVisible(true);
+            }
+            //this.dispose();
+        });
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butAgregarColor;
     private javax.swing.JButton butAgregarCombinacion;
@@ -704,6 +737,7 @@ public class FrmArticulo extends javax.swing.JFrame {
     private javax.swing.JButton butEliminarCombinacion;
     private javax.swing.JButton butGuardar;
     private javax.swing.JCheckBox checkEs_Numero;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

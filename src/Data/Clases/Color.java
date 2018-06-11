@@ -86,6 +86,17 @@ public class Color {
         try {
                 con = Data.Connection();
                 
+                if(con.createStatement().executeQuery("SELECT * "
+                        + "FROM articulo_color "
+                        + "WHERE Id_Color = "+_iId).next())
+                    throw new Exception(){
+                        @Override
+                        public String toString(){
+                            return "Este color está asociado a un artículo.";
+                        }
+                    };
+                
+                
                 con.createStatement().executeUpdate("DELETE FROM articulo_color WHERE Id_Color = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM articulo_color_imagen WHERE Id_Color = " + _iId);
                 con.createStatement().executeUpdate("DELETE FROM stock WHERE Id_Color = " + _iId);

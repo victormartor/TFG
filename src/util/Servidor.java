@@ -141,10 +141,12 @@ public class Servidor
     public void enviarTallasArticulo(int iId_Articulo) throws Exception
     {    
         Articulo articulo = new Articulo(iId_Articulo);
-        for(Integer i : articulo.getTallas()){
-            Talla talla = new Talla(i);
-            String sTalla = talla.getId()+":"+talla.getNombre();
-            _SocketDatos.enviaMensaje(sTalla);
+        ArrayList<Talla> aTallas = Talla.Select(null, articulo.getTalla_Es_Numero());
+        for(Talla talla : aTallas){
+            if(articulo.getTallas().contains(talla.getId())){
+                String sTalla = talla.getId()+":"+talla.getNombre();
+                _SocketDatos.enviaMensaje(sTalla);
+            }
         }
         _SocketDatos.enviaMensaje("FinTallas"); 
     }
@@ -156,13 +158,26 @@ public class Servidor
             Articulo art = new Articulo(i);
             String sArticulo = art.toString();
             Categoria categoria = new Categoria(art.getId_Categoria());
-            sArticulo += ":"+categoria.getId_Marca();
+            sArticulo += ":"+categoria.getId_Marca()+":"+categoria.getId();
             _SocketDatos.enviaMensaje(sArticulo);
             String sPartes[] = sArticulo.split(":");
             Imagen imagen = new Imagen(Integer.parseInt(sPartes[2]));
             _SocketDatos.enviaMensaje(imagen.getNombre());
         }
         _SocketDatos.enviaMensaje("FinComb");
+    }
+    
+    public String obtenerPedido() throws Exception
+    {  
+        String sMensaje;
+        String sPedido = "";
+        sMensaje = _SocketDatos.recibeMensaje();
+        while(!sMensaje.equals("FinTicket")){
+            sPedido += sMensaje+"\n";
+            sMensaje = _SocketDatos.recibeMensaje();
+        }
+        sPedido += "FinTicket";
+        return sPedido;
     }
 
 } // fin de class

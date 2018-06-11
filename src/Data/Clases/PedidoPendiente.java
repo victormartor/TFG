@@ -17,9 +17,9 @@ import java.util.Date;
  */
 public class PedidoPendiente {
     public class Articulo_Color_Talla{
-        private int _iId_Articulo;
-        private int _iId_Color;
-        private int _iId_Talla;
+        private Integer _iId_Articulo;
+        private Integer _iId_Color;
+        private Integer _iId_Talla;
         
         //GET
         public int getId_Articulo(){return _iId_Articulo;}

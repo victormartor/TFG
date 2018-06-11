@@ -69,6 +69,7 @@ public class FrmColores extends javax.swing.JFrame {
             public String getElementAt(int i) { return strings[i]; }
         });
         lColores.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lColores.setSelectionBackground(new java.awt.Color(0, 0, 0));
         jScrollPane1.setViewportView(lColores);
 
         butAgregar.setBackground(new java.awt.Color(0, 0, 0));
@@ -145,9 +146,8 @@ public class FrmColores extends javax.swing.JFrame {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
-                "¿Está seguro? Todos los artículos que tengan este color lo perderán,\n"
-                        + "asegúrese de que esos artículos tienen al menos otro color "
-                        + "asociado."
+                "¿Está seguro? El color solo se podrá eliminar si no está"
+                        + " asociado a ningún artículo."
                         + "\n Esta acción no se puede deshacer.",
                 "Eliminar color",
                 JOptionPane.YES_NO_OPTION,
