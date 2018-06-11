@@ -10,10 +10,16 @@ import Data.Clases.Categoria;
 import Data.Clases.Color;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
+import Data.Clases.Pedido;
 import Data.Clases.PedidoPendiente;
+import Data.Clases.PedidoPendiente.Articulo_Color_Talla;
+import Data.Clases.Stock;
 import Data.Clases.Talla;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -44,7 +50,7 @@ public class IfrPedido extends javax.swing.JFrame {
         });
         
         setTitle(getTitle()+_pedidoP.getNumPedido());
-        lblPedido.setText(lblPedido.getText()+_pedidoP.getNumPedido());
+        lblPedido.setText(lblPedido.getText()+"#"+_pedidoP.getNumPedido());
         
         for(PedidoPendiente.Articulo_Color_Talla art_col_tal : _pedidoP.getTicketPedido()){
             
@@ -385,7 +391,7 @@ public class IfrPedido extends javax.swing.JFrame {
                                         .addComponent(lblBloque)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(txtBloque, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 63, Short.MAX_VALUE))
+                                .addGap(0, 103, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblEmail)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -466,7 +472,23 @@ public class IfrPedido extends javax.swing.JFrame {
             options[0]); //default button title
         
         if(n==0){
-           cerrar(); 
+            try {
+                ArrayList<Integer> aiArticulosStock = new ArrayList();
+                for(Articulo_Color_Talla act : _pedidoP.getTicketPedido()){
+                    aiArticulosStock.add(Stock.Select(act.getId_Articulo(), act.getId_Color(),
+                            act.getId_Talla(), null).get(0).getId());
+                }
+                
+                Integer codPostal = null;
+                if(!txtCodPostal.getText().equals("")) codPostal = Integer.parseInt(txtCodPostal.getText());
+            
+                Pedido.Create(new Date(System.currentTimeMillis()), _pedidoP.getNumArticulos(),
+                        _pedidoP.getTotal(), codPostal,
+                        cmbDireccion.getSelectedItem().toString(), aiArticulosStock);
+            } catch (Exception ex) {
+                Logger.getLogger(IfrPedido.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           cerrar();
         }
     }//GEN-LAST:event_butConfirmarActionPerformed
 

@@ -41,6 +41,7 @@ public class FrmConfig extends javax.swing.JFrame {
         }
         
         txtNombreTienda.setText(_aConfig.get(0).getValor());
+        txtEmail.setText(_aConfig.get(1).getValor());
     }
     
     @Override
@@ -61,11 +62,13 @@ public class FrmConfig extends javax.swing.JFrame {
         lblNombreTienda = new javax.swing.JLabel();
         txtNombreTienda = new javax.swing.JTextField();
         butGuardar = new javax.swing.JButton();
+        lblEmail = new javax.swing.JLabel();
+        txtEmail = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Configuración");
         setIconImage(getIconImage());
-        setMinimumSize(new java.awt.Dimension(600, 120));
+        setMinimumSize(new java.awt.Dimension(400, 150));
 
         lblNombreTienda.setText("Nombre de la tienda:");
 
@@ -78,6 +81,8 @@ public class FrmConfig extends javax.swing.JFrame {
             }
         });
 
+        lblEmail.setText("Email:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -86,12 +91,16 @@ public class FrmConfig extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 261, Short.MAX_VALUE)
                         .addComponent(butGuardar))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblNombreTienda)
-                        .addGap(19, 19, 19)
-                        .addComponent(txtNombreTienda, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblNombreTienda)
+                            .addComponent(lblEmail))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtNombreTienda)
+                            .addComponent(txtEmail))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -101,7 +110,11 @@ public class FrmConfig extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNombreTienda)
                     .addComponent(txtNombreTienda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblEmail)
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(butGuardar)
                 .addContainerGap())
         );
@@ -112,6 +125,7 @@ public class FrmConfig extends javax.swing.JFrame {
     private void butGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butGuardarActionPerformed
         _lblNombreTienda.setText(txtNombreTienda.getText());
         _aConfig.get(0).setValor(txtNombreTienda.getText());
+        _aConfig.get(1).setValor(txtEmail.getText());
         
         try{
             for(Configuracion c : _aConfig){
@@ -128,7 +142,9 @@ public class FrmConfig extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butGuardar;
+    private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblNombreTienda;
+    private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtNombreTienda;
     // End of variables declaration//GEN-END:variables
 }

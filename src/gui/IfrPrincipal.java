@@ -80,9 +80,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
         ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,-1,Image.SCALE_SMOOTH));
         icono_logo.setIcon(iconoEscalado);
         
-        /*
-        String sPedido = "30:1:4\n"
-                + "32:4:4\n"
+        String sPedido = "39:19:3\n"
+                + "40:23:6\n"
                 + "FinTicket";
         try {
             _modPedidos.addPedido(new PedidoPendiente(sPedido, _numPedidos));
@@ -90,7 +89,6 @@ public class IfrPrincipal extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("Error al crear el pedido. "+ex.toString());
         }  
-        */
     }
     
     @Override

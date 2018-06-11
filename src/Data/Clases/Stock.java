@@ -17,6 +17,7 @@ import java.util.ArrayList;
  */
 public class Stock {
 	
+        private int _iId;
 	private int _iId_Articulo;
 	private int _iId_Color;
         private int _iId_Talla;
@@ -29,6 +30,7 @@ public class Stock {
         private String _sColor;
         private String _sTalla;
 	
+        public int getId() {return _iId;}
 	public int getId_Articulo() {return _iId_Articulo;}	
 	public int getId_Color() {return _iId_Color;}
         public int getId_Talla() {return _iId_Talla;}
@@ -42,7 +44,7 @@ public class Stock {
         
 	public void setExistencias(int iExistencias) {_iExistencias = iExistencias;}
 	
-	public Stock(int iId_Articulo, int iId_Color, int iId_Talla) throws Exception {
+	public Stock(int iId) throws Exception {
             Connection con = null;
 	    ResultSet rs = null;
 	 	try {
@@ -51,22 +53,21 @@ public class Stock {
                                         + "Id_Articulo, Id_Color, Id_Talla, Existencias "
 	 				+ "FROM Stock "
 	 				+ "WHERE "
-                                        + "Id_Articulo = " + iId_Articulo 
-                                        + " AND Id_Color = " + iId_Color 
-                                        + " AND Id_Talla = " + iId_Talla + ";");
+                                        + "Id = " + iId+";");
 	 		rs.next();
 	 		
-	 		_iId_Articulo = iId_Articulo;
-                        _iId_Color = iId_Color;
-                        _iId_Talla = iId_Talla;
+                        _iId = iId;
+	 		_iId_Articulo = rs.getInt("Id_Articulo");
+                        _iId_Color = rs.getInt("Id_Color");
+                        _iId_Talla = rs.getInt("Id_Talla");
                         _iExistencias = rs.getInt("Existencias");
                         
                         _sMarca = new Marca(new Categoria(
-                                new Articulo(iId_Articulo).getId_Categoria()).getId_Marca()).getNombre();
-                        _sCategoria = new Categoria(new Articulo(iId_Articulo).getId_Categoria()).getNombre();
-                        _sArticulo = new Articulo(iId_Articulo).getNombre();
-                        _sColor = new Color(iId_Color).getNombre();
-                        _sTalla = new Talla(iId_Talla).getNombre();
+                                new Articulo(_iId_Articulo).getId_Categoria()).getId_Marca()).getNombre();
+                        _sCategoria = new Categoria(new Articulo(_iId_Articulo).getId_Categoria()).getNombre();
+                        _sArticulo = new Articulo(_iId_Articulo).getNombre();
+                        _sColor = new Color(_iId_Color).getNombre();
+                        _sTalla = new Talla(_iId_Talla).getNombre();
 	    }
 	 	catch (SQLException ee) { throw ee; }
 		finally {
@@ -97,7 +98,7 @@ public class Stock {
                                         + iId_Color + ", "
                                         + iId_Talla + ",0);");
 			
-			return new Stock(iId_Articulo, iId_Color, iId_Talla);
+			return new Stock(Data.LastId(con));
 		}
 		catch (SQLException ee) { throw ee; }
 		finally {
@@ -117,10 +118,8 @@ public class Stock {
         Connection con = null;
         try {
                 con = Data.Connection();
-                con.createStatement().executeUpdate("DELETE FROM Marca WHERE "
-                                        + "Id_Articulo = " + _iId_Articulo 
-                                        + " AND Id_Color = " + _iId_Color 
-                                        + " AND Id_Talla = " + _iId_Talla + ";");
+                con.createStatement().executeUpdate("DELETE FROM Stock WHERE "
+                                        + "Id = " + _iId + ";");
                 _bIsDeleted = true;
         }
         catch (SQLException ee) { throw ee; }
@@ -144,9 +143,7 @@ public class Stock {
                    con.createStatement().executeUpdate("UPDATE Stock "
                                    + "SET Existencias = " + _iExistencias
                                    + " WHERE "
-                                    + "Id_Articulo = " + _iId_Articulo 
-                                    + " AND Id_Color = " + _iId_Color 
-                                    + " AND Id_Talla = " + _iId_Talla + ";");
+                                    + "Id = " + _iId + ";");
            }
            catch (SQLException ee) { throw ee; }
            finally {
@@ -171,14 +168,12 @@ public class Stock {
            try {
                    con = Data.Connection();
                    rs = con.createStatement().executeQuery("SELECT "
-                                    + "Id_Articulo, Id_Color, Id_Talla "
+                                    + "Id "
                                     + "FROM Stock"
                                     + Where(iId_Articulo, iId_Color, iId_Talla, iExistencias));
 
                    while(rs.next()) 
-                           aStock.add(new Stock(rs.getInt("Id_Articulo"), 
-                                   rs.getInt("Id_Color"), 
-                                   rs.getInt("Id_Talla")));
+                           aStock.add(new Stock(rs.getInt("Id")));
 
                    return aStock;
            }
