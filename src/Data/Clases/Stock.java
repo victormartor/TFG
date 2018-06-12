@@ -77,7 +77,7 @@ public class Stock {
 	}
 	
     public String toString() {
-        return getId_Articulo() + ":" + getId_Color() + ":" + getId_Talla() + ":" + getExistencias(); 
+        return getId_Articulo() + "-" + getId_Color() + "-" + getId_Talla(); 
     }
 	
     /**

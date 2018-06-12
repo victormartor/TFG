@@ -9,6 +9,7 @@ import Data.Clases.Articulo;
 import Data.Clases.Articulo_Color_Talla;
 import Data.Clases.Categoria;
 import Data.Clases.Color;
+import Data.Clases.Configuracion;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import Data.Clases.Pedido;
@@ -23,8 +24,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -160,6 +169,37 @@ public class IfrPedido extends javax.swing.JFrame {
      public Image getIconImage() {
         Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
         return retValue;
+    }
+     
+     private void enviarConGMail(String destinatario, String asunto, String cuerpo) {
+        // Esto es lo que va delante de @gmail.com en tu cuenta de correo. Es el remitente también.
+        String remitente = "easyshopuca";  //Para la dirección nomcuenta@gmail.com
+        String clave = "uca-easySHOP18";
+        
+        Properties props = System.getProperties();
+        props.put("mail.smtp.host", "smtp.gmail.com");  //El servidor SMTP de Google
+        //props.put("mail.smtp.user", remitente);
+        //props.put("mail.smtp.clave", "miClaveDeGMail");    //La clave de la cuenta
+        props.put("mail.smtp.auth", "true");    //Usar autenticación mediante usuario y clave
+        props.put("mail.smtp.starttls.enable", "true"); //Para conectar de manera segura al servidor SMTP
+        props.put("mail.smtp.port", "587"); //El puerto SMTP seguro de Google
+
+        Session session = Session.getDefaultInstance(props);
+        MimeMessage message = new MimeMessage(session);
+
+        try {
+            message.setFrom("EasyShop");
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinatario));   //Se podrían añadir varios de la misma manera
+            message.setSubject(asunto);
+            message.setText(cuerpo);
+            Transport transport = session.getTransport("smtp");
+            transport.connect("smtp.gmail.com", remitente, clave);
+            transport.sendMessage(message, message.getAllRecipients());
+            transport.close();
+        }
+        catch (MessagingException me) {
+            me.printStackTrace();   //Si se produce un error
+        }
     }
      
     private void atras(){
@@ -593,10 +633,49 @@ public class IfrPedido extends javax.swing.JFrame {
                 Integer codPostal = null;
                 if(!txtCodPostal.getText().equals("")) codPostal = Integer.parseInt(txtCodPostal.getText());
             
-                Pedido.Create(new Date(System.currentTimeMillis()), _pedidoP.getNumArticulos(),
+                Pedido pedido = Pedido.Create(new Date(System.currentTimeMillis()), _pedidoP.getNumArticulos(),
                         _pedidoP.getTotal(), codPostal,
                         cmbDireccion.getSelectedItem().toString(), aiArticulosStock);
                 
+                //SI EL ENVIO ES A DOMICILIO SE ENVIARÁ UN CORREO CON LOS DATOS PERSONALES
+                if(cmbDireccion.getSelectedIndex() == 1){
+                    String destinatario = Configuracion.Select("Email", null).get(0).getValor();
+                    String asunto = "EasyShop - Envío a domicilio";
+                    String linea1 = "\n=====================================\n";
+                    String linea2 ="\n--------------------------------------\n";
+                    String cuerpo = "Pedido #"+pedido.getId()+linea1;
+                    cuerpo+= linea2+"ARTÍCULOS"+linea2;
+                    for(Integer iId_Stock : pedido.getArticulosStock()){
+                        Stock stock = new Stock(iId_Stock);
+                        Articulo articulo = new Articulo(stock.getId_Articulo());
+                        Marca marca = new Marca(new Categoria(articulo.getId_Categoria()).getId_Marca());
+                        Color color = new Color(stock.getId_Color());
+                        Talla talla = new Talla(stock.getId_Talla());
+                        
+                        cuerpo+= "Cod: "+stock.toString()+"\n"
+                                +articulo.getNombre()+"\n"
+                                +marca.getNombre()+"\n"
+                                +"Color: "+color.getNombre()+"\n"
+                                +"Talla: "+talla.getNombre()+"\n"
+                                +"Precio: "+articulo.getPVP()+" €\n\n";
+                    }
+                    cuerpo += "Total: "+pedido.getTotal()+" €";
+                    cuerpo += linea2+"DATOS DEL CLIENTE"+linea2
+                            +"Nombre: "+txtNombre.getText()+"\n"
+                            +"Ciudad: "+txtCiudad.getText()+"\n"
+                            +"Código Postal: "+txtCodPostal.getText()+"\n"
+                            +"Calle: "+txtCalle.getText()+"\n"
+                            +"Número: "+txtNumero.getText()+" Bloque: "+txtBloque.getText()+"\n"
+                            +"Teléfono: "+txtTfno.getText()+"\n"
+                            +"Email: "+txtEmail.getText()+linea1;
+                    
+                    enviarConGMail(destinatario,asunto,cuerpo);
+                }
+                
+                JOptionPane.showMessageDialog(this, 
+                "El pedido se ha almacenado correctamente.", 
+                "Mensaje del sistema", 
+                JOptionPane.PLAIN_MESSAGE);
                 cerrar();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, 
