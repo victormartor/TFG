@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 14-05-2018 a las 15:50:42
+-- Tiempo de generación: 12-06-2018 a las 13:37:43
 -- Versión del servidor: 5.7.17-log
 -- Versión de PHP: 5.6.30
 
@@ -19,6 +19,12 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `easyshop`
 --
+
+DROP DATABASE IF EXISTS easyshop;
+CREATE DATABASE easyshop CHARACTER SET utf8;
+USE easyshop;
+CREATE USER IF NOT EXISTS 'easyshop_admin'@'localhost' IDENTIFIED BY 'easyshopUCA18';
+GRANT ALL ON easyshop.* TO 'easyshop_admin'@'localhost';
 
 -- --------------------------------------------------------
 
@@ -83,6 +89,7 @@ CREATE TABLE `art_combina_con` (
   `Id_Articulo2` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+
 -- --------------------------------------------------------
 
 --
@@ -114,6 +121,26 @@ CREATE TABLE `color` (
 
 INSERT INTO `color` (`Id`, `Nombre`) VALUES
 (-1, 'Nuevo color');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `configuracion`
+--
+
+CREATE TABLE `configuracion` (
+  `Id` int(11) NOT NULL,
+  `Campo` varchar(128) COLLATE utf8_spanish_ci NOT NULL,
+  `Valor` varchar(128) COLLATE utf8_spanish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `configuracion`
+--
+
+INSERT INTO `configuracion` (`Id`, `Campo`, `Valor`) VALUES
+(1, 'Nombre_tienda', 'Nombre tienda'),
+(2, 'Email', '');
 
 -- --------------------------------------------------------
 
@@ -150,15 +177,49 @@ CREATE TABLE `marca` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `pedido`
+--
+
+CREATE TABLE `pedido` (
+  `Id` int(11) NOT NULL,
+  `Fecha` date NOT NULL,
+  `NumArticulos` int(11) NOT NULL,
+  `Total` double NOT NULL,
+  `CodPostal` int(11) DEFAULT NULL,
+  `DirEnvio` varchar(128) COLLATE utf8_spanish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pedido_stock`
+--
+
+CREATE TABLE `pedido_stock` (
+  `Id_Pedido` int(11) NOT NULL,
+  `Id_Stock` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `stock`
 --
 
 CREATE TABLE `stock` (
+  `Id` int(11) NOT NULL,
   `Id_Articulo` int(11) NOT NULL,
-  `Id_Talla` int(11) NOT NULL,
   `Id_Color` int(11) NOT NULL,
+  `Id_Talla` int(11) NOT NULL,
   `Existencias` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `stock`
+--
+
 
 -- --------------------------------------------------------
 
@@ -258,6 +319,12 @@ ALTER TABLE `color`
   ADD PRIMARY KEY (`Id`);
 
 --
+-- Indices de la tabla `configuracion`
+--
+ALTER TABLE `configuracion`
+  ADD PRIMARY KEY (`Id`);
+
+--
 -- Indices de la tabla `imagen`
 --
 ALTER TABLE `imagen`
@@ -271,9 +338,23 @@ ALTER TABLE `marca`
   ADD KEY `Id_Imagen` (`Id_Imagen`);
 
 --
+-- Indices de la tabla `pedido`
+--
+ALTER TABLE `pedido`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indices de la tabla `pedido_stock`
+--
+ALTER TABLE `pedido_stock`
+  ADD KEY `Id_Pedido` (`Id_Pedido`,`Id_Stock`),
+  ADD KEY `Id_Stock` (`Id_Stock`);
+
+--
 -- Indices de la tabla `stock`
 --
 ALTER TABLE `stock`
+  ADD PRIMARY KEY (`Id`),
   ADD KEY `Id_Articulo` (`Id_Articulo`,`Id_Talla`,`Id_Color`),
   ADD KEY `Id_Color` (`Id_Color`),
   ADD KEY `Id_Talla` (`Id_Talla`);
@@ -292,32 +373,47 @@ ALTER TABLE `talla`
 -- AUTO_INCREMENT de la tabla `articulo`
 --
 ALTER TABLE `articulo`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT de la tabla `color`
 --
 ALTER TABLE `color`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+--
+-- AUTO_INCREMENT de la tabla `configuracion`
+--
+ALTER TABLE `configuracion`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `imagen`
 --
 ALTER TABLE `imagen`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT de la tabla `marca`
 --
 ALTER TABLE `marca`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+--
+-- AUTO_INCREMENT de la tabla `pedido`
+--
+ALTER TABLE `pedido`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+--
+-- AUTO_INCREMENT de la tabla `stock`
+--
+ALTER TABLE `stock`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT de la tabla `talla`
 --
 ALTER TABLE `talla`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 --
 -- Restricciones para tablas volcadas
 --
@@ -369,6 +465,13 @@ ALTER TABLE `categoria`
 --
 ALTER TABLE `marca`
   ADD CONSTRAINT `marca_ibfk_1` FOREIGN KEY (`Id_Imagen`) REFERENCES `imagen` (`Id`);
+
+--
+-- Filtros para la tabla `pedido_stock`
+--
+ALTER TABLE `pedido_stock`
+  ADD CONSTRAINT `pedido_stock_ibfk_1` FOREIGN KEY (`Id_Stock`) REFERENCES `stock` (`Id`),
+  ADD CONSTRAINT `pedido_stock_ibfk_2` FOREIGN KEY (`Id_Pedido`) REFERENCES `pedido` (`Id`);
 
 --
 -- Filtros para la tabla `stock`

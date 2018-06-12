@@ -80,8 +80,8 @@ public class IfrPrincipal extends javax.swing.JFrame {
         ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(100,-1,Image.SCALE_SMOOTH));
         icono_logo.setIcon(iconoEscalado);
         
-        String sPedido = "39:19:3\n"
-                + "40:23:6\n"
+        String sPedido = "1:1:3\n"
+                + "3:3:3\n"
                 + "FinTicket";
         try {
             _modPedidos.addPedido(new PedidoPendiente(sPedido, _numPedidos));

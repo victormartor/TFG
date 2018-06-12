@@ -64,10 +64,9 @@ public class prueba {
     }
     
     public static void main(String args[]) throws Exception{
-        String destinatario = Configuracion.Select("Email", null).get(0).getValor();
-        String asunto = "Prueba";
-        String cuerpo = "Esto es una prueba";
-        enviarConGMail(destinatario,asunto,cuerpo);
+        String OS = System.getProperty("os.name");
+        System.out.println(OS);
+        if(OS.contains("Win")) System.out.println("Es windows madafaca");
     }
 }
 
