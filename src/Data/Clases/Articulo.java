@@ -7,10 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- *
- * @author Víctor Martín Torres - 12/06/2018
+ * Representa un registro de la tabla Artículo.
  * 
- * Clase Articulo representa en un objeto una fila de la tabla Articulo
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class Articulo 
 {
@@ -47,8 +46,8 @@ public class Articulo
 
     /**
      * Constructor a partir de un Id obtiene el artículo de la base de datos
-     * @param iId - Id del artículo
-     * @throws java.sql.SQLException
+     * @param iId Id del artículo
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
     public Articulo(int iId) throws SQLException
     {
@@ -129,15 +128,15 @@ public class Articulo
     /**
      * Inserta un articulo en la base de datos
      * 
-     * @param sNombre - Nombre del artículo
-     * @param dPVP - PVP del artículo
-     * @param iId_Categoria - Id de la categoría a la que pertenece
-     * @param bTalla_Es_Numero - Está clasificado en tallas número
-     * @param aiTallas - Array de Id de tallas
-     * @param aiColores - Array de Id de colores
-     * @param aiCombinaciones - Array de Id de artículos que combinan
+     * @param sNombre Nombre del artículo
+     * @param dPVP PVP del artículo
+     * @param iId_Categoria Id de la categoría a la que pertenece
+     * @param bTalla_Es_Numero Está clasificado en tallas número
+     * @param aiTallas Array de Id de tallas
+     * @param aiColores Array de Id de colores
+     * @param aiCombinaciones Array de Id de artículos que combinan
      * @return devuelve el artículo insertado
-     * @throws java.sql.SQLException 
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
     public static Articulo Create(String sNombre, double dPVP, 
             int iId_Categoria, Boolean bTalla_Es_Numero,
@@ -189,7 +188,7 @@ public class Articulo
     * Elimina un artículo de la base de datos y marcamos la variable 
     * _bIsDeleted a true.
     * 
-    * @throws Exception
+    * @throws Exception Hay un error en la conexión o ya ha sido eliminado.
     */
    public void Delete() throws Exception
    {
@@ -233,7 +232,7 @@ public class Articulo
     * Actualiza el registro en la base de datos con los valores de las 
     * variables privadas.
     * 
-    * @throws Exception
+    * @throws Exception Hay un error en la conexión o ya ha sido eliminado.
     */
    public void Update() throws Exception 
    {
@@ -283,17 +282,17 @@ public class Articulo
     * Realiza una consulta SELECT a la base de datos con los parámetros de 
     * búsqueda indicados. Si alguno es nulo no se incluye en el SELECT.
     * 
-    * @param sNombre - Nombre del artículo
-    * @param dPVP - PVP del artículo
-    * @param iId_Categoria - Id de la cetegoría a la que pertenece
-    * @param bTalla_Es_Numero - Está clasificado en tallas número
+    * @param sNombre Nombre del artículo
+    * @param dPVP PVP del artículo
+    * @param iId_Categoria Id de la cetegoría a la que pertenece
+    * @param bTalla_Es_Numero Está clasificado en tallas número
     * @return devuelve una lista de los articulos que coincidan con los 
     * parámetros de búsqueda
-    * @throws Exception
+     * @throws java.sql.SQLException Hay un error en la conexión.
     */
    public static ArrayList<Articulo> Select(
            String sNombre, Double dPVP, Integer iId_Categoria, 
-           Boolean bTalla_Es_Numero) throws Exception
+           Boolean bTalla_Es_Numero) throws SQLException 
    {
         ArrayList<Articulo> aArticulos = new ArrayList<>();
 
@@ -310,7 +309,7 @@ public class Articulo
 
                 return aArticulos;
         }
-        catch (SQLException ee) { throw ee; }
+        catch (SQLException e) { throw e; }
         finally {
             if (rs != null) rs.close();
             if (con != null) con.close();
@@ -321,10 +320,10 @@ public class Articulo
     * Comprueba los parámetros recibidos como no nulos y añade la búsqueda 
     * a la consulta where
     * 
-    * @param sNombre - Nombre del artículo
-    * @param dPVP - PVP del artículo
-    * @param iId_Categoria - Id de la cetegoría a la que pertenece
-    * @param bTalla_Es_Numero - Está clasificado en tallas número
+    * @param sNombre Nombre del artículo
+    * @param dPVP PVP del artículo
+    * @param iId_Categoria Id de la cetegoría a la que pertenece
+    * @param bTalla_Es_Numero Está clasificado en tallas número
     * @return Devuelve la consulta WHERE como un String
     */
    private static String Where(String sNombre, Double dPVP, 
@@ -374,8 +373,8 @@ public class Articulo
    /**
     * Asocia un Color ya creado con el artículo
     * 
-     * @param color - Color a asociar
-     * @throws java.sql.SQLException
+     * @param color Color a asociar
+     * @throws java.sql.SQLException Hay un error en la conexión.
     */
    public void Add_Color(Color color) throws SQLException {
        Connection con = null;
@@ -396,12 +395,12 @@ public class Articulo
      * Obtiene una lista con las imágenes asociadas a un color ya asociado
      * con el artículo.
      * 
-     * @param iId_Color - Id del color
-     * @return Array de objetos Imagen 
-     * @throws java.lang.Exception
+     * @param iId_Color Id del color
+     * @return Array de objetos Imagen
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
    public ArrayList<Imagen> Get_Imagenes_Color(Integer iId_Color) 
-           throws Exception 
+           throws SQLException 
    {
        ArrayList<Imagen> aImagenes = new ArrayList<>();
        Connection con = null;
@@ -419,7 +418,7 @@ public class Articulo
 
                 return aImagenes;
         }
-        catch (SQLException ee) { throw ee; }
+        catch (SQLException e) { throw e; }
         finally {
             if (rs != null) rs.close();
             if (con != null) con.close();
@@ -429,9 +428,9 @@ public class Articulo
     /**
      * Asocia una imagen ya creada con un color ya asociado al artículo.
      * 
-     * @param iId_Color - Id del color
-     * @param iId_Imagen - Id de la imagen
-     * @throws java.sql.SQLException
+     * @param iId_Color Id del color
+     * @param iId_Imagen Id de la imagen
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
    public void Add_Imagen_Color(Integer iId_Color, Integer iId_Imagen) 
            throws SQLException 
@@ -455,10 +454,11 @@ public class Articulo
      * Desasocia un color que ya estaba asociado al artículo. Eliminando
      * también sus imágenes del servidor.
      * 
-     * @param iId_Color - Id del color
-     * @throws Exception
+     * @param iId_Color Id del color
+     * @throws Exception Hay un error en la conexión o alguna imagen ya está 
+     * eliminada
      */
-   public void Delete_Color(Integer iId_Color) throws Exception
+   public void Delete_Color(Integer iId_Color) throws Exception 
    {
        Connection con = null;
         try {
@@ -485,7 +485,7 @@ public class Articulo
 
             _aiColores.remove(iId_Color);
         }
-        catch (SQLException ee) { throw ee; }
+        catch (SQLException e) { throw e; }
         finally {
             if (con != null) con.close();
         }

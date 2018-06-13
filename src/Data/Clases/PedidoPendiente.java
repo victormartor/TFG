@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Data.Clases;
 
 import java.awt.Frame;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,24 +9,26 @@ import java.util.Date;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
+ * 
+ * Clase PedidoPendiente representa un pedido que aún no ha sido aceptado.
  */
-public class PedidoPendiente {
-    
-    private ArrayList<Articulo_Color_Talla> _aTicketPedido;
-    private int _iNumPedido;
+public class PedidoPendiente 
+{
+    private final ArrayList<Articulo_Color_Talla> _aTicketPedido;
+    private final int _iNumPedido;
     private double _dTotal;
+    private final String _sHora;
     private boolean _bAbierto;
     private Frame _frmPedido;
-    private String _sHora;
     
     //GET
     public ArrayList<Articulo_Color_Talla> getTicketPedido(){return _aTicketPedido;}
     public int getNumPedido(){return _iNumPedido;}
     public double getTotal(){return _dTotal;}
+    public String getHora(){return _sHora;}
     public boolean getAbierto(){return _bAbierto;}
     public Frame getFrame(){return _frmPedido;}
-    public String getHora(){return _sHora;}
     
     public int getNumArticulos(){return _aTicketPedido.size();}
     
@@ -38,7 +36,17 @@ public class PedidoPendiente {
     public void setAbierto(boolean state){_bAbierto = state;}
     public void setFrame(Frame frame){_frmPedido = frame;}
     
-    public PedidoPendiente(String sTicket, int iNumPedido) throws Exception{
+    /**
+     * Constructor a partir de un String lee todos los artículos del pedido y
+     * le asigna un número de pedido.
+     * 
+     * @param sTicket Ticket recibido de la aplicación android en formato
+     * String
+     * @param iNumPedido Número del pedido.
+     * @throws java.sql.SQLException Hay un error en la conexión.
+     */
+    public PedidoPendiente(String sTicket, int iNumPedido) throws SQLException 
+    {
         _aTicketPedido = new ArrayList<>();
         String[] lines = sTicket.split("\n");
         
@@ -65,6 +73,6 @@ public class PedidoPendiente {
         Date date = new Date();
         DateFormat hourFormat = new SimpleDateFormat("HH'h':mm'm':ss's'");
         
-        _sHora = hourFormat.format(date).toString();
+        _sHora = hourFormat.format(date);
     }
 }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author Víctor Martín Torres - 12/06/2018
  * 
- * Clase Color representa en un objeto una fila de la tabla Color
+ * Clase Color representa en un objeto una fila de la tabla Color.
  */
 public class Color 
 {
@@ -28,8 +28,8 @@ public class Color
 
     /**
      * Constructor a partir de un Id obtiene el color de la base de datos
-     * @param iId - Id del color
-     * @throws java.sql.SQLException
+     * @param iId Id del color
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
     public Color(int iId) throws SQLException  
     {
@@ -64,9 +64,9 @@ public class Color
     /**
      * Inserta un color en la base de datos
      * 
-     * @param sNombre
+     * @param sNombre Nombre del color.
      * @return devuelve el color insertado
-     * @throws java.sql.SQLException
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
     public static Color Create(String sNombre) throws SQLException  
     {
@@ -89,7 +89,7 @@ public class Color
     * Elimina un color de la base de datos y marcamos la variable 
     * _bIsDeleted a true.
     * 
-    * @throws Exception 
+    * @throws Exception Hay un error en la conexión o ya ha sido eliminada.
     */
    public void Delete() throws Exception
    {
@@ -136,7 +136,7 @@ public class Color
     * Actualiza el registro en la base de datos con los valores de las 
     * variables privadas.
     * 
-    * @throws Exception 
+    * @throws Exception Hay un error en la conexión o ya ha sido eliminada.
     */
    public void Update() throws Exception 
    {
@@ -160,10 +160,10 @@ public class Color
     * Realiza una consulta SELECT a la base de datos con los parámetros 
     * de búsqueda indicados. Si alguno es nulo no se incluye en el SELECT.
     * 
-    * @param sNombre - Nombre del color
+    * @param sNombre Nombre del color
     * @return devuelve una lista de los colores que coincidan con los 
     * parámetros de búsqueda
-     * @throws java.sql.SQLException
+    * @throws java.sql.SQLException Hay un error en la conexión.
     */
    public static ArrayList<Color> Select(
                    String sNombre) throws SQLException
@@ -194,7 +194,7 @@ public class Color
     * Comprueba los parámetros recibidos como no nulos y añade la búsqueda 
     * a la consulta where
     * 
-    * @param sNombre - Nombre del color
+    * @param sNombre Nombre del color
     * @return Devuelve la consulta WHERE como un String
     */
    private static String Where(String sNombre) 

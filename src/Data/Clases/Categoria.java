@@ -34,8 +34,8 @@ public class Categoria
 
     /**
      * Constructor a partir de un Id obtiene la categoría de la base de datos
-     * @param iId - Id de la categoría
-     * @throws java.sql.SQLException
+     * @param iId Id de la categoría
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
     public Categoria(int iId) throws SQLException  
     {
@@ -74,11 +74,11 @@ public class Categoria
     /**
      * Inserta una categoria en la base de datos
      * 
-     * @param sNombre - Nombre de la categoría
-     * @param iId_Imagen - Id de la imagen asociada
-     * @param iId_Marca - Id de la marca a la que pertenece
+     * @param sNombre Nombre de la categoría
+     * @param iId_Imagen Id de la imagen asociada
+     * @param iId_Marca Id de la marca a la que pertenece
      * @return devuelve la categoria insertada
-     * @throws java.sql.SQLException
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
     public static Categoria Create(String sNombre, int iId_Imagen, 
             int iId_Marca) throws SQLException 
@@ -104,7 +104,7 @@ public class Categoria
     * Elimina una categoria de la base de datos y marcamos la variable 
     * _bIsDeleted a true.
     * 
-    * @throws Exception 
+    * @throws Exception Hay un error en la conexión o ya ha sido eliminada.
     */
    public void Delete() throws Exception
    {
@@ -129,7 +129,7 @@ public class Categoria
     * Actualiza el registro en la base de datos con los valores de las 
     * variables privadas.
     * 
-    * @throws Exception 
+    * @throws Exception Hay un error en la conexión o ya ha sido eliminada.
     */
    public void Update() throws Exception 
    {
@@ -155,16 +155,16 @@ public class Categoria
     * Realiza una consulta SELECT a la base de datos con los parámetros de 
     * búsqueda indicados. Si alguno es nulo no se incluye en el SELECT.
     * 
-    * @param sNombre - Nombre de la categoría
-    * @param iId_Imagen - Id de la imagen asociada
-    * @param iId_Marca - Id de la marca a la que pertenece
+    * @param sNombre Nombre de la categoría
+    * @param iId_Imagen Id de la imagen asociada
+    * @param iId_Marca Id de la marca a la que pertenece
     * @return devuelve una lista de las categorias que coincidan con 
     * los parámetros de búsqueda
-    * @throws Exception
+    * @throws java.sql.SQLException Hay un error en la conexión.
     */
    public static ArrayList<Categoria> Select(
             String sNombre, Integer iId_Imagen, Integer iId_Marca) 
-           throws Exception
+           throws SQLException           
    {
         ArrayList<Categoria> aCategorias = new ArrayList<>();
 
@@ -180,7 +180,7 @@ public class Categoria
 
             return aCategorias;
         }
-        catch (SQLException ee) { throw ee; }
+        catch (SQLException e) { throw e; }
         finally {
             if (rs != null) rs.close();
             if (con != null) con.close();
@@ -191,9 +191,9 @@ public class Categoria
     * Comprueba los parámetros recibidos como no nulos y añade la búsqueda 
     * a la consulta where
     * 
-    * @param sNombre - Nombre de la categoría
-    * @param iId_Imagen - Id de la imagen asociada
-    * @param iId_Marca - Id de la marca a la que pertenece
+    * @param sNombre Nombre de la categoría
+    * @param iId_Imagen Id de la imagen asociada
+    * @param iId_Marca Id de la marca a la que pertenece
     * @return Devuelve la consulta WHERE como un String
     */
    private static String Where(String sNombre, Integer iId_Imagen, 

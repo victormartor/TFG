@@ -6,7 +6,8 @@ package Data.Clases;
  * 
  * Clase Articulo_Color_Talla creada para almacenar sus tres Ids
  */
-public class Articulo_Color_Talla{
+public class Articulo_Color_Talla
+{
     private final Integer _iId_Articulo;
     private final Integer _iId_Color;
     private final Integer _iId_Talla;

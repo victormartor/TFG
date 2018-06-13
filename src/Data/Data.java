@@ -10,14 +10,13 @@ import java.sql.SQLException;
 import util.Config;
 
 /**
- *
- * @author Víctor Martín Torres - 12/06/2018
- * 
- * Clase Data encargada de proporcionar métodos y variables generales
+ * Encargada de proporcionar métodos y variables generales
  * para la ejecución del programa.
+ * 
+ * @author Víctor Martín Torres - 12/06/2018
  */
-public class Data {
-    
+public class Data 
+{
     /**
      * @return Devuelve la URL del archivo db.properties
      */
@@ -29,7 +28,7 @@ public class Data {
     /**
      * Crea una conexión con la base de datos y devuelve el canal de conexión
      * @return Devuelve la conexión abierta
-     * @throws java.sql.SQLException
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
     public static Connection Connection() throws SQLException 
     {
@@ -40,10 +39,10 @@ public class Data {
     
     /**
      * Carga los drivers para poder usar la base de datos mySQL
-     * @throws java.lang.InstantiationException
-     * @throws java.lang.IllegalAccessException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.io.IOException
+     * @throws java.lang.InstantiationException No se puede instanciar la clase.
+     * @throws java.lang.IllegalAccessException Acceso denegado.
+     * @throws java.lang.ClassNotFoundException No encuentra la clase.
+     * @throws java.io.IOException Error de entrada/salida.
      */
     public static void LoadDriver() 
         throws InstantiationException, IllegalAccessException, 
@@ -55,9 +54,9 @@ public class Data {
     
     /**
      * Transforma un String para que pueda ser reconocido correctamente por SQL
-     * @param s - String a transformar
-     * @param bAddQuotes - Añadir comillas simples al principio y al final
-     * @param bAddWildcards - Añadir símbolo del porcentaje al principio
+     * @param s String a transformar
+     * @param bAddQuotes Añadir comillas simples al principio y al final
+     * @param bAddWildcards Añadir símbolo del porcentaje al principio
      * y al final
      * @return Devuelve el String transformado según los parámetros de entrada
      */
@@ -87,7 +86,7 @@ public class Data {
     
     /**
      * Transforma un Boolean para que pueda ser reconocido correctamente por SQL
-     * @param b - Boolean a transformar
+     * @param b Boolean a transformar
      * @return Devuelve 0 si es false y 1 si es true
      */
     public static int Boolean2Sql(boolean b)
@@ -100,9 +99,9 @@ public class Data {
     
     /**
      * Obtiene el campo Id de la última fina insertada en la base de datos
-     * @param con - Conexión actualmente abierta
+     * @param con Conexión actualmente abierta
      * @return Devuelve el último identificador insertado en una conexión dada
-     * @throws java.sql.SQLException
+     * @throws java.sql.SQLException Hay un error en la conexión.
      */
     public static int LastId(Connection con) throws SQLException 
     {
@@ -115,7 +114,7 @@ public class Data {
     /**
      * Transforma un String a un Double para que pueda ser reconocido 
      * correctamente por SQL
-     * @param s - El String a transformar
+     * @param s El String a transformar
      * @return Devuelve el String transformado en Double
      */
     public static double String2Double(String s)
