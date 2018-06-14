@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import Data.Clases.Articulo;
@@ -10,7 +5,6 @@ import Data.Clases.Articulo_Color_Talla;
 import Data.Clases.Categoria;
 import Data.Clases.Color;
 import Data.Clases.Configuracion;
-import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import Data.Clases.Pedido;
 import Data.Clases.PedidoPendiente;
@@ -20,14 +14,13 @@ import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -40,37 +33,56 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 /**
+ * Ventana desde la que se puede ver un pedido. Si es un pedido pendiente
+ * se pueden rellenar los datos del cliente y aceptar el pedido.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Pedido
+ * @see PedidoPendiente
  */
 public class IfrPedido extends javax.swing.JFrame {
 
     private PedidoPendiente _pedidoP;
+    
     /**
-     * Creates new form IfrPedido
+     * Crea una nueva interfaz de Pedido
+     * @param pedidoP Parámetro necesario si es un pedido pendiente
+     * @param pedidoR Parámetro necesario si es un pedido existente 
+     * @throws java.sql.SQLException Error al buscar en la base de datos.
      */
-    public IfrPedido(PedidoPendiente pedidoP, Pedido pedidoR) throws Exception {
+    public IfrPedido(PedidoPendiente pedidoP, Pedido pedidoR) 
+            throws SQLException  
+    {
         initComponents();
-        getContentPane().setBackground(java.awt.Color.white);
         
-        ArrayList<Articulo_Color_Talla> aACT = null;
+        ArrayList<Articulo_Color_Talla> aACT;
         
-        if(pedidoP != null){
+        /**
+         * Si es un pedido pendiente personalizar la ventana para mostrar los 
+         * campos a rellenar, si es un pedido existente no mostrar los campos
+         * a rellenar.
+         */
+        if(pedidoP != null)
+        {
             _pedidoP = pedidoP;
         
             setTitle(getTitle()+_pedidoP.getNumPedido());
             lblPedido.setText(lblPedido.getText()+"#"+_pedidoP.getNumPedido());
             lblNumArt.setText(lblNumArt.getText()+_pedidoP.getNumArticulos());
-            lblTotal.setText(lblTotal.getText()+String.format("%.2f", _pedidoP.getTotal())+" €");
+            lblTotal.setText(lblTotal.getText()+String.format("%.2f", 
+                    _pedidoP.getTotal())+" €");
             
             aACT = pedidoP.getTicketPedido();
             butAtras.setVisible(false);
         }
-        else{
+        else
+        {
             setTitle(getTitle()+pedidoR.getId());
-            lblPedido.setText(lblPedido.getText()+"#"+pedidoR.getId()+" - "+pedidoR.getFecha());
+            lblPedido.setText(lblPedido.getText()+"#"+pedidoR.getId()+" - "
+                    +pedidoR.getFecha());
             lblNumArt.setText(lblNumArt.getText()+pedidoR.getNumArticulos());
-            lblTotal.setText(lblTotal.getText()+String.format("%.2f", pedidoR.getTotal())+" €");
+            lblTotal.setText(lblTotal.getText()+String.format("%.2f", 
+                    pedidoR.getTotal())+" €");
             
             aACT = new ArrayList();
             for(Integer iId_Stock : pedidoR.getArticulosStock()){
@@ -83,14 +95,16 @@ public class IfrPedido extends javax.swing.JFrame {
             
             txtCodPostal.setText(String.format("%d", pedidoR.getCodPostal()));
             txtCodPostal.setEditable(false);
-            if(pedidoR.getDirEnvio().equals("Domicilio")) cmbDireccion.setSelectedIndex(1);
+            if(pedidoR.getDirEnvio().equals("Domicilio"))
+                cmbDireccion.setSelectedIndex(1);
             cmbDireccion.setEnabled(false);
             butConfirmar.setVisible(false);
         }
         setDireccion(0);
           
-        for(Articulo_Color_Talla art_col_tal : aACT){
-            
+        //RELLENAR EL TICKET DEL PEDIDO CON CADA ARTÍCULO
+        for(Articulo_Color_Talla art_col_tal : aACT)
+        {
             Articulo articulo = null;
             Marca marca = null;
             Color color= null;
@@ -98,42 +112,52 @@ public class IfrPedido extends javax.swing.JFrame {
             
             try {
                 articulo = new Articulo(art_col_tal.getId_Articulo());
-                marca = new Marca(new Categoria(articulo.getId_Categoria()).getId_Marca());
+                marca = new Marca(new Categoria(articulo.getId_Categoria())
+                        .getId_Marca());
                 color = new Color(art_col_tal.getId_Color());
                 talla = new Talla(art_col_tal.getId_Talla());
-            } catch (Exception ex) {
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, 
-                "Error al obtener el artículo, el color y la talla.\n"+ex.toString(), 
+                "Error al obtener el artículo, el color y la talla.\n"
+                        +ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
             }
             
-            if(articulo != null && marca != null && color != null && talla != null){
-                
+            if(articulo != null && marca != null && color != null && talla != null)
+            {
                 JLabel iconoArticulo = new JLabel();
                 Image image = null;
                 try {
-                    image = new ImageIcon(articulo.Get_Imagenes_Color(color.getId()).get(0).getRuta()).getImage();
-                } catch (Exception ex) {
-                    Logger.getLogger(IfrPedido.class.getName()).log(Level.SEVERE, null, ex);
+                    image = new ImageIcon(articulo.Get_Imagenes_Color(
+                            color.getId()).get(0).getRuta()).getImage();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, 
+                    "Error al obtener la imagen del artículo.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
                 if(image != null){
-                    ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(-1,100,Image.SCALE_SMOOTH));
+                    ImageIcon iconoEscalado = new ImageIcon(
+                            image.getScaledInstance(-1,100,Image.SCALE_SMOOTH));
                     iconoArticulo.setIcon(iconoEscalado);
                 }
                 iconoArticulo.setVerticalAlignment(SwingConstants.TOP);
                 panelTicket.add(iconoArticulo);
                 
                 String sNombre = null;
-                if(articulo.getNombre().length()>20) sNombre = articulo.getNombre().substring(0, 20)+"...";
+                if(articulo.getNombre().length()>20) sNombre = 
+                        articulo.getNombre().substring(0, 20)+"...";
                 else sNombre = articulo.getNombre();
                 
                 String sMarca = null;
-                if(marca.getNombre().length()>20) sMarca = marca.getNombre().substring(0, 20)+"...";
+                if(marca.getNombre().length()>20) sMarca = 
+                        marca.getNombre().substring(0, 20)+"...";
                 else sMarca = marca.getNombre();
                 
                 String sColor = null;
-                if(color.getNombre().length()>10) sColor = color.getNombre().substring(0, 10)+"...";
+                if(color.getNombre().length()>10) sColor = 
+                        color.getNombre().substring(0, 10)+"...";
                 else sColor = color.getNombre();
                 
                 JLabel pedido = new JLabel();
@@ -154,10 +178,10 @@ public class IfrPedido extends javax.swing.JFrame {
                 panelTicket.add(precio);
             }
         }
-        
-        
-        
-        addWindowListener(new java.awt.event.WindowAdapter() {
+             
+        //personalizar el comportamiento del boton de cerrar
+        addWindowListener(new java.awt.event.WindowAdapter() 
+        {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 cerrar();
@@ -165,13 +189,23 @@ public class IfrPedido extends javax.swing.JFrame {
         });
     }
     
+    /**
+     * Personalizar el icono de la ventana
+     * @return Devuelve el icono personalizado.
+     */
     @Override
-     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
-        return retValue;
+    public Image getIconImage() 
+    {
+       return Toolkit.getDefaultToolkit()
+               .getImage(ClassLoader.getSystemResource("img/boton_48.png"));
     }
      
-     private void enviarConGMail(String destinatario, String asunto, String cuerpo) {
+    //METODOS PRIVADOS//////////////////////////////////////////////////////////
+    
+    //enviar el pedido por email si es envio a domicilio
+    private void enviarConGMail(String destinatario, String asunto, 
+            String cuerpo) 
+    {
         // Esto es lo que va delante de @gmail.com en tu cuenta de correo. Es el remitente también.
         String remitente = "easyshopuca";  //Para la dirección nomcuenta@gmail.com
         String clave = "uca-easySHOP18";
@@ -189,7 +223,8 @@ public class IfrPedido extends javax.swing.JFrame {
 
         try {
             message.setFrom("EasyShop");
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(destinatario));   //Se podrían añadir varios de la misma manera
+            message.addRecipient(Message.RecipientType.TO, 
+                    new InternetAddress(destinatario));   //Se podrían añadir varios de la misma manera
             message.setSubject(asunto);
             message.setText(cuerpo);
             Transport transport = session.getTransport("smtp");
@@ -198,17 +233,22 @@ public class IfrPedido extends javax.swing.JFrame {
             transport.close();
         }
         catch (MessagingException me) {
-            me.printStackTrace();   //Si se produce un error
+            JOptionPane.showMessageDialog(this, 
+                "Error al enviar el email.\n"+me.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
-     
-    private void atras(){
+    
+    //volver a la lista de pedidos existentes
+    private void atras()
+    {
         java.awt.EventQueue.invokeLater(() -> {
             Frame ifrPedidos = null;
             try {
                 ifrPedidos = new IfrPedidosRealizados();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al leer la base de datos.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -221,6 +261,7 @@ public class IfrPedido extends javax.swing.JFrame {
         });
     }
     
+    //dependdiendo de que direccion sea elegida se mostrarán más o menos campos
     private void setDireccion(int direccion)
     {
         if(direccion == 0)
@@ -259,6 +300,7 @@ public class IfrPedido extends javax.swing.JFrame {
         }
     }
     
+    //cerrar la ventana
     private void cerrar()
     {
         if(_pedidoP != null){
@@ -269,6 +311,7 @@ public class IfrPedido extends javax.swing.JFrame {
             atras();
         }
     }
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -582,22 +625,14 @@ public class IfrPedido extends javax.swing.JFrame {
             options,  //the titles of buttons
             options[0]); //default button title
         
-        if(n==0){
+        if(n==0)
+        {
             try {
                 ArrayList<Integer> aiArticulosStock = new ArrayList();
-                Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+                Map<Integer, Integer> map = new HashMap<>();
                 for(Articulo_Color_Talla act : _pedidoP.getTicketPedido()){
-                    Stock stock = Stock.Select(act.getId_Articulo(), act.getId_Color(),
-                            act.getId_Talla(), null).get(0);
-                    /*
-                    if(stock.getExistencias()>0) aiArticulosStock.add(stock.getId());
-                    else throw new Exception(){
-                        @Override
-                        public String toString(){
-                            return "No hay existencias.";
-                        }
-                    };   
-                    */
+                    Stock stock = Stock.Select(act.getId_Articulo(), 
+                            act.getId_Color(), act.getId_Talla(), null).get(0);
                     aiArticulosStock.add(stock.getId());
                     
                     if(!map.containsKey(stock.getId())) map.put(stock.getId(), 1);
@@ -631,15 +666,20 @@ public class IfrPedido extends javax.swing.JFrame {
                 }
                 
                 Integer codPostal = null;
-                if(!txtCodPostal.getText().equals("")) codPostal = Integer.parseInt(txtCodPostal.getText());
+                if(!txtCodPostal.getText().equals("")) codPostal = 
+                        Integer.parseInt(txtCodPostal.getText());
             
-                Pedido pedido = Pedido.Create(new Date(System.currentTimeMillis()), _pedidoP.getNumArticulos(),
+                Pedido pedido = Pedido.Create(
+                        new Date(System.currentTimeMillis()), 
+                        _pedidoP.getNumArticulos(),
                         _pedidoP.getTotal(), codPostal,
-                        cmbDireccion.getSelectedItem().toString(), aiArticulosStock);
+                        cmbDireccion.getSelectedItem().toString(), 
+                        aiArticulosStock);
                 
                 //SI EL ENVIO ES A DOMICILIO SE ENVIARÁ UN CORREO CON LOS DATOS PERSONALES
                 if(cmbDireccion.getSelectedIndex() == 1){
-                    String destinatario = Configuracion.Select("Email", null).get(0).getValor();
+                    String destinatario = Configuracion.Select("Email", null)
+                            .get(0).getValor();
                     String asunto = "EasyShop - Envío a domicilio";
                     String linea1 = "\n=====================================\n";
                     String linea2 ="\n--------------------------------------\n";
@@ -648,7 +688,8 @@ public class IfrPedido extends javax.swing.JFrame {
                     for(Integer iId_Stock : pedido.getArticulosStock()){
                         Stock stock = new Stock(iId_Stock);
                         Articulo articulo = new Articulo(stock.getId_Articulo());
-                        Marca marca = new Marca(new Categoria(articulo.getId_Categoria()).getId_Marca());
+                        Marca marca = new Marca(new Categoria(
+                                articulo.getId_Categoria()).getId_Marca());
                         Color color = new Color(stock.getId_Color());
                         Talla talla = new Talla(stock.getId_Talla());
                         
@@ -665,7 +706,8 @@ public class IfrPedido extends javax.swing.JFrame {
                             +"Ciudad: "+txtCiudad.getText()+"\n"
                             +"Código Postal: "+txtCodPostal.getText()+"\n"
                             +"Calle: "+txtCalle.getText()+"\n"
-                            +"Número: "+txtNumero.getText()+" Bloque: "+txtBloque.getText()+"\n"
+                            +"Número: "+txtNumero.getText()+" Bloque: "
+                            +txtBloque.getText()+"\n"
                             +"Teléfono: "+txtTfno.getText()+"\n"
                             +"Email: "+txtEmail.getText()+linea1;
                     
@@ -678,12 +720,11 @@ public class IfrPedido extends javax.swing.JFrame {
                 JOptionPane.PLAIN_MESSAGE);
                 cerrar();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                     "Error al aceptar el pedido.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
             }
-           
         }
     }//GEN-LAST:event_butConfirmarActionPerformed
 

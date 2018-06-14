@@ -1,70 +1,83 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import Data.Clases.Pedido;
-import Data.Clases.PedidoPendiente;
 import Data.Modelos.PedidoTableModel;
-import Data.Modelos.StockTableModel;
 import java.awt.Frame;
-import static java.awt.Frame.NORMAL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
+ * Ventana desde la que se pueden ver los pedidos realizados.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Pedido
+ * @see PedidoTableModel
  */
-public class IfrPedidosRealizados extends javax.swing.JFrame {
-
+public class IfrPedidosRealizados extends javax.swing.JFrame 
+{
     /**
-     * Creates new form IfrPedidosRealizados
+     * Crea una nueva interfaz con una tabla mostrando los datos de los pedidos
+     * existentes.
+     * @throws SQLException Error al leer la base de datos.
      */
-    public IfrPedidosRealizados() throws Exception {
+    public IfrPedidosRealizados() throws SQLException  
+    {
         initComponents();
         
+        //Obtener todos los pedidos de la tabla Pedido
         ArrayList<Pedido> aPedidos = Pedido.Select(null, null, null, null, null);
         tablePedidos.setModel(new PedidoTableModel(aPedidos));
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tablePedidos.getModel());
+        TableRowSorter<TableModel> sorter = 
+                new TableRowSorter<>(tablePedidos.getModel());
         tablePedidos.setRowSorter(sorter);
         
-        tablePedidos.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent e) {
-                if(e.getClickCount()==2){
+        //Si se hace doble click en un pedido abre la interfaz de Pedido
+        tablePedidos.addMouseListener(new java.awt.event.MouseAdapter() 
+        {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if(e.getClickCount()==2)
+                {
                    ver_pedido();
-                 }
+                }
            }
         });
     }
     
+    //MÉTODOS PRIVADOS//////////////////////////////////////////////////////////
+    
+    //Ver pedido
     private void ver_pedido()
     {
         int index = tablePedidos.getSelectedRow();
         
         if(index != -1)
         {
-            Pedido pedido = ((PedidoTableModel)tablePedidos.getModel()).getData(index);
+            Pedido pedido = ((PedidoTableModel)tablePedidos.getModel())
+                    .getData(index);
                   
             java.awt.EventQueue.invokeLater(() -> {
                 try {
                     Frame ifrPedido = new IfrPedido(null, pedido);
+                    ifrPedido.setBackground(java.awt.Color.white);
                     ifrPedido.setLocationRelativeTo(this);
                     ifrPedido.setVisible(true);
-                } catch (Exception ex) {
-                    Logger.getLogger(IfrPedidosRealizados.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(this, 
+                    "Error al leer el pedido.\n"+ex.toString(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
                 }
             });
-             
             this.dispose();
         }
     }
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * This method is called from within the constructor to initialize the form.

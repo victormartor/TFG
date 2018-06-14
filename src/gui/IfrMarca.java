@@ -1,43 +1,40 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
-import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import Data.Renders.ListaRender;
 import Data.Modelos.ModMarcas;
-import java.awt.Color;
 import java.awt.Frame;
-import static java.awt.Frame.NORMAL;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.ImageIcon;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
+ * Ventana desde donde se pueden ver las marcas, eliminarlas o modificarlas.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Marca
+ * @see ModMarcas
  */
-public class IfrMarca extends javax.swing.JFrame {
-    
+public class IfrMarca extends javax.swing.JFrame 
+{
     private static ModMarcas _modMarcas;
     
     /**
-     * Creates new form IfrMarca
-     * @throws java.lang.Exception
+     * Crea una nueva interfaz de Marcas. 
+     * @throws java.sql.SQLException Error al buscar las marcas en la base
+     * de datos.
      */
-    public IfrMarca() throws Exception {
+    public IfrMarca() throws SQLException  
+    {
         initComponents();
-        //getContentPane().setBackground(Color.white);
+        
+        //Buscar las marcas en la base de datos
         _modMarcas = new ModMarcas();
         listMarcas.setModel(_modMarcas);
         listMarcas.setCellRenderer(new ListaRender());
         
+        //Al hacer doble click en una marca se habre el formulariod de Marca
         listMarcas.addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -48,13 +45,22 @@ public class IfrMarca extends javax.swing.JFrame {
         });
     }
     
+    /**
+     * Personalizar el icono de la ventana
+     * @return Devuelve el icono personalizado.
+     */
     @Override
-     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
-        return retValue;
+    public Image getIconImage() 
+    {
+       return Toolkit.getDefaultToolkit()
+               .getImage(ClassLoader.getSystemResource("img/boton_48.png"));
     }
     
-    private void modificarMarca(){
+    //MÉTODOS PRIVADOS//////////////////////////////////////////////////////////
+    
+    //modificar marca existente
+    private void modificarMarca()
+    {
         int iIndex = listMarcas.getSelectedIndex();
         Marca marca = (Marca)_modMarcas.getElementAt(iIndex);
 
@@ -76,6 +82,7 @@ public class IfrMarca extends javax.swing.JFrame {
             this.dispose();
         });
     }
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -178,7 +185,7 @@ public class IfrMarca extends javax.swing.JFrame {
                 try {
                     _modMarcas.removeMarca(index);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al eliminar la marca.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
@@ -193,7 +200,7 @@ public class IfrMarca extends javax.swing.JFrame {
             try {
                 frmMarca = new FrmMarca(null);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al crear una marca vacía.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
