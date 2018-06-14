@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
@@ -402,7 +403,11 @@ public class IfrPrincipal extends javax.swing.JFrame
         if(butEstadoServidor.isSelected())
         {
             lblException.setText(" ");
-            _servidor.encenderServidor();
+            try {
+                _servidor.encenderServidor();
+            } catch (IOException ex) {
+                lblException.setText(" "+ex.toString());
+            }
             lblEstadoServidor.setText("Encendido");
 
             _hilo = new Thread(){
@@ -490,7 +495,7 @@ public class IfrPrincipal extends javax.swing.JFrame
                 _servidor.apagarServidor();
                 _hilo.interrupt();
                 lblEstadoServidor.setText("Apagado");
-            }catch(Exception ex){ 
+            }catch(IOException ex){ 
                 lblException.setText(" "+ex.toString());
             }
         }

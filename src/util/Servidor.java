@@ -6,19 +6,18 @@ import Data.Clases.Color;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import Data.Clases.Talla;
-import java.awt.Font;
-import java.awt.image.BufferedImage;
-import java.util.Scanner;
 import java.io.*;
 import java.net.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-
+/**
+ * Clase encargada de proporcionar los métodos para interactuar con la 
+ * aplicación android.
+ * 
+ * @author Víctor Martín Torres - 12/06/2018
+ * @see SocketStream
+ */
 public class Servidor
 {
     private String _sMensaje;
@@ -30,25 +29,30 @@ public class Servidor
     public String getMensaje(){return _sMensaje;}
     public boolean encendido() {return _bEncendido;}
     
-    public void encenderServidor()
+    /**
+     * Método para encender el servidor
+     * @throws java.io.IOException Error al encender el servidor
+     */
+    public void encenderServidor() throws IOException
     {
         _bEncendido = true;
-        try
-        {
-            _SocketConexion =  new ServerSocket(5000);
-            
-        }catch(IOException e) 
-        {
-            System.out.println("Error al encender el Servidor. "+e.toString());
-        }      
+        _SocketConexion =  new ServerSocket(5000);     
     }
     
-    public void conectar() throws Exception
+    /**
+     * Realizar una conexión 
+     * @throws java.io.IOException Error en la conexión
+     */
+    public void conectar() throws IOException 
     {
-      _SocketDatos = new SocketStream   (_SocketConexion.accept( ));            
+      _SocketDatos = new SocketStream (_SocketConexion.accept( ));            
     }
     
-    public void apagarServidor() throws Exception
+    /**
+     * AMétodo para apagar el servidor 
+     * @throws java.io.IOException Error al apagar el servidor
+     */
+    public void apagarServidor() throws IOException
     {
         _bEncendido = false;
  
@@ -62,20 +66,36 @@ public class Servidor
          
     }
     
-    public String obtenerMensaje() throws Exception
+    /**
+     * Método para obtener un mensaje del cliente.
+     * @return Devuelve el mensaje en forma de String.
+     * @throws IOException Error en la conexión
+     */
+    public String obtenerMensaje() throws IOException
     {
         return _SocketDatos.recibeMensaje();
     }
     
-    public void enviarMensaje(String sMensaje) throws Exception
+    /**
+     * Método para enviar un mensaje al cliente
+     * @param sMensaje El mensaje a enviar.
+     * @throws IOException Error en la conexión
+     */
+    public void enviarMensaje(String sMensaje) throws IOException
     {
         _SocketDatos.enviaMensaje(sMensaje);    
     }
     
-    public void enviarMarcas() throws Exception
+    /**
+     * Método para enviar la lista de marcas al cliente
+     * @throws SQLException Error al acceder a la base de datos
+     * @throws IOException Error en la conexión
+     */
+    public void enviarMarcas() throws SQLException, IOException 
     {
         ArrayList<Marca> aMarcas = Marca.Select(null, null);
-        for(Marca marca : aMarcas){
+        for(Marca marca : aMarcas)
+        {
             _SocketDatos.enviaMensaje(marca.toString());
             Imagen imagen = new Imagen(marca.getId_Imagen());
             _SocketDatos.enviaMensaje(imagen.getNombre());
@@ -83,7 +103,13 @@ public class Servidor
         _SocketDatos.enviaMensaje("FinMarcas");
     }
     
-    public void enviarMarca(int iId_Marca) throws Exception
+    /**
+     * Método para enviar una marca al cliente.
+     * @param iId_Marca El Id de la Marca
+     * @throws SQLException Error al acceder a la base de datos
+     * @throws IOException Error en la conexión
+     */
+    public void enviarMarca(int iId_Marca) throws SQLException, IOException 
     {    
         Marca marca = new Marca(iId_Marca);
 
@@ -92,10 +118,19 @@ public class Servidor
         _SocketDatos.enviaMensaje(imagen.getNombre());
     }
     
-    public void enviarCategorias(int iId_Marca) throws Exception
+    /**
+     * Método para enviar la lista de categorías al cliente
+     * @param iId_Marca El Id de la marca a la que pertenecen las categorías
+     * @throws SQLException Error al acceder a la base de datos
+     * @throws IOException Error en la conexión
+     */
+    public void enviarCategorias(int iId_Marca) throws SQLException, IOException
     {
-        ArrayList<Categoria> aCategorias = Categoria.Select(null, null, iId_Marca);
-        for(Categoria categoria : aCategorias){
+        ArrayList<Categoria> aCategorias = 
+                Categoria.Select(null, null, iId_Marca);
+        
+        for(Categoria categoria : aCategorias)
+        {
             _SocketDatos.enviaMensaje(categoria.toString());
             Imagen imagen = new Imagen(categoria.getId_Imagen());
             _SocketDatos.enviaMensaje(imagen.getNombre());
@@ -103,11 +138,20 @@ public class Servidor
         _SocketDatos.enviaMensaje("FinCategorias");
     }
     
-    public void enviarArticulos(int iId_Categoria) throws Exception
+    /**
+     * Método para enviar una lista de artículos al cliente
+     * @param iId_Categoria El Id de la categoría a la que pertenecen los 
+     * artículos
+     * @throws SQLException Error al acceder a la base de datos
+     * @throws IOException Error en la conexión
+     */
+    public void enviarArticulos(int iId_Categoria) throws SQLException, IOException
     {
-    
-        ArrayList<Articulo> aArticulos = Articulo.Select(null, null, iId_Categoria, null);
-        for(Articulo articulo : aArticulos){
+        ArrayList<Articulo> aArticulos = 
+                Articulo.Select(null, null, iId_Categoria, null);
+        
+        for(Articulo articulo : aArticulos)
+        {
             String sArticulo = articulo.toString();
             _SocketDatos.enviaMensaje(sArticulo);
             String sPartes[] = sArticulo.split(":");
@@ -117,20 +161,39 @@ public class Servidor
         _SocketDatos.enviaMensaje("FinArticulos"); 
     }
     
-    public void enviarUnArticulo(int iId_Articulo) throws Exception
+    /**
+     * Método paraa enviar un artículo al cliente
+     * @param iId_Articulo El Id del artículo
+     * @throws SQLException Error al acceder a la base de datos
+     * @throws IOException Error en la conexión
+     */
+    public void enviarUnArticulo(int iId_Articulo) 
+            throws SQLException, IOException
     { 
         Articulo articulo = new Articulo(iId_Articulo);
         _SocketDatos.enviaMensaje(articulo.toString());
     }
     
-    public void enviarColoresArticulo(int iId_Articulo) throws Exception
+    /**
+     * Método para enviar la lista de colores que pertenecen a un artículo al
+     * cliente.
+     * @param iId_Articulo El Id del artículo.
+     * @throws SQLException Error al acceder a la base de datos
+     * @throws IOException Error en la conexión
+     */
+    public void enviarColoresArticulo(int iId_Articulo) 
+            throws SQLException, IOException
     {
         Articulo articulo = new Articulo(iId_Articulo);
-        for(Integer i : articulo.getColores()){
+        
+        for(Integer i : articulo.getColores())
+        {
             Color color = new Color(i);
             String sColor = color.getId()+":"+color.getNombre();
             _SocketDatos.enviaMensaje(sColor);
-            for(Imagen imagen : articulo.Get_Imagenes_Color(color.getId())){
+            
+            for(Imagen imagen : articulo.Get_Imagenes_Color(color.getId()))
+            {
                 _SocketDatos.enviaMensaje(imagen.getNombre());
             }
             _SocketDatos.enviaMensaje("FinImagenes");
@@ -138,12 +201,24 @@ public class Servidor
         _SocketDatos.enviaMensaje("FinColores");
     }
     
-    public void enviarTallasArticulo(int iId_Articulo) throws Exception
+    /**
+     * Método para enviar la lista de tallas que pertenecen a un artículo al 
+     * cliente.
+     * @param iId_Articulo El Id del artículo.
+     * @throws SQLException Error al acceder a la base de datos
+     * @throws IOException Error en la conexión.
+     */
+    public void enviarTallasArticulo(int iId_Articulo) 
+            throws SQLException, IOException
     {    
         Articulo articulo = new Articulo(iId_Articulo);
-        ArrayList<Talla> aTallas = Talla.Select(null, articulo.getTalla_Es_Numero());
-        for(Talla talla : aTallas){
-            if(articulo.getTallas().contains(talla.getId())){
+        ArrayList<Talla> aTallas = 
+                Talla.Select(null, articulo.getTalla_Es_Numero());
+        
+        for(Talla talla : aTallas)
+        {
+            if(articulo.getTallas().contains(talla.getId()))
+            {
                 String sTalla = talla.getId()+":"+talla.getNombre();
                 _SocketDatos.enviaMensaje(sTalla);
             }
@@ -151,10 +226,20 @@ public class Servidor
         _SocketDatos.enviaMensaje("FinTallas"); 
     }
     
-    public void enviarCombinacionesArticulo(int iId_Articulo) throws Exception
+    /**
+     * Método para enviar las combinaciones que pertenecen a un artículo al
+     * cliente.
+     * @param iId_Articulo El Id del artículo
+     * @throws SQLException Error al acceder a la base de datos
+     * @throws IOException Error en la conexión.
+     */
+    public void enviarCombinacionesArticulo(int iId_Articulo) 
+            throws SQLException, IOException
     {  
         Articulo articulo = new Articulo(iId_Articulo);
-        for(Integer i : articulo.getCombinaciones()){
+        
+        for(Integer i : articulo.getCombinaciones())
+        {
             Articulo art = new Articulo(i);
             String sArticulo = art.toString();
             Categoria categoria = new Categoria(art.getId_Categoria());
@@ -167,7 +252,13 @@ public class Servidor
         _SocketDatos.enviaMensaje("FinComb");
     }
     
-    public String obtenerPedido() throws Exception
+    /**
+     * Método para obtener el pedido del cliente.
+     * @return Devuelve el pedido en forma de String.
+     * @throws SQLException Error al acceder a la base de datos
+     * @throws IOException Error en la conexión
+     */
+    public String obtenerPedido() throws SQLException, IOException
     {  
         String sMensaje;
         String sPedido = "";
@@ -179,6 +270,5 @@ public class Servidor
         sPedido += "FinTicket";
         return sPedido;
     }
-
-} // fin de class
+} 
 
