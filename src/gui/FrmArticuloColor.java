@@ -1,17 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import Data.Clases.Articulo;
 import Data.Clases.Color;
-import Data.Clases.Configuracion;
 import Data.Clases.Imagen;
 import Data.Data;
 import Data.Modelos.ColorListModel;
-import Data.Modelos.ModArticulo_Color;
 import Data.Modelos.ModArticulo_Color_Imagen;
 import Data.Renders.ListaImagenesRender;
 import java.awt.Dimension;
@@ -24,16 +17,13 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.TimeoutException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -41,35 +31,65 @@ import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
+ * Ventana desde la que se puede crear o modificar un color y asociarlo a un
+ * artículo existente. Desde ella se le pueden asignar las imágenes de ese
+ * artículo para ese color.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Articulo
+ * @see Color
+ * @see ModArticulo_Color_Imagen
  */
-public class FrmArticuloColor extends javax.swing.JFrame {
-
-    private Articulo _articulo = null;
-    private Color _color = null;
-    private ModArticulo_Color_Imagen _modArticulo_Color_Imagen = null;
-    private String _srutaGuardada = null;
-    private boolean _bModificar = false;
-    private boolean _bCambios = false;
+public class FrmArticuloColor extends javax.swing.JFrame 
+{
+    private Articulo _articulo;
+    private Color _color;
+    private ModArticulo_Color_Imagen _modArticulo_Color_Imagen;
     
     /**
-     * Creates new form FrmArticuloColor
+     * La varible _sRutaGuardada será la ruta donde estaba la última imagen
+     * que asociamos al color. Con esto conseguimos que si se van a asociar
+     * varias imágenes no haya que volver a buscar la carpeta.
+     */
+    private String _srutaGuardada;
+    
+    /**
+     * La variable _bModificar es un booleano que estará a false cuando se esté
+     * creando un elemento nuevo, y estará a true cuando se esté modificando
+     * un elemento existente.
+     */
+    private boolean _bModificar;
+    
+    /**
+     * La variable _bCambios es un booleano que nos avisará si se ha realizado
+     * algún cambio y este no ha sido guardado.
+     */
+    private boolean _bCambios;
+    
+    /**
+     * Crea un nuevo formulario de ArticuloColor.
+     * @param iId_Articulo El Id del Artículo al que se va a asociar el Color.
+     * @param iId_Color Si se va a modificar un color existente este 
+     * parámetro es su Id en la base de datos. Si se va a asociar un Color
+     * nuevo, este parámetro debe ser null.
      */
     public FrmArticuloColor(Integer iId_Articulo, Integer iId_Color) {
         initComponents();
+        _bCambios = false;
         
+        //Cargar la lista de colores disponibles de la base de datos
         try {
             ArrayList<Color> lColores = Color.Select(null);
             lColores.add(new Color(-1));
             cmbColor.setModel(new ColorListModel(lColores));
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, 
                 "Error al leer colores.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
         
+        //Cargar el artículo de la base de datos
         try {
             _articulo = new Articulo(iId_Articulo);
         } catch (Exception ex) {
@@ -79,53 +99,70 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
         }
         
+        /**
+         * Si el color ya está asociado al artículo cargar sus imágenes 
+         * asociadas y deshabilitar que se pueda cambiar el nombre.
+         */
         if(iId_Color != null){
             _bModificar = true;
             try {
                 _color = new Color(iId_Color);
-            } catch (Exception ex) {
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, 
                 "Error al buscar color.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
             }
-            cmbColor.setSelectedIndex(((ColorListModel)cmbColor.getModel()).getIndexColor(iId_Color));
+            cmbColor.setSelectedIndex(((ColorListModel)cmbColor.getModel())
+                    .getIndexColor(iId_Color));
             cmbColor.setEnabled(false);
-            this.setTitle("Modificar color "+_color);
              
             try {
-                _modArticulo_Color_Imagen = new ModArticulo_Color_Imagen(_articulo, _color);
+                _modArticulo_Color_Imagen = 
+                        new ModArticulo_Color_Imagen(_articulo, _color);
                 lImagenes.setModel(_modArticulo_Color_Imagen);
                 lImagenes.setCellRenderer(new ListaImagenesRender());
-            } catch (Exception ex) {
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, 
                 "Error al buscar imágenes.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
             }
         }
+        else
+            _bModificar = false;
         
+        //Personalizar comportamiento del botón de cerrar
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                if(salir())
+                if(es_posible_salir())
                     FrmArticuloColor.this.dispose();
             }
         });
     }
     
+    /**
+     * Personalizar el icono de la ventana
+     * @return Devuelve el icono personalizado.
+     */
     @Override
-     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
-        return retValue;
+    public Image getIconImage() {
+       return Toolkit.getDefaultToolkit()
+               .getImage(ClassLoader.getSystemResource("img/boton_48.png"));
     }
     
-    private void guardar(){
-        if(!_bModificar){
+    //MÉTODOS PRIVADOS//////////////////////////////////////////////////////////
+     
+    //Guardar cambios
+    private void guardar()
+    {
+        if(!_bModificar)
+        {
             try {
                 _articulo.Add_Color(_color);
                 _bModificar = true;
-            } catch (Exception ex) {
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, 
                 "Error al añadir color.\n"+ex.toString(), 
                 "Error", 
@@ -140,8 +177,11 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         JOptionPane.PLAIN_MESSAGE);
     }
     
-    private void comprobar_cambios(){
-        if(_bCambios){
+    //Comprobar si existem cambios sin guardar
+    private void comprobar_cambios()
+    {
+        if(_bCambios)
+        {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
@@ -160,7 +200,9 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         }
     }
     
-    private boolean salir(){
+    //Comprobar si es posible cerrar la ventana
+    private boolean es_posible_salir()
+    {
         comprobar_cambios();
         if(!_bModificar && _color != null){
             try {
@@ -173,7 +215,8 @@ public class FrmArticuloColor extends javax.swing.JFrame {
             }
             return true;
         }
-        else{
+        else
+        {
             if(_color != null && _modArticulo_Color_Imagen.getSize() == 0){
                 JOptionPane.showMessageDialog(null,
                 "¡ATENCIÓN! Se debe asignar al menos una imagen al color.",
@@ -181,20 +224,21 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 JOptionPane.WARNING_MESSAGE);
                 return false;
             }
-            else{
-                return true;
-            }        
+            else
+                return true;     
         }  
     }
     
-    private boolean color_esta_asociado(){
-        
+    //Comprobar si un color está ya asociado al artículo o no
+    private boolean color_esta_asociado()
+    {
         ArrayList<Integer> lColores = _articulo.getColores();
         boolean bEsta_asociado = false;
         for(Integer i : lColores)
             if(i == _color.getId()) bEsta_asociado = true;
 
-        if(bEsta_asociado){
+        if(bEsta_asociado)
+        {
             JOptionPane.showMessageDialog(null, 
                 "Error, ese color ya está asociado a este artículo.", 
                 "Color ya asociado", 
@@ -202,13 +246,17 @@ public class FrmArticuloColor extends javax.swing.JFrame {
 
             return true;
         }
-        else{
+        else
+        {
             return false;
         }
     }
     
-    private boolean comprobar_color(){
-        if(_color == null || _color.getId()==-1){
+    //Comprobar si se ha elegido el nombre del color
+    private boolean comprobar_color()
+    {
+        if(_color == null || _color.getId()== -1)
+        {
             JOptionPane.showMessageDialog(null, 
                 "Error, debe elegir primero un color.", 
                 "Elija un color", 
@@ -219,6 +267,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
         else
             return true;  
     }
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -352,18 +401,20 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
-        if(salir()){
+        if(es_posible_salir())
+        {
             java.awt.EventQueue.invokeLater(() -> {
                 Frame frmArticulo = null;
                 try {
                     frmArticulo = new FrmArticulo(_articulo.getId(),null);
-                } catch (Exception ex) {
+                } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, 
                     "Error al leer artículo.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
                 }
                 if(frmArticulo != null){
+                    frmArticulo.setTitle("Modificar artículo");
                     frmArticulo.setLocationRelativeTo(this);
                     frmArticulo.setVisible(true);
                 }
@@ -377,69 +428,72 @@ public class FrmArticuloColor extends javax.swing.JFrame {
     }//GEN-LAST:event_butGuardarActionPerformed
 
     private void butSubirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSubirActionPerformed
-        if(comprobar_color()){
+        if(comprobar_color())
+        {
             JFileChooser ventanaElegirImagen = new JFileChooser();
             String rutaImagenes = Data.getRutaImagenes();
- 
-            if(rutaImagenes != null) ventanaElegirImagen.setCurrentDirectory(new File(rutaImagenes));
-            if(_srutaGuardada != null) ventanaElegirImagen.setCurrentDirectory(new File(_srutaGuardada));
+           
+            if(_srutaGuardada != null) 
+                ventanaElegirImagen.setCurrentDirectory(new File(_srutaGuardada));
+            else if(rutaImagenes != null) 
+                ventanaElegirImagen.setCurrentDirectory(new File(rutaImagenes));
+            
             JLabel img = new JLabel();
             img.setPreferredSize(new Dimension(175,175));
             ventanaElegirImagen.setAccessory(img);
 
-            FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG) y PNG", "jpg","jpeg", "png");
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter(
+                    "Formatos de Archivos JPEG(*.JPG;*.JPEG) y PNG", "jpg",
+                    "jpeg", "png");
             ventanaElegirImagen.addChoosableFileFilter(filtro);
             ventanaElegirImagen.setFileFilter(filtro);
-            ventanaElegirImagen.setDialogTitle("Abrir Imagen");
-
-            
+            ventanaElegirImagen.setDialogTitle("Abrir Imagen");           
 
             // Add property change listener
-            ventanaElegirImagen.addPropertyChangeListener(new PropertyChangeListener(){
-
-                // When any JFileChooser property changes, this handler
-                // is executed
-                public void propertyChange(final PropertyChangeEvent pe)
-                {
-                    // Create SwingWorker for smooth experience
-                    SwingWorker<Image,Void> worker=new SwingWorker<Image,Void>(){
-
-                        // The image processing method
-                        protected Image doInBackground()
+            ventanaElegirImagen.addPropertyChangeListener(
+                    (final PropertyChangeEvent pe) -> {
+                // Create SwingWorker for smooth experience
+                SwingWorker<Image,Void> worker = new SwingWorker<Image,Void>()
+                {               
+                    // The image processing method
+                    @Override
+                    protected Image doInBackground()
+                    {
+                        // If selected file changes..
+                        if(pe.getPropertyName().equals(JFileChooser
+                                .SELECTED_FILE_CHANGED_PROPERTY))
                         {
-                            // If selected file changes..
-                            if(pe.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
-                            {
                             // Get selected file
                             File f=ventanaElegirImagen.getSelectedFile();
-
-                                try
-                                {
-                                    img.setText("");
-                                    // Create FileInputStream for file
-                                    FileInputStream fin=new FileInputStream(f);
-
-                                    // Read image from fin
-                                    BufferedImage bim=ImageIO.read(fin);
-
-                                    // Return the scaled version of image
-                                    return bim.getScaledInstance(-1,170,BufferedImage.SCALE_FAST);
-
-                                }catch(Exception e){
-                                    // If there is a problem reading image,
-                                    // it might not be a valid image or unable
-                                    // to read
-                                    img.setText(" Not valid image/Unable to read");
-                                }
-                            }
-
-                        return null;
-                        }
-
-                        protected void done()
-                        {
+                            
                             try
                             {
+                                img.setText("");
+                                // Create FileInputStream for file
+                                FileInputStream fin=new FileInputStream(f);
+                                
+                                // Read image from fin
+                                BufferedImage bim=ImageIO.read(fin);
+                                
+                                // Return the scaled version of image
+                                return bim.getScaledInstance(-1,170,
+                                        BufferedImage.SCALE_FAST);              
+                            }catch(IOException e){
+                                // If there is a problem reading image,
+                                // it might not be a valid image or unable
+                                // to read
+                                img.setText(" Not valid image/Unable to read");
+                            }
+                        }
+                        
+                        return null;
+                    }
+                    
+                    @Override
+                    protected void done()
+                    {
+                        try
+                        {
                             // Get the image
                             Image i=get(1L,TimeUnit.NANOSECONDS);
 
@@ -448,40 +502,41 @@ public class FrmArticuloColor extends javax.swing.JFrame {
 
                             // Set icon otherwise
                             img.setIcon(new ImageIcon(i));
-                            }catch(Exception e){
-                                // Print error occured
-                                img.setText(" Error occured.");
-                            }
+                        }catch(InterruptedException | ExecutionException | 
+                                TimeoutException e){
+                            // Print error occured
+                            img.setText(" Error occured.");
                         }
-                    };
-
-                    // Start worker thread
-                    worker.execute();
-                }
-            });
+                    }
+                };
+                
+                // Start worker thread
+                worker.execute();
+            } // When any JFileChooser property changes, this handler
+            // is executed
+            );
 
             int ventana = ventanaElegirImagen.showOpenDialog(null);
             if(ventana == JFileChooser.APPROVE_OPTION)
             {
                 File file = ventanaElegirImagen.getSelectedFile();
-                String sRuta = null;
                 Imagen imagen = null;
                 try {
-                    sRuta = file.getAbsolutePath();
+                    String sRuta = file.getAbsolutePath();
                     sRuta = sRuta.replace(file.getName(), "");
                     _srutaGuardada = sRuta;
-                    imagen = Imagen.Create(file, rutaImagenes);
-                    
-                } catch (Exception ex) {
+                    imagen = Imagen.Create(file, rutaImagenes);   
+                } catch (IOException | SQLException ex) {
                     JOptionPane.showMessageDialog(null, 
                     "Error al subir imagen.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
                 }
-                if(imagen != null){
+                if(imagen != null)
+                {
                     try {
                         _modArticulo_Color_Imagen.addImagen(imagen);
-                    } catch (Exception ex) {
+                    } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(null, 
                         "Error al añadir imagen.\n"+ex.toString(), 
                         "Error", 
@@ -519,13 +574,13 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
                 }
-                //_bCambios = true;
             }
         }
     }//GEN-LAST:event_butEliminarActionPerformed
 
     private void cmbColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbColorActionPerformed
-        if(!_bModificar){
+        if(!_bModificar)
+        {
             _color = (Color)cmbColor.getSelectedItem();
             if(_color.getId()==-1){
                 String sColor = (String)JOptionPane.showInputDialog(
@@ -538,7 +593,7 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 if(sColor!= null){
                    try {
                         color = Color.Create(sColor);
-                    } catch (Exception ex) {
+                    } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(null, 
                         "Error al crear color.\n"+ex.toString(), 
                         "Error", 
@@ -547,9 +602,10 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                 
                     try {
                         cmbColor.setModel(new ColorListModel(Color.Select(null)));
-                        cmbColor.setSelectedIndex(((ColorListModel)cmbColor.getModel()).getIndexColor(color.getId()));
+                        cmbColor.setSelectedIndex(((ColorListModel)cmbColor
+                                .getModel()).getIndexColor(color.getId()));
                         cmbColor.setEnabled(false);
-                    } catch (Exception ex) {
+                    } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(null, 
                         "Error al leer colores.\n"+ex.toString(), 
                         "Error", 
@@ -558,10 +614,11 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                     _color = color;
                     
                     try {
-                        _modArticulo_Color_Imagen = new ModArticulo_Color_Imagen(_articulo, _color);
+                        _modArticulo_Color_Imagen = 
+                                new ModArticulo_Color_Imagen(_articulo, _color);
                         lImagenes.setModel(_modArticulo_Color_Imagen);
                         lImagenes.setCellRenderer(new ListaImagenesRender());
-                    } catch (Exception ex) {
+                    } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(null, 
                         "Error al buscar imágenes.\n"+ex.toString(), 
                         "Error", 
@@ -570,15 +627,18 @@ public class FrmArticuloColor extends javax.swing.JFrame {
                     _bCambios = true;
                 }
             }
-            else{
-                if(!color_esta_asociado()){
+            else
+            {
+                if(!color_esta_asociado())
+                {
                     cmbColor.setEnabled(false);
 
                     try {
-                        _modArticulo_Color_Imagen = new ModArticulo_Color_Imagen(_articulo, _color);
+                        _modArticulo_Color_Imagen = 
+                                new ModArticulo_Color_Imagen(_articulo, _color);
                         lImagenes.setModel(_modArticulo_Color_Imagen);
                         lImagenes.setCellRenderer(new ListaImagenesRender());
-                    } catch (Exception ex) {
+                    } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(null, 
                         "Error al buscar imágenes.\n"+ex.toString(), 
                         "Error", 

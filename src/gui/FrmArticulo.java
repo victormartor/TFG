@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import Data.Clases.Articulo;
-import Data.Clases.Categoria;
 import Data.Clases.Color;
-import Data.Clases.Imagen;
 import Data.Clases.Talla;
 import Data.Data;
 import Data.Modelos.ModArticulo_Color;
@@ -19,33 +12,62 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 /**
+ * Ventana desde la que se puede crear o modificar un artículo. Desde ella 
+ * podremos asignarle un nombre, un precio, una lista de tallas, una lista de
+ * colores , una lista de combinaciones y finalmente gestionar sus existencias
+ * en la base de datos.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Articulo
+ * @see ModArticulo_Color
+ * @see ModArticulos
  */
-public class FrmArticulo extends javax.swing.JFrame {
+public class FrmArticulo extends javax.swing.JFrame 
+{
+    private Articulo _articulo;
+    private ModArticulo_Color _modArticulo_Color;
+    private ModArticulos _modArticulosComb;
     
-    private Articulo _articulo = null;
-    private ModArticulo_Color _modArticulo_Color = null;
-    private ModArticulos _modArticulosComb = null;
-    private boolean _bModificar = false;
+    /**
+     * La variable _bModificar es un booleano que estará a false cuando se esté
+     * creando un Artículo nuevo, y estará a true cuando se esté modificando
+     * un Artículo existente.
+     */
+    private boolean _bModificar;
+    
+    /**
+     * La variable _bCambios es un booleano que nos avisará si se ha realizado
+     * algún cambio y este no ha sido guardado.
+     */
     private boolean _bCambios;
 
     /**
-     * Creates new form FrmArticulo
+     * Crea un nuevo formulario de Articulo. 
+     * @param iId_Articulo Si se va a modificar un artículo existente este 
+     * parámetro es su Id en la base de datos. Si se va a crear un Articulo
+     * nuevo, este parámetro debe ser null.
+     * @param iId_Categoria El Id de la Categoría a la que pertenece el Artículo
+     * @throws SQLException Error al buscar o crear el artículo en la base de
+     * datos.
      */
-    public FrmArticulo(Integer iId_Articulo, Integer iId_Categoria) throws Exception {
+    public FrmArticulo(Integer iId_Articulo, Integer iId_Categoria) 
+            throws SQLException  
+    {
         initComponents();
+        txtNombre.requestFocus();
+        _bCambios = false;
         
+        /**
+         * Si el artículo existe rellenar todos los campos del formulario con 
+         * sus valores, en caso contrario crear un artículo nuevo con valores
+         * vacíos en la base de datos.
+         */
         if(iId_Articulo != null){
             _bModificar = true;
             _articulo = new Articulo(iId_Articulo);
@@ -54,39 +76,49 @@ public class FrmArticulo extends javax.swing.JFrame {
             checkEs_Numero.setSelected(_articulo.getTalla_Es_Numero());
         }
         else{
-            _articulo = Articulo.Create("", 0, iId_Categoria, false, null, null, null);
+            _bModificar = false;
+            _articulo = Articulo.Create("", 0, iId_Categoria, false, 
+                                        null, null, null);
         }
 
+        //Esconder el panel lateral derecho de combinaciones
         jScrollPane3.setVisible(false);
         txtTodos.setVisible(false);
         
-        //TALLAS
-        ArrayList<Talla> aTallas = Talla.Select(null, checkEs_Numero.isSelected());
-        ArrayList<Integer> aTallasMarcadas = new ArrayList<>();
-        aTallasMarcadas = _articulo.getTallas();
-        for(Talla t : aTallas) {
+        /**
+         * TALLAS: 
+         * preparar el formulario de tallas con las tallas que tenga ya 
+         * asignadas el artículo.
+         */
+        ArrayList<Talla> aTallas = Talla.Select(null, 
+                                                checkEs_Numero.isSelected());
+        ArrayList<Integer> aTallasMarcadas = _articulo.getTallas();
+        for(Talla talla : aTallas) 
+        {
             boolean bMarcada = false;
             for(Integer i : aTallasMarcadas)
-                if(t.getId() == i)
+                if(talla.getId() == i)
                     bMarcada = true;
             
-            JCheckBox checkbox_talla = new JCheckBox(t.toString());
+            JCheckBox checkbox_talla = new JCheckBox(talla.toString());
             checkbox_talla.setSelected(bMarcada);
-            checkbox_talla.addActionListener(new ActionListener(){
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    _bCambios = true;
-                }
+            checkbox_talla.addActionListener((ActionEvent e) -> {
+                _bCambios = true;
             });
             panelTallas.add(checkbox_talla);
         }
         
         panelTallas.updateUI();
         
-        //COLORES
+        /**
+         * COLORES:
+         * preparar la lista de colores y rellenar con los colores que ya
+         * estén asociados al artículo.
+         */
         _modArticulo_Color = new ModArticulo_Color(_articulo.getId());
         lColores.setModel(_modArticulo_Color);
         
+        //cuando se hace doble click en un color abre el formulario de color
         lColores.addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -96,23 +128,33 @@ public class FrmArticulo extends javax.swing.JFrame {
            }
         });
         
-        //COMBINACIONES
+        /**
+         * COMBINACIONES:
+         * preparar la lista de combinaciones y rellenar con las combinaciones
+         * que ya estan asociadas al artículo. La lista de la izquierda debe
+         * contener todas las combinaciones y en la lista de la derecha
+         * (que comienza invisible) debe tener una lista con todos los artículos
+         * que no estén en la lista de combinaciones de nuestro artículo.
+         */
         lCombinaciones.setModel(new ModArticulos(null, _articulo.getId()));
         lCombinaciones.setCellRenderer(new ListaRender());
         
         try {
             _modArticulosComb = new ModArticulos(null,null);
 
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, 
-                "Error al crear lista de artículos para combinaciones.\n"+ex.toString(), 
+                "Error al crear lista de artículos para combinaciones.\n"
+                        + ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
-        _modArticulosComb.removeCombinacion(_modArticulosComb.getIndexOf(_articulo));
+        _modArticulosComb.removeCombinacion(
+                _modArticulosComb.getIndexOf(_articulo));
         ArrayList<Integer> aComb = _articulo.getCombinaciones();
         for(Integer iId_Comb : aComb)
-            _modArticulosComb.removeCombinacion(_modArticulosComb.getIndexOf(new Articulo(iId_Comb)));
+            _modArticulosComb.removeCombinacion(
+                    _modArticulosComb.getIndexOf(new Articulo(iId_Comb)));
         
         lArticulosCombinaciones.setModel(_modArticulosComb);
         lArticulosCombinaciones.setCellRenderer(new ListaRender());
@@ -123,29 +165,33 @@ public class FrmArticulo extends javax.swing.JFrame {
                    agregarComb();
                 }
             }
-        });
+        });   
         
-        if(_bModificar)
-            this.setTitle("Modificar artículo");
-        
-        txtNombre.requestFocus();
-        _bCambios = false;
-        
+        //Personalizar comportamiento del botón de cerrar
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                if(salir()) FrmArticulo.this.dispose();
+                if(es_posible_salir()) FrmArticulo.this.dispose();
             }
         });
     }
     
+    /**
+     * Personalizar el icono de la ventana
+     * @return Devuelve el icono personalizado.
+     */
     @Override
-     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
-        return retValue;
+    public Image getIconImage() 
+    {
+       return Toolkit.getDefaultToolkit()
+               .getImage(ClassLoader.getSystemResource("img/boton_48.png"));
     }
     
-    private void guardar(){
+    //MÉTODOS PRIVADOS//////////////////////////////////////////////////////////
+     
+    //Guardar cambios
+    private void guardar()
+    {
         try {
             _articulo.setNombre(txtNombre.getText());
             _articulo.setPVP(Data.String2Double(txtPVP.getText()));
@@ -169,30 +215,40 @@ public class FrmArticulo extends javax.swing.JFrame {
         }
     }
     
-    private void agregarComb(){
+    //Agregar un nuevo artículo a las combinaciones
+    private void agregarComb()
+    {
         int index = lArticulosCombinaciones.getSelectedIndex();
-        if(index != -1){
-            ModArticulos modArticulosCombinaciones = (ModArticulos)lArticulosCombinaciones.getModel();
-            Articulo articulo = (Articulo)modArticulosCombinaciones.getElementAt(index);
+        if(index != -1)
+        {
+            ModArticulos modArticulosCombinaciones = 
+                    (ModArticulos)lArticulosCombinaciones.getModel();
+            Articulo articulo = 
+                    (Articulo)modArticulosCombinaciones.getElementAt(index);
             ((ModArticulos)lCombinaciones.getModel()).addArticulo(articulo);
 
             ArrayList<Integer> aComb = _articulo.getCombinaciones();
             aComb.add(articulo.getId());
             _articulo.setCombinaciones(aComb);
 
-            ((ModArticulos)lArticulosCombinaciones.getModel()).removeCombinacion(lArticulosCombinaciones.getSelectedIndex());
+            ((ModArticulos)lArticulosCombinaciones.getModel())
+                    .removeCombinacion(lArticulosCombinaciones
+                            .getSelectedIndex());
             _bCambios = true;
         }
     }
     
-    private void modificarArticuloColor(){
+    //Modificar un color asociado al artículo
+    private void modificarArticuloColor()
+    {
         int iIndex = lColores.getSelectedIndex();
         Color color = (Color)_modArticulo_Color.getElementAt(iIndex);
 
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmArticuloColor = null;
             try {
-                frmArticuloColor = new FrmArticuloColor(_articulo.getId(), color.getId());
+                frmArticuloColor = new FrmArticuloColor(_articulo.getId(), 
+                                                        color.getId());
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, 
                 "Error al buscar color.\n"+ex.toString(), 
@@ -200,6 +256,7 @@ public class FrmArticulo extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
             }
             if(frmArticuloColor != null){
+                frmArticuloColor.setTitle("Modificar color "+ color);
                 frmArticuloColor.setLocationRelativeTo(FrmArticulo.this);
                 frmArticuloColor.setVisible(true);
             }
@@ -207,8 +264,11 @@ public class FrmArticulo extends javax.swing.JFrame {
         });
     }
     
-    private void comprobar_cambios(){
-        if(_bCambios){
+    //Comprobar si existem cambios sin guardar
+    private void comprobar_cambios()
+    {
+        if(_bCambios)
+        {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
@@ -227,9 +287,12 @@ public class FrmArticulo extends javax.swing.JFrame {
         }
     }
     
-    private boolean salir(){
+    //Comprobar si es posible cerrar la ventana
+    private boolean es_posible_salir()
+    {
         comprobar_cambios();
-        if(!_bModificar){
+        if(!_bModificar)
+        {
             try {
                 _articulo.Delete();
             } catch (Exception ex) {
@@ -239,8 +302,9 @@ public class FrmArticulo extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
             }
             return true;
-        }
-        else{
+        } 
+        else
+        {
             if(_modArticulo_Color.getColores().isEmpty()){
                 JOptionPane.showMessageDialog(null,
                 "¡ATENCIÓN! Se debe asignar al menos un color al artículo.",
@@ -253,21 +317,26 @@ public class FrmArticulo extends javax.swing.JFrame {
         }   
     }
     
-    private ArrayList<Integer> getTallasMarcadas() throws Exception{
-        ArrayList<Talla> aTallas = Talla.Select(null, checkEs_Numero.isSelected());
+    //Obtener una lista de las tallas asociadas al artículo
+    private ArrayList<Integer> getTallasMarcadas() throws SQLException 
+    {
+        ArrayList<Talla> aTallas = Talla.Select(null, 
+                                                checkEs_Numero.isSelected());
         ArrayList<Integer> aTallasMarcadas = new ArrayList<>();
         
         for(int i = 0; i < aTallas.size(); i++){
             JCheckBox checkbox_talla = (JCheckBox)panelTallas.getComponent(i);
             if(checkbox_talla.isSelected()){
                 int n = 0;
-                while(!checkbox_talla.getText().equals(aTallas.get(n).getNombre())) n++;
+                while(!checkbox_talla.getText().equals(aTallas.get(n)
+                        .getNombre())) n++;
                 aTallasMarcadas.add(aTallas.get(n).getId());
             }
         }
         
         return aTallasMarcadas;
     }
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -306,7 +375,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         lblArticulo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jSeparator4 = new javax.swing.JSeparator();
-        jButton1 = new javax.swing.JButton();
+        butGestionarExistencias = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Agregar artículo");
@@ -444,13 +513,13 @@ public class FrmArticulo extends javax.swing.JFrame {
 
         jLabel1.setText("Artículos relacionados");
 
-        jButton1.setBackground(new java.awt.Color(0, 0, 0));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Gestionar existencias");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        butGestionarExistencias.setBackground(new java.awt.Color(0, 0, 0));
+        butGestionarExistencias.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        butGestionarExistencias.setForeground(new java.awt.Color(255, 255, 255));
+        butGestionarExistencias.setText("Gestionar existencias");
+        butGestionarExistencias.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                butGestionarExistenciasActionPerformed(evt);
             }
         });
 
@@ -462,7 +531,7 @@ public class FrmArticulo extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(butGestionarExistencias)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(butGuardar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -566,7 +635,7 @@ public class FrmArticulo extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(butAtras)
                             .addComponent(butGuardar)
-                            .addComponent(jButton1)))
+                            .addComponent(butGestionarExistencias)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
@@ -582,14 +651,14 @@ public class FrmArticulo extends javax.swing.JFrame {
 
     private void checkEs_NumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkEs_NumeroActionPerformed
         try {
-            ArrayList<Talla> aTallas = Talla.Select(null, checkEs_Numero.isSelected());
+            ArrayList<Talla> aTallas = Talla.Select(null, 
+                                                   checkEs_Numero.isSelected());
             panelTallas.removeAll();
-            for(Talla t : aTallas){
-                panelTallas.add(new JCheckBox(t.toString()));
-            }
+            for(Talla talla : aTallas)
+                panelTallas.add(new JCheckBox(talla.toString()));
             
             panelTallas.updateUI();
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, 
                 "Error al buscar tallas.\n"+ex.toString(), 
                 "Error", 
@@ -599,11 +668,13 @@ public class FrmArticulo extends javax.swing.JFrame {
     }//GEN-LAST:event_checkEs_NumeroActionPerformed
 
     private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
-        if(salir()){
+        if(es_posible_salir())
+        {
             java.awt.EventQueue.invokeLater(() -> {
                 Frame frmCategoria = null;
                 try {
-                    frmCategoria = new FrmCategoria(_articulo.getId_Categoria(), null);
+                    frmCategoria = new FrmCategoria(_articulo.getId_Categoria(),
+                                                    null);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, 
                     "Error al leer marcas.\n"+ex.toString(), 
@@ -631,9 +702,9 @@ public class FrmArticulo extends javax.swing.JFrame {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
-                "¿Está seguro? Se eliminarán además todos los datos y las imagenes de este"
-                        + " artículo asociados a este color."
-                        + "\n Esta acción no se puede deshacer.",
+                "¿Está seguro? Se eliminarán además todos los datos y "
+                + "las imagenes de este artículo asociados a este color."
+                + "\n Esta acción no se puede deshacer.",
                 "Eliminar color",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
@@ -660,7 +731,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmArticuloColor = null;
             try {
-                frmArticuloColor = new FrmArticuloColor(_articulo.getId(), null);
+               frmArticuloColor = new FrmArticuloColor(_articulo.getId(), null);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, 
                 "Error al buscar artículo.\n"+ex.toString(), 
@@ -691,11 +762,13 @@ public class FrmArticulo extends javax.swing.JFrame {
         int index = lCombinaciones.getSelectedIndex();
         if(index != -1){
             ArrayList<Integer> aCombinaciones = _articulo.getCombinaciones();
-            Articulo articulo = (Articulo)((ModArticulos)lCombinaciones.getModel()).getElementAt(index);
+            Articulo articulo = (Articulo)((ModArticulos)lCombinaciones
+                    .getModel()).getElementAt(index);
             aCombinaciones.remove((Integer)articulo.getId());
             _articulo.setCombinaciones(aCombinaciones);
 
-            ((ModArticulos)lCombinaciones.getModel()).removeCombinacion(lCombinaciones.getSelectedIndex());
+            ((ModArticulos)lCombinaciones.getModel())
+                    .removeCombinacion(lCombinaciones.getSelectedIndex());
             _modArticulosComb.addArticulo(articulo);
             _bCambios = true;
         }
@@ -709,7 +782,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         _bCambios = true;
     }//GEN-LAST:event_txtPVPKeyTyped
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void butGestionarExistenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butGestionarExistenciasActionPerformed
         comprobar_cambios();
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmExistencias = null;
@@ -725,9 +798,8 @@ public class FrmArticulo extends javax.swing.JFrame {
                 frmExistencias.setLocationRelativeTo(this);
                 frmExistencias.setVisible(true);
             }
-            //this.dispose();
         });
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_butGestionarExistenciasActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butAgregarColor;
@@ -735,9 +807,9 @@ public class FrmArticulo extends javax.swing.JFrame {
     private javax.swing.JButton butAtras;
     private javax.swing.JButton butEliminarColor;
     private javax.swing.JButton butEliminarCombinacion;
+    private javax.swing.JButton butGestionarExistencias;
     private javax.swing.JButton butGuardar;
     private javax.swing.JCheckBox checkEs_Numero;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

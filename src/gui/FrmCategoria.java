@@ -276,6 +276,7 @@ public class FrmCategoria extends javax.swing.JFrame {
                 JOptionPane.ERROR_MESSAGE);
             }
             if(frmArticulo != null){
+                frmArticulo.setTitle("Modificar artículo");
                 frmArticulo.setLocationRelativeTo(FrmCategoria.this);
                 frmArticulo.setVisible(true);
             }
