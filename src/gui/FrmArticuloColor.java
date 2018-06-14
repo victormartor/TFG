@@ -13,7 +13,6 @@ import Data.Data;
 import Data.Modelos.ColorListModel;
 import Data.Modelos.ModArticulo_Color;
 import Data.Modelos.ModArticulo_Color_Imagen;
-import Data.Modelos.ModImagenes;
 import Data.Renders.ListaImagenesRender;
 import java.awt.Dimension;
 import java.awt.Frame;

@@ -1,48 +1,74 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Data.Modelos;
 
 import Data.Clases.Articulo;
 import Data.Clases.Categoria;
 import Data.Clases.Marca;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.AbstractListModel;
 
 /**
+ * Modelo para hacer una lista de tipo Marca.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Marca
  */
 public class ModMarcas extends AbstractListModel
 {
-    private ArrayList<Marca> lMarca;
+    private final ArrayList<Marca> _aMarca;
     
-    public ModMarcas() throws Exception
+    /**
+     * Constructor. 
+     * @throws java.sql.SQLException Error al obtener las marcas de la base de
+     * datos.
+     */
+    public ModMarcas() throws SQLException 
     {
-        lMarca = Marca.Select(null, null);
+        _aMarca = Marca.Select(null, null);
     }
 
+    /**
+     * Devuelve el tamaño de la lista.
+     * @return Tamaño de la lista.
+     */
     @Override
-    public int getSize() {
-        return lMarca.size();
+    public int getSize() 
+    {
+        return _aMarca.size();
     }
 
+    /**
+     * Devuelve el elemento de tipo Marca en una posición dada.
+     * @param iIndex Posición del elemento dentro de la lista.
+     * @return Elemento de tipo Marca en esa posición.
+     */
     @Override
-    public Object getElementAt(int index) {
-        return lMarca.get(index);
+    public Object getElementAt(int iIndex) 
+    {
+        return _aMarca.get(iIndex);
     }
     
-    public void addMarca(Marca marca) throws Exception
+    /**
+     * Añade una marca a la lista.
+     * @param marca Marca que se queire añadir.
+     */
+    public void addMarca(Marca marca)
     {
-        lMarca.add(marca);
+        _aMarca.add(marca);
         this.fireIntervalAdded(this, getSize(), getSize()+1);
     }
     
-    public void removeMarca(int index) throws Exception
+    /**
+     * Elimina una marca de la lista en una posición dada. Tambien elimina la
+     * marca de la base de datos, teniendo que eliminar sus categorías y
+     * los artículos de esas categorías.
+     * @param iIndex Posición del elemento a eliminar.
+     * @throws Exception Error al eliminar la marca, alguna de sus categorías
+     * o alguno de los artículos de esas categorías.
+     */
+    public void removeMarca(int iIndex) throws Exception
     {
-        Marca marca = lMarca.get(index);
+        Marca marca = _aMarca.get(iIndex);
         
         ArrayList<Categoria> aCategorias = Categoria.Select(null, null, marca.getId());
         for(Categoria c : aCategorias){
@@ -54,12 +80,7 @@ public class ModMarcas extends AbstractListModel
         }
         marca.Delete();
         
-        lMarca.remove(index);
-        this.fireIntervalRemoved(index, getSize(), getSize()+1);
-    }
-    
-    public Marca getMarca(int index)
-    {
-        return lMarca.get(index);
+        _aMarca.remove(iIndex);
+        this.fireIntervalRemoved(iIndex, getSize(), getSize()+1);
     }
 }

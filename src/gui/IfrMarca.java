@@ -56,7 +56,7 @@ public class IfrMarca extends javax.swing.JFrame {
     
     private void modificarMarca(){
         int iIndex = listMarcas.getSelectedIndex();
-        Marca marca = _modMarcas.getMarca(iIndex);
+        Marca marca = (Marca)_modMarcas.getElementAt(iIndex);
 
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmMarca = null;

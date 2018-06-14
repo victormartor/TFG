@@ -11,7 +11,6 @@ import Data.Data;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import Data.Modelos.ModCategorias;
-import Data.Modelos.ModImagenes;
 import Data.Modelos.ModMarcas;
 import Data.Renders.ListaImagenesRender;
 import Data.Renders.ListaRender;
