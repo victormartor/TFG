@@ -1,22 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import Data.Clases.Categoria;
-import Data.Clases.Configuracion;
 import Data.Data;
 import Data.Clases.Imagen;
 import Data.Clases.Marca;
 import Data.Modelos.ModCategorias;
-import Data.Modelos.ModMarcas;
-import Data.Renders.ListaImagenesRender;
 import Data.Renders.ListaRender;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -25,92 +17,132 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.TimeoutException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import util.Config;
 
 /**
+ * Ventana desde la que se puede crear o modificar una Marca. Desde ella
+ * podemos asignarle un nombre, una imagen y una lista de Categorias.
  *
- * @author Víctor Martín Torres - 12/06/2018
+ * @author Víctor Martín Torres - 12/06/20187
+ * @see Marca
+ * @see ModCategorias
  */
-public class FrmMarca extends javax.swing.JFrame {
-
-    private Marca _marca = null;
-    private ModCategorias _modCategorias = null;
+public class FrmMarca extends javax.swing.JFrame 
+{
+    private final Marca _marca;
+    private final ModCategorias _modCategorias;
     
-    private boolean _bModificar = false;
-    private boolean _bCambios = false;
     /**
-     * Creates new form FrmMarca
+     * La variable _bModificar es un booleano que estará a false cuando se esté
+     * creando un elemento nuevo, y estará a true cuando se esté modificando
+     * un elemento existente.
      */
-    public FrmMarca(Integer iId_Marca) throws Exception {
+    private boolean _bModificar;
+    
+    /**
+     * La variable _bCambios es un booleano que nos avisará si se ha realizado
+     * algún cambio y este no ha sido guardado.
+     */
+    private boolean _bCambios;
+    
+    /**
+     * Crea un nuevo formulario de Marca.
+     * @param iId_Marca Si se va a modificar una marca existente este 
+     * parámetro es su Id en la base de datos. Si se va a crear una marca
+     * nueva, este parámetro debe ser null.
+     * @throws java.sql.SQLException Error al buscar o crear la marca en la
+     * base de datos.
+     */
+    public FrmMarca(Integer iId_Marca) throws SQLException  
+    {
         initComponents();
-        //getContentPane().setBackground(Color.white);
+        txtNombre.requestFocus();
+        _bCambios = false;
         
-        if(iId_Marca != null){
+        /**
+         * Si la marca existe rellenar todos los campos del formulario con 
+         * sus valores, en caso contrario crear una marca nueva con valores
+         * vacíos en la base de datos.
+         */
+        if(iId_Marca != null)
+        {
             _bModificar = true;
             _marca = new Marca(iId_Marca);
             txtNombre.setText(_marca.getNombre());
         }
-        else{
+        else
+        {
+            _bModificar = false;
             _marca = Marca.Create("", -1);
         }
         
+        //Cargar la imagen de la marca
         cargarImagen();
         
+        /**
+         * LISTA DE CATEGORÍAS:
+         * preparar la liste de categorias y rellenar con las categorias que
+         * ya esten asociadas a la marca.
+         */
         _modCategorias = new ModCategorias(_marca.getId());
         lCategorias.setModel(_modCategorias);
         lCategorias.setCellRenderer(new ListaRender());
         
-        if(_bModificar)
-            this.setTitle("Modificar marca");
-        
-        lCategorias.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent e) {
-                if(e.getClickCount()==2){
+        //cuando se hace doble click en una categoria se abre el formulario de
+        //categoria
+        lCategorias.addMouseListener(new java.awt.event.MouseAdapter() 
+        {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if(e.getClickCount()==2)
+                {
                     comprobar_cambios();
                     modificarCategoria();
                 }
            }
         });
         
-        txtNombre.requestFocus();
-        
+        //Personalizar comportamiento del botón de cerrar
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                if(salir())
+                if(es_posible_salir())
                     FrmMarca.this.dispose();
             }
         });
     }
     
+    /**
+     * Personalizar el icono de la ventana
+     * @return Devuelve el icono personalizado.
+     */
     @Override
-     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
-        return retValue;
+    public Image getIconImage() 
+    {
+       return Toolkit.getDefaultToolkit()
+               .getImage(ClassLoader.getSystemResource("img/boton_48.png"));
     }
     
-    private void subir_imagen(){
+    //MÉTODOS PRIVADOS//////////////////////////////////////////////////////////
+    
+    //subir imagen
+    private void subir_imagen()
+    {
         JFileChooser ventanaElegirImagen = new JFileChooser();
         String rutaImagenes = Data.getRutaImagenes();
         
-        if(rutaImagenes != null) {
+        if(rutaImagenes != null) 
+        {
             File folder = new File(rutaImagenes);
             if(!folder.exists()) folder.mkdirs();
             ventanaElegirImagen.setCurrentDirectory(folder);
@@ -119,57 +151,57 @@ public class FrmMarca extends javax.swing.JFrame {
         img.setPreferredSize(new Dimension(175,175));
         ventanaElegirImagen.setAccessory(img);
 
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de Archivos JPEG(*.JPG;*.JPEG) y PNG", "jpg","jpeg", "png");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter(
+                "Formatos de Archivos JPEG(*.JPG;*.JPEG) y PNG", 
+                "jpg","jpeg", "png");
         ventanaElegirImagen.addChoosableFileFilter(filtro);
         ventanaElegirImagen.setFileFilter(filtro);
         ventanaElegirImagen.setDialogTitle("Abrir Imagen");
         
         // Add property change listener
-        ventanaElegirImagen.addPropertyChangeListener(new PropertyChangeListener(){
-       
-            // When any JFileChooser property changes, this handler
-            // is executed
-            public void propertyChange(final PropertyChangeEvent pe)
+        ventanaElegirImagen.addPropertyChangeListener(
+                (final PropertyChangeEvent pe) -> {
+            // Create SwingWorker for smooth experience
+            SwingWorker<Image,Void> worker=new SwingWorker<Image,Void>()
             {
-                // Create SwingWorker for smooth experience
-                SwingWorker<Image,Void> worker=new SwingWorker<Image,Void>(){
-               
-                    // The image processing method
-                    protected Image doInBackground()
+                // The image processing method
+                @Override
+                protected Image doInBackground()
+                {
+                    // If selected file changes..
+                    if(pe.getPropertyName().equals(
+                            JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
                     {
-                        // If selected file changes..
-                        if(pe.getPropertyName().equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY))
-                        {
                         // Get selected file
                         File f=ventanaElegirImagen.getSelectedFile();
-                       
-                            try
-                            {
-                                img.setText("");
-                                // Create FileInputStream for file
-                                FileInputStream fin=new FileInputStream(f);
-
-                                // Read image from fin
-                                BufferedImage bim=ImageIO.read(fin);
-
-                                // Return the scaled version of image
-                                return bim.getScaledInstance(-1,170,BufferedImage.SCALE_FAST);
-                           
-                            }catch(Exception e){
-                                // If there is a problem reading image,
-                                // it might not be a valid image or unable
-                                // to read
-                                img.setText(" Not valid image/Unable to read");
-                            }
-                        }
-                   
-                    return null;
-                    }
-                   
-                    protected void done()
-                    {
+                        
                         try
                         {
+                            img.setText("");
+                            // Create FileInputStream for file
+                            FileInputStream fin=new FileInputStream(f);
+                            
+                            // Read image from fin
+                            BufferedImage bim=ImageIO.read(fin);
+                            
+                            // Return the scaled version of image
+                            return bim.getScaledInstance(-1,170,
+                                    BufferedImage.SCALE_FAST);  
+                        }catch(IOException e){
+                            // If there is a problem reading image,
+                            // it might not be a valid image or unable
+                            // to read
+                            img.setText(" Not valid image/Unable to read");
+                        }
+                    }
+                    return null;
+                }
+                
+                @Override
+                protected void done()
+                {
+                    try
+                    {
                         // Get the image
                         Image i=get(1L,TimeUnit.NANOSECONDS);
                        
@@ -178,37 +210,38 @@ public class FrmMarca extends javax.swing.JFrame {
                        
                         // Set icon otherwise
                         img.setIcon(new ImageIcon(i));
-                        }catch(Exception e){
-                            // Print error occured
-                            img.setText(" Error occured.");
-                        }
+                    }catch(InterruptedException | ExecutionException |
+                            TimeoutException e){
+                        // Print error occured
+                        img.setText(" Error occured.");
                     }
-                };
-               
-                // Start worker thread
-                worker.execute();
-            }
-        });
+                }
+            };
+            
+            // Start worker thread
+            worker.execute();
+        } // When any JFileChooser property changes, this handler
+        // is executed
+        );
 
-        int ventana = ventanaElegirImagen.showOpenDialog(null);
+        int ventana = ventanaElegirImagen.showOpenDialog(this);
         if(ventana == JFileChooser.APPROVE_OPTION)
         {
             File file = ventanaElegirImagen.getSelectedFile();
-            String sRuta = null;
             Imagen imagen = null;
             try {
-                sRuta = file.getAbsolutePath();
-                sRuta = sRuta.replace(file.getName(), "");
                 imagen = Imagen.Create(file, rutaImagenes);     
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+            } catch (IOException | SQLException ex) {
+                JOptionPane.showMessageDialog(this, 
                 "Error al subir la imagen.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
             }
-            if(imagen != null){
+            if(imagen != null)
+            {
                 try {
-                    if(_marca.getId_Imagen() != -1){
+                    if(_marca.getId_Imagen() != -1)
+                    {
                         int id_imagen = _marca.getId_Imagen();
                         _marca.setId_Imagen(imagen.getId());
                         _marca.Update();
@@ -219,7 +252,7 @@ public class FrmMarca extends javax.swing.JFrame {
                  
                     cargarImagen();
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al actualizar la imagen.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
@@ -230,8 +263,11 @@ public class FrmMarca extends javax.swing.JFrame {
         _bCambios = true;
     }
     
-    private void comprobar_cambios(){
-        if(_bCambios){
+    //comprobar si existen cambios sin guardar
+    private void comprobar_cambios()
+    {
+        if(_bCambios)
+        {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
@@ -250,7 +286,9 @@ public class FrmMarca extends javax.swing.JFrame {
         }
     }
     
-    private void guardar(){
+    //guardar cambios
+    private void guardar()
+    {
         try {
             _marca.setNombre(txtNombre.getText());
             _marca.Update();
@@ -258,33 +296,37 @@ public class FrmMarca extends javax.swing.JFrame {
             _bModificar = true;
             _bCambios = false;
 
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
             "Los cambios se han guardado correctamente.", 
             "Mensaje del sistema", 
             JOptionPane.PLAIN_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
                 "Error al guardar.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
     }
     
-    private void modificarCategoria(){
+    //modificar categoria existente
+    private void modificarCategoria()
+    {
         int iIndex = lCategorias.getSelectedIndex();
         Categoria categoria = (Categoria)_modCategorias.getElementAt(iIndex);
 
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmCategoria = null;
             try {
-                frmCategoria = new FrmCategoria(categoria.getId(), _marca.getId());
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                frmCategoria = new FrmCategoria(categoria.getId(), 
+                        _marca.getId());
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, 
                 "Error al buscar la categoría.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
             }
             if(frmCategoria != null){
+                frmCategoria.setTitle("Modificar categoría");
                 frmCategoria.setLocationRelativeTo(FrmMarca.this);
                 frmCategoria.setVisible(true);
             }
@@ -292,45 +334,52 @@ public class FrmMarca extends javax.swing.JFrame {
         });
     }
     
-    private void cargarImagen() throws Exception{
+    //cargar imagen de la marca
+    private void cargarImagen() throws SQLException
+    {
         if(_marca.getId_Imagen() != -1){
             iconoImagen.setText("");
-            Image image = new ImageIcon(new Imagen(_marca.getId_Imagen()).getRuta()).getImage();
-            ImageIcon iconoEscalado = new ImageIcon (image.getScaledInstance(-1,100,Image.SCALE_SMOOTH));
+            Image image = new ImageIcon(
+                    new Imagen(_marca.getId_Imagen()).getRuta()).getImage();
+            ImageIcon iconoEscalado = new ImageIcon(
+                    image.getScaledInstance(-1,100,Image.SCALE_SMOOTH));
             iconoImagen.setIcon(iconoEscalado);
         }
-        else{
+        else
             iconoImagen.setText("<html><body>Elige una <br> imagen</body></html>");
-        }
     }
     
-    private boolean salir(){
+    //comprobar si es posible cerrar la ventana
+    private boolean es_posible_salir()
+    {
         comprobar_cambios();
-        if(!_bModificar){
+        if(!_bModificar)
+        {
             try {
                 _marca.Delete();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al eliminar la marca.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
             }
             return true;
         }
-        else{
+        else
+        {
             try {
-                if(new Marca(_marca.getId()).getId_Imagen() == -1){
-                    JOptionPane.showMessageDialog(null,
+                if(new Marca(_marca.getId()).getId_Imagen() == -1)
+                {
+                    JOptionPane.showMessageDialog(this,
                             "¡ATENCIÓN! Se debe asignar una imagen a la marca.",
                             "Error",
                             JOptionPane.WARNING_MESSAGE);
                     return false;
                 }
-                else{
+                else
                     return true;
-                }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al salir.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -338,6 +387,7 @@ public class FrmMarca extends javax.swing.JFrame {
             } 
         }
     }
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -532,7 +582,8 @@ public class FrmMarca extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void butAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAtrasActionPerformed
-        if(salir()){
+        if(es_posible_salir())
+        {
             java.awt.EventQueue.invokeLater(() -> {
                 Frame ifrMarca = null;
                 try {
@@ -567,19 +618,19 @@ public class FrmMarca extends javax.swing.JFrame {
     private void butAgregarCatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarCatActionPerformed
         comprobar_cambios();
         try {
-            if(new Marca(_marca.getId()).getId_Imagen() == -1){
+            if(new Marca(_marca.getId()).getId_Imagen() == -1)
+            {
                 JOptionPane.showMessageDialog(null,
                         "¡ATENCIÓN! Se debe asignar una imagen a la marca.",
                         "Error",
                         JOptionPane.WARNING_MESSAGE);
-                
             }
             else{
                 java.awt.EventQueue.invokeLater(() -> {
                     Frame frmCategoria = null;
                     try {
                         frmCategoria = new FrmCategoria(null, _marca.getId());
-                    } catch (Exception ex) {
+                    } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(null, 
                         "Error al crear una categoría vacía.\n"+ex.toString(), 
                         "Error", 
@@ -592,8 +643,8 @@ public class FrmMarca extends javax.swing.JFrame {
                     this.dispose();
                 });
             }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, 
+        } catch (HeadlessException | SQLException ex) {
+            JOptionPane.showMessageDialog(this, 
                 "Error al salir.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -608,7 +659,8 @@ public class FrmMarca extends javax.swing.JFrame {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
-                "¿Está seguro? Se eliminarán además todos los artículos de esta categoría."
+                "¿Está seguro? Se eliminarán además todos los artículos "
+                        + "de esta categoría."
                         + "\n Esta acción no se puede deshacer.",
                 "Eliminar categoría",
                 JOptionPane.YES_NO_OPTION,
@@ -622,12 +674,11 @@ public class FrmMarca extends javax.swing.JFrame {
                 try {
                     _modCategorias.removeCategoria(index);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al eliminar categoría.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
                 }
-                
                 _bCambios = true;
             }
         }

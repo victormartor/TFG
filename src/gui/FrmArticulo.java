@@ -203,12 +203,12 @@ public class FrmArticulo extends javax.swing.JFrame
             _bModificar = true;
             _bCambios = false;
 
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
             "Los cambios se han guardado correctamente.", 
             "Mensaje del sistema", 
             JOptionPane.PLAIN_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
                 "Error al guardar.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -250,7 +250,7 @@ public class FrmArticulo extends javax.swing.JFrame
                 frmArticuloColor = new FrmArticuloColor(_articulo.getId(), 
                                                         color.getId());
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al buscar color.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -296,7 +296,7 @@ public class FrmArticulo extends javax.swing.JFrame
             try {
                 _articulo.Delete();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al eliminar artículo.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -306,7 +306,7 @@ public class FrmArticulo extends javax.swing.JFrame
         else
         {
             if(_modArticulo_Color.getColores().isEmpty()){
-                JOptionPane.showMessageDialog(null,
+                JOptionPane.showMessageDialog(this,
                 "¡ATENCIÓN! Se debe asignar al menos un color al artículo.",
                 "Error",
                 JOptionPane.WARNING_MESSAGE);
@@ -659,7 +659,7 @@ public class FrmArticulo extends javax.swing.JFrame
             
             panelTallas.updateUI();
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
                 "Error al buscar tallas.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -676,12 +676,13 @@ public class FrmArticulo extends javax.swing.JFrame
                     frmCategoria = new FrmCategoria(_articulo.getId_Categoria(),
                                                     null);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al leer marcas.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
                 }
                 if(frmCategoria != null){
+                    frmCategoria.setTitle("Modificar categoría");
                     frmCategoria.setLocationRelativeTo(FrmArticulo.this);
                     frmCategoria.setVisible(true);
                 }
@@ -717,7 +718,7 @@ public class FrmArticulo extends javax.swing.JFrame
                 try {
                     _modArticulo_Color.removeColor(index);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al eliminar color.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
@@ -733,7 +734,7 @@ public class FrmArticulo extends javax.swing.JFrame
             try {
                frmArticuloColor = new FrmArticuloColor(_articulo.getId(), null);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al buscar artículo.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -789,7 +790,7 @@ public class FrmArticulo extends javax.swing.JFrame
             try {
                 frmExistencias = new FrmExistencias(_articulo.getNombre());
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al leer la base de datos.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);

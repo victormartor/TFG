@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import Data.Clases.Articulo;
@@ -13,41 +8,60 @@ import Data.Modelos.StockTableModel;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
+ * Ventana desde la que se puede ver y modificar las existencias de cada
+ * Artículo.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Stock
  */
-public class FrmExistencias extends javax.swing.JFrame {
-
-    private ArrayList<Stock> _aStock;
+public class FrmExistencias extends javax.swing.JFrame 
+{
+    private final ArrayList<Stock> _aStock;
+    
+    /**
+     * La variable _bCambios es un booleano que nos avisará si se ha realizado
+     * algún cambio y este no ha sido guardado.
+     */
     private boolean _bCambios;
     
     /**
-     * Creates new form FrmStock
+     * Crea un nuevo formulario de Existencias (Stock).
+     * @param sNombre_Articulo Parámetro necesario si se quiere modificar
+     * las existencias de un artículo en concreto.
+     * @throws java.sql.SQLException Error al buscar o crear el Stock.
      */
-    public FrmExistencias(String sNombre_Articulo) throws Exception {
+    public FrmExistencias(String sNombre_Articulo) throws SQLException  
+    {
         initComponents();
-        
         _aStock = new ArrayList();
         
+        /**
+         * Obtiene todo el Stock de todos los artículos en la tabla Stock.
+         * Si existe algún artículo que no tenga ningún registro en la 
+         * tabla Stock crea dicho registro.
+         */
         ArrayList<Articulo> aArticulo = Articulo.Select(null, null, null, null);
-        for(Articulo articulo : aArticulo){
-            for(int Id_Color : articulo.getColores()){
+        for(Articulo articulo : aArticulo)
+        {
+            for(int Id_Color : articulo.getColores())
+            {
                 Color color = new Color(Id_Color);
-                for(int Id_Talla : articulo.getTallas()){
+                for(int Id_Talla : articulo.getTallas())
+                {
                     Talla talla = new Talla(Id_Talla);
                     
-                    ArrayList<Stock> aStock = Stock.Select(articulo.getId(), Id_Color, Id_Talla, null);
+                    ArrayList<Stock> aStock = Stock.Select(articulo.getId(), 
+                            Id_Color, Id_Talla, null);
                     if(aStock.isEmpty()){
-                        Stock stock = Stock.Create(articulo.getId(), Id_Color, Id_Talla);
+                        Stock stock = Stock.Create(articulo.getId(), 
+                                Id_Color, Id_Talla);
                         _aStock.add(stock);
                     }
                     else{
@@ -57,11 +71,14 @@ public class FrmExistencias extends javax.swing.JFrame {
                 }
             }
         }
-        tableExistencias.setModel(new StockTableModel(_aStock));
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableExistencias.getModel());
-        tableExistencias.setRowSorter(sorter);
-        _bCambios = false;
         
+        //Asignar el modelo a la tabla y sorter para que se pueda ordenar
+        tableExistencias.setModel(new StockTableModel(_aStock));
+        TableRowSorter<TableModel> sorter = 
+                new TableRowSorter<>(tableExistencias.getModel());
+        tableExistencias.setRowSorter(sorter);
+        
+        //Personalizar comportamiento del botón de cerrar
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -69,20 +86,35 @@ public class FrmExistencias extends javax.swing.JFrame {
             }
         });
         
-        if(sNombre_Articulo != null){
+        //Si se ha proporcionado un nombre de artículo se realiza la búsqueda
+        if(sNombre_Articulo != null)
+        {
             txtBuscar.setText(sNombre_Articulo);
             buscar();
         }
+        
+        _bCambios = false;
     }
     
+    /**
+     * Personalizar el icono de la ventana
+     * @return Devuelve el icono personalizado.
+     */
     @Override
-     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
-        return retValue;
+    public Image getIconImage() 
+    {
+       return Toolkit.getDefaultToolkit()
+               .getImage(ClassLoader.getSystemResource("img/boton_48.png"));
     }
     
-    private void buscar(){
-        if(_bCambios){
+    //MÉTODOS PRIVADOS//////////////////////////////////////////////////////////
+    
+    //Realizar una búsqueda por nombre de artículo y modificar el contenido de 
+    //la tabla
+    private void buscar()
+    {
+        if(_bCambios)
+        {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
@@ -101,20 +133,25 @@ public class FrmExistencias extends javax.swing.JFrame {
         }
         
         try {
-            tableExistencias.setModel(new StockTableModel(Stock.Search(txtBuscar.getText())));
-            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableExistencias.getModel());
+            tableExistencias.setModel(
+                    new StockTableModel(Stock.Search(txtBuscar.getText())));
+            TableRowSorter<TableModel> sorter = 
+                    new TableRowSorter<>(tableExistencias.getModel());
             tableExistencias.setRowSorter(sorter);
             _bCambios = false;
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, 
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, 
                 "Error al buscar stock.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
     }
     
-    private void cerrar(){
-        if(_bCambios){
+    //cerrar la ventana preguntando si se quieren guardar los cambios
+    private void cerrar()
+    {
+        if(_bCambios)
+        {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
@@ -131,29 +168,31 @@ public class FrmExistencias extends javax.swing.JFrame {
                 guardar();
             }
         }
-        
         this.dispose();
     }
     
-    private void guardar(){
+    //Guardar cambios
+    private void guardar()
+    {
         try{
-            for(int i = 0; i<tableExistencias.getModel().getRowCount();i++){
-                ((StockTableModel)tableExistencias.getModel()).getData(i).Update();
-            }
+            for(int i = 0; i<tableExistencias.getModel().getRowCount();i++)
+                ((StockTableModel)tableExistencias.getModel())
+                        .getData(i).Update();
             
             _bCambios = false;
 
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
             "Los cambios se han guardado correctamente.", 
             "Mensaje del sistema", 
             JOptionPane.PLAIN_MESSAGE);
         }catch(Exception ex){
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
                 "Error al actualizar.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
     }
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -305,9 +344,8 @@ public class FrmExistencias extends javax.swing.JFrame {
     }//GEN-LAST:event_butBuscarActionPerformed
 
     private void txtBuscarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyPressed
-        if(evt.getExtendedKeyCode() == KeyEvent.VK_ENTER){
+        if(evt.getExtendedKeyCode() == KeyEvent.VK_ENTER)
             buscar();
-        } 
     }//GEN-LAST:event_txtBuscarKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

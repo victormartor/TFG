@@ -1,53 +1,61 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import Data.Clases.Configuracion;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /**
+ * Ventana desde la que se puede cambiar la configuración de variables 
+ * globales en la aplicación que están almacenadas en la base de datos.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Configuracion
  */
-public class FrmConfig extends javax.swing.JFrame {
-
-    private ArrayList<Configuracion> _aConfig = null;
+public class FrmConfig extends javax.swing.JFrame 
+{
+    private ArrayList<Configuracion> _aConfig;
     private JLabel _lblNombreTienda;
     
     /**
-     * Creates new form FrmConfig
+     * Crea un nuevo formulario de configuracion.
+     * @param lblNombreTienda Es necesario que se le pase el JLabel que contiene
+     * el nombre de la tienda de la ventana principal para poder cambiar su 
+     * contenido sin tener que cerrarla.
      */
-    public FrmConfig(JLabel lblNombreTienda) {
+    public FrmConfig(JLabel lblNombreTienda) 
+    {
         initComponents();
         
         _lblNombreTienda = lblNombreTienda;
         
+        //Obtener todas las variables globales de configuración
         try {
             _aConfig = Configuracion.Select(null, null);
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, 
                 "Error al leer la configuración.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
         
+        //Asignar sus valores a las cajas de texto
         txtNombreTienda.setText(_aConfig.get(0).getValor());
         txtEmail.setText(_aConfig.get(1).getValor());
     }
     
+    /**
+     * Personalizar el icono de la ventana
+     * @return Devuelve el icono personalizado.
+     */
     @Override
-     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
-        return retValue;
+    public Image getIconImage() 
+    {
+       return Toolkit.getDefaultToolkit()
+               .getImage(ClassLoader.getSystemResource("img/boton_48.png"));
     }
 
     /**
@@ -128,11 +136,10 @@ public class FrmConfig extends javax.swing.JFrame {
         _aConfig.get(1).setValor(txtEmail.getText());
         
         try{
-            for(Configuracion c : _aConfig){
+            for(Configuracion c : _aConfig)
                 c.Update();
-            }
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(null, 
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(this, 
                 "Error al guardar.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);

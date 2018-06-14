@@ -1,38 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
-import Data.Clases.Color;
 import Data.Clases.Talla;
 import Data.Modelos.TallaListModel;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
+ * Ventana desde la que se puede crear o eliminar una talla. Desde ella 
+ * se pueden crear o eliminar los dos tipos de tallas ya sean número o no.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Talla
+ * @see TallaListModel
  */
-public class FrmTallas extends javax.swing.JFrame {
-
+public class FrmTallas extends javax.swing.JFrame 
+{
     private TallaListModel _modLetras = null;
     private TallaListModel _modNumeros = null;
     
     /**
-     * Creates new form FrmTallas
+     * Crea un nuevo formulario de tallas.
      */
-    public FrmTallas() {
+    public FrmTallas() 
+    {
         initComponents();
         
+        //Obtener las listas de tallas de la base de datos
         try {
             _modLetras = new TallaListModel(Talla.Select(null, false));
             _modNumeros = new TallaListModel(Talla.Select(null, true));
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, 
                 "Error al obtener las tallas.\n"+ex.toString(), 
                 "Error", 
@@ -43,20 +42,30 @@ public class FrmTallas extends javax.swing.JFrame {
         lTallasNumero.setModel(_modNumeros);
     }
     
+    /**
+     * Personalizar el icono de la ventana
+     * @return Devuelve el icono personalizado.
+     */
     @Override
-     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
-        return retValue;
+    public Image getIconImage() 
+    {
+       return Toolkit.getDefaultToolkit()
+               .getImage(ClassLoader.getSystemResource("img/boton_48.png"));
     }
     
-    private boolean isNumeric(String cadena){
+    //METODOS PRIVADOS//////////////////////////////////////////////////////////
+    
+    //comprobar si un String es numerico o no
+    private boolean isNumeric(String cadena)
+    {
         try {
-                Integer.parseInt(cadena);
-                return true;
+            Integer.parseInt(cadena);
+            return true;
         } catch (NumberFormatException nfe){
                 return false;
         }
     }
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -209,34 +218,36 @@ public class FrmTallas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void butAgregarLetraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butAgregarLetraActionPerformed
-        String sTalla = (String)JOptionPane.showInputDialog(
+        String sTalla = (String)JOptionPane.showInputDialog
+        (
             this,
             "Talla",
             "Nueva talla",
             JOptionPane.PLAIN_MESSAGE);
         
         if(sTalla != null){
-            if(!isNumeric(sTalla)){
+            if(!isNumeric(sTalla))
+            {
                 try {
                     _modLetras.addTalla(Talla.Create(sTalla, false));
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(this, 
                     "Error al crear la talla.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
                 }
             }
-            else{
+            else
                 JOptionPane.showMessageDialog(this,
                     "La talla no debe ser numérica.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-            }
         }
     }//GEN-LAST:event_butAgregarLetraActionPerformed
 
     private void butEliminarLetraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarLetraActionPerformed
-        if(lTallasLetra.getSelectedIndex() != -1){
+        if(lTallasLetra.getSelectedIndex() != -1)
+        {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
@@ -254,7 +265,7 @@ public class FrmTallas extends javax.swing.JFrame {
                 try {
                     _modLetras.removeTalla(lTallasLetra.getSelectedIndex());
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al eliminar la talla.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
@@ -270,14 +281,16 @@ public class FrmTallas extends javax.swing.JFrame {
             "Nueva talla",
             JOptionPane.PLAIN_MESSAGE);
         
-        if(sTalla != null){
-            if(isNumeric(sTalla)){
+        if(sTalla != null)
+        {
+            if(isNumeric(sTalla))
+            {
                 try {
                     Talla.Create(sTalla, true);
                     _modNumeros = new TallaListModel(Talla.Select(null, true));
                     lTallasNumero.setModel(_modNumeros);
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(this, 
                     "Error al crear la talla.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
@@ -293,7 +306,8 @@ public class FrmTallas extends javax.swing.JFrame {
     }//GEN-LAST:event_butAgregarNumeroActionPerformed
 
     private void butEliminarNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarNumeroActionPerformed
-        if(lTallasNumero.getSelectedIndex() != -1){
+        if(lTallasNumero.getSelectedIndex() != -1)
+        {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
@@ -311,7 +325,7 @@ public class FrmTallas extends javax.swing.JFrame {
                 try {
                     _modNumeros.removeTalla(lTallasNumero.getSelectedIndex());
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al eliminar la talla.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);

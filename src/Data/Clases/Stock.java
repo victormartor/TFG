@@ -137,6 +137,8 @@ public class Stock
         Connection con = null;
         try {
             con = Data.Connection();
+            con.createStatement().executeUpdate("DELETE FROM pedido_stock WHERE "
+                                    + "Id_Stock = " + _iId + ";");
             con.createStatement().executeUpdate("DELETE FROM Stock WHERE "
                                     + "Id = " + _iId + ";");
             _bIsDeleted = true;

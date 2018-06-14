@@ -1,46 +1,52 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import Data.Clases.Color;
 import Data.Modelos.ColorListModel;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
+ * Ventana desde la que se puede crear o modificar un color. Desde ella se le
+ * puede asignar un nombre.
  *
  * @author Víctor Martín Torres - 12/06/2018
+ * @see Color
+ * @see ColorListModel
  */
-public class FrmColores extends javax.swing.JFrame {
-
+public class FrmColores extends javax.swing.JFrame 
+{
     private ColorListModel _modColores = null;
     
     /**
-     * Creates new form FrmColores
+     * Crea un nuevo formulario de colores.
      */
-    public FrmColores()  {
+    public FrmColores()  
+    {
         initComponents();
+        
+        //Obtener la lista de colores de la base de datos.
         try {
             _modColores = new ColorListModel(Color.Select(null));
             lColores.setModel(_modColores);
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, 
-                "Error al obtener colores.\n"+ex.toString(), 
+                "Error al obtener los colores.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
     }
     
+    /**
+     * Personalizar el icono de la ventana
+     * @return Devuelve el icono personalizado.
+     */
     @Override
-     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/boton_48.png"));
-        return retValue;
+    public Image getIconImage() 
+    {
+       return Toolkit.getDefaultToolkit()
+               .getImage(ClassLoader.getSystemResource("img/boton_48.png"));
     }
 
     /**
@@ -132,8 +138,8 @@ public class FrmColores extends javax.swing.JFrame {
         if(sColor != null){
             try {
                 _modColores.addColor(Color.Create(sColor));
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, 
                 "Error al crear color.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -142,7 +148,8 @@ public class FrmColores extends javax.swing.JFrame {
     }//GEN-LAST:event_butAgregarActionPerformed
 
     private void butEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEliminarActionPerformed
-        if(lColores.getSelectedIndex() != -1){
+        if(lColores.getSelectedIndex() != -1)
+        {
             Object[] options = {"Sí",
                                 "No"};
             int n = JOptionPane.showOptionDialog(this,
@@ -161,7 +168,7 @@ public class FrmColores extends javax.swing.JFrame {
                 try {
                     _modColores.removeColor(lColores.getSelectedIndex());
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al eliminar color.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);

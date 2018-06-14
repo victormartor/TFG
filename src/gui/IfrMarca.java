@@ -63,12 +63,13 @@ public class IfrMarca extends javax.swing.JFrame {
             try {
                 frmMarca = new FrmMarca(marca.getId());
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al buscar la marca.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
             }
             if(frmMarca != null){
+                frmMarca.setTitle("Modificar marca");
                 frmMarca.setLocationRelativeTo(IfrMarca.this);
                 frmMarca.setVisible(true);
             }

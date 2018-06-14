@@ -202,6 +202,9 @@ public class Articulo
             ResultSet rs = con.createStatement().executeQuery(
                 "SELECT Id_Imagen FROM Articulo_Color_Imagen "
                 + "WHERE Id_Articulo = "+_iId);
+            
+            for(Stock stock : Stock.Select(_iId, null, null, null))
+                stock.Delete();
 
             con.createStatement().executeUpdate(
                 "DELETE FROM articulo_talla WHERE Id_Articulo = " + _iId);
@@ -212,8 +215,6 @@ public class Articulo
                 +" or Id_Articulo2 = " + _iId);
             con.createStatement().executeUpdate(
                "DELETE FROM articulo_color_imagen WHERE Id_Articulo = " + _iId);
-            con.createStatement().executeUpdate(
-                "DELETE FROM stock WHERE Id_Articulo = " + _iId);
             con.createStatement().executeUpdate(
                 "DELETE FROM Articulo WHERE Id = " + _iId);
 

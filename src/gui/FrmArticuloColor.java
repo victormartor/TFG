@@ -92,7 +92,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
         //Cargar el artículo de la base de datos
         try {
             _articulo = new Articulo(iId_Articulo);
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, 
                 "Error al buscar artículo.\n"+ex.toString(), 
                 "Error", 
@@ -163,7 +163,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
                 _articulo.Add_Color(_color);
                 _bModificar = true;
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al añadir color.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -208,7 +208,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
             try {
                 _articulo.Delete_Color(_color.getId());
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                 "Error al eliminar color.\n"+ex.toString(), 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
@@ -218,7 +218,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
         else
         {
             if(_color != null && _modArticulo_Color_Imagen.getSize() == 0){
-                JOptionPane.showMessageDialog(null,
+                JOptionPane.showMessageDialog(this,
                 "¡ATENCIÓN! Se debe asignar al menos una imagen al color.",
                 "Error",
                 JOptionPane.WARNING_MESSAGE);
@@ -239,7 +239,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
 
         if(bEsta_asociado)
         {
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
                 "Error, ese color ya está asociado a este artículo.", 
                 "Color ya asociado", 
                 JOptionPane.WARNING_MESSAGE);
@@ -257,7 +257,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
     {
         if(_color == null || _color.getId()== -1)
         {
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
                 "Error, debe elegir primero un color.", 
                 "Elija un color", 
                 JOptionPane.WARNING_MESSAGE);
@@ -408,7 +408,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
                 try {
                     frmArticulo = new FrmArticulo(_articulo.getId(),null);
                 } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al leer artículo.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
@@ -516,7 +516,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
             // is executed
             );
 
-            int ventana = ventanaElegirImagen.showOpenDialog(null);
+            int ventana = ventanaElegirImagen.showOpenDialog(this);
             if(ventana == JFileChooser.APPROVE_OPTION)
             {
                 File file = ventanaElegirImagen.getSelectedFile();
@@ -527,7 +527,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
                     _srutaGuardada = sRuta;
                     imagen = Imagen.Create(file, rutaImagenes);   
                 } catch (IOException | SQLException ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al subir imagen.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
@@ -537,7 +537,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
                     try {
                         _modArticulo_Color_Imagen.addImagen(imagen);
                     } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, 
+                        JOptionPane.showMessageDialog(this, 
                         "Error al añadir imagen.\n"+ex.toString(), 
                         "Error", 
                         JOptionPane.ERROR_MESSAGE);
@@ -569,7 +569,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
                 try {
                     _modArticulo_Color_Imagen.removeImagen(index);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, 
+                    JOptionPane.showMessageDialog(this, 
                     "Error al eliminar imagen.\n"+ex.toString(), 
                     "Error", 
                     JOptionPane.ERROR_MESSAGE);
@@ -594,7 +594,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
                    try {
                         color = Color.Create(sColor);
                     } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, 
+                        JOptionPane.showMessageDialog(this, 
                         "Error al crear color.\n"+ex.toString(), 
                         "Error", 
                         JOptionPane.ERROR_MESSAGE);
@@ -606,7 +606,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
                                 .getModel()).getIndexColor(color.getId()));
                         cmbColor.setEnabled(false);
                     } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, 
+                        JOptionPane.showMessageDialog(this, 
                         "Error al leer colores.\n"+ex.toString(), 
                         "Error", 
                         JOptionPane.ERROR_MESSAGE);
@@ -619,7 +619,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
                         lImagenes.setModel(_modArticulo_Color_Imagen);
                         lImagenes.setCellRenderer(new ListaImagenesRender());
                     } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, 
+                        JOptionPane.showMessageDialog(this, 
                         "Error al buscar imágenes.\n"+ex.toString(), 
                         "Error", 
                         JOptionPane.ERROR_MESSAGE);
@@ -639,7 +639,7 @@ public class FrmArticuloColor extends javax.swing.JFrame
                         lImagenes.setModel(_modArticulo_Color_Imagen);
                         lImagenes.setCellRenderer(new ListaImagenesRender());
                     } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, 
+                        JOptionPane.showMessageDialog(this, 
                         "Error al buscar imágenes.\n"+ex.toString(), 
                         "Error", 
                         JOptionPane.ERROR_MESSAGE);
