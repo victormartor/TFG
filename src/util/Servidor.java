@@ -20,13 +20,14 @@ import java.util.ArrayList;
  */
 public class Servidor
 {
-    private String _sMensaje;
     private boolean _bEncendido;
     private ServerSocket _SocketConexion;
     private SocketStream _SocketDatos;
     
-    //GET
-    public String getMensaje(){return _sMensaje;}
+    /**
+     * Indica si el servidor está encendido o no.
+     * @return El servidor está encendido
+     */
     public boolean encendido() {return _bEncendido;}
     
     /**
@@ -49,7 +50,7 @@ public class Servidor
     }
     
     /**
-     * AMétodo para apagar el servidor 
+     * Método para apagar el servidor 
      * @throws java.io.IOException Error al apagar el servidor
      */
     public void apagarServidor() throws IOException
