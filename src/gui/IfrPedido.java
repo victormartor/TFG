@@ -41,7 +41,7 @@ import javax.swing.SwingConstants;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class IfrPedido extends javax.swing.JFrame {
 

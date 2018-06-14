@@ -18,7 +18,7 @@ import javax.swing.ListCellRenderer;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class ListaImagenesRender extends JLabel implements ListCellRenderer{
 

@@ -40,7 +40,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class FrmCategoria extends javax.swing.JFrame {
 
@@ -263,7 +263,7 @@ public class FrmCategoria extends javax.swing.JFrame {
     
     private void modificarArticulo(){
         int iIndex = lArticulos.getSelectedIndex();
-        Articulo articulo = _modArticulos.getArticulo(iIndex);
+        Articulo articulo = (Articulo)_modArticulos.getElementAt(iIndex);
 
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmArticulo = null;

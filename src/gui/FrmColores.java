@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class FrmColores extends javax.swing.JFrame {
 

@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class FrmConfig extends javax.swing.JFrame {
 

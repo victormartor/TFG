@@ -8,10 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
+ * Representa un pedido que aún no ha sido aceptado.
  *
  * @author Víctor Martín Torres - 12/06/2018
- * 
- * Clase PedidoPendiente representa un pedido que aún no ha sido aceptado.
  */
 public class PedidoPendiente 
 {

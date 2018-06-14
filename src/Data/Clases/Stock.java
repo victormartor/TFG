@@ -7,10 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
+ * Representa un registro de la tabla Stock.
  *
  * @author Víctor Martín Torres - 12/06/2018
- * 
- * Clase Stock representa en un objeto una fila de la tabla Stock.
  */
 public class Stock 
 {	

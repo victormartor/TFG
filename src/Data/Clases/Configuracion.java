@@ -7,11 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
+ * Representa un registro de la tabla Configuracion.
  *
  * @author Víctor Martín Torres - 12/06/2018
- * 
- * Clase Configuración representa en un objeto una fila de la tabla 
- * Configuración.
  */
 public class Configuracion 
 {

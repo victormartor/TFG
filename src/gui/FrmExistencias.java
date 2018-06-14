@@ -23,7 +23,7 @@ import javax.swing.table.TableRowSorter;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class FrmExistencias extends javax.swing.JFrame {
 

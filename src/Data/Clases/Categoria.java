@@ -7,10 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
+ * Representa un registro de la tabla Categoria.
  *
  * @author Víctor Martín Torres - 12/06/2018
- * 
- * Clase Categoria representa en un objeto una fila de la tabla Categoria
  */
 public class Categoria 
 {	

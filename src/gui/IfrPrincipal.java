@@ -23,7 +23,7 @@ import util.Servidor;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class IfrPrincipal extends javax.swing.JFrame {
 

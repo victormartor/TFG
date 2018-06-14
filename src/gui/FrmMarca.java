@@ -46,7 +46,7 @@ import util.Config;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class FrmMarca extends javax.swing.JFrame {
 
@@ -273,7 +273,7 @@ public class FrmMarca extends javax.swing.JFrame {
     
     private void modificarCategoria(){
         int iIndex = lCategorias.getSelectedIndex();
-        Categoria categoria = _modCategorias.getCategoria(iIndex);
+        Categoria categoria = (Categoria)_modCategorias.getElementAt(iIndex);
 
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmCategoria = null;

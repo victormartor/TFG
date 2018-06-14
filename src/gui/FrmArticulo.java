@@ -30,7 +30,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class FrmArticulo extends javax.swing.JFrame {
     
@@ -173,7 +173,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         int index = lArticulosCombinaciones.getSelectedIndex();
         if(index != -1){
             ModArticulos modArticulosCombinaciones = (ModArticulos)lArticulosCombinaciones.getModel();
-            Articulo articulo = modArticulosCombinaciones.getArticulo(index);
+            Articulo articulo = (Articulo)modArticulosCombinaciones.getElementAt(index);
             ((ModArticulos)lCombinaciones.getModel()).addArticulo(articulo);
 
             ArrayList<Integer> aComb = _articulo.getCombinaciones();
@@ -187,7 +187,7 @@ public class FrmArticulo extends javax.swing.JFrame {
     
     private void modificarArticuloColor(){
         int iIndex = lColores.getSelectedIndex();
-        Color color = _modArticulo_Color.getColor(iIndex);
+        Color color = (Color)_modArticulo_Color.getElementAt(iIndex);
 
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmArticuloColor = null;
@@ -691,7 +691,7 @@ public class FrmArticulo extends javax.swing.JFrame {
         int index = lCombinaciones.getSelectedIndex();
         if(index != -1){
             ArrayList<Integer> aCombinaciones = _articulo.getCombinaciones();
-            Articulo articulo = ((ModArticulos)lCombinaciones.getModel()).getArticulo(index);
+            Articulo articulo = (Articulo)((ModArticulos)lCombinaciones.getModel()).getElementAt(index);
             aCombinaciones.remove((Integer)articulo.getId());
             _articulo.setCombinaciones(aCombinaciones);
 

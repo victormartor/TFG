@@ -7,10 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
+ * Representa un registro de la tabla Talla.
  *
  * @author Víctor Martín Torres - 12/06/2018
- * 
- * Clase Talla representa en un objeto una fila de la tabla Talla.
  */
 public class Talla 
 {	

@@ -43,7 +43,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
- * @author victor
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class FrmArticuloColor extends javax.swing.JFrame {
 

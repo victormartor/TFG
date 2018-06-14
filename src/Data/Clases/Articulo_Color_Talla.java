@@ -1,10 +1,9 @@
 package Data.Clases;
 
 /**
- *
- * @author Víctor Martín Torres - 12/06/2018
+ * Almacena sus tres Ids.
  * 
- * Clase Articulo_Color_Talla creada para almacenar sus tres Ids
+ * @author Víctor Martín Torres - 12/06/2018
  */
 public class Articulo_Color_Talla
 {

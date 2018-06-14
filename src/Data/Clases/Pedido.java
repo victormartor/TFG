@@ -8,10 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
+ * Representa un registro de la tabla Pedido.
  *
  * @author Víctor Martín Torres - 12/06/2018
- * 
- * Clase Pedido representa en un objeto una fila de la tabla Pedido.
  */
 public class Pedido 
 {	
