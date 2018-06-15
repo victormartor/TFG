@@ -86,14 +86,13 @@ public class FrmExistencias extends javax.swing.JFrame
             }
         });
         
+        _bCambios = false;
         //Si se ha proporcionado un nombre de artículo se realiza la búsqueda
         if(sNombre_Articulo != null)
         {
             txtBuscar.setText(sNombre_Articulo);
             buscar();
-        }
-        
-        _bCambios = false;
+        }   
     }
     
     /**
