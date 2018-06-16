@@ -20,6 +20,9 @@ import static org.junit.Assert.*;
  */
 public class MarcaTest {
     
+    private Marca _marca_prueba;
+    private Marca _marca_zara;
+    
     public MarcaTest() {
     }
     
@@ -32,21 +35,23 @@ public class MarcaTest {
     }
     
     @Before
-    public void setUp() {
+    public void setUp() throws SQLException {
+        _marca_prueba = Marca.Create("Prueba_Marca", -1);
+        _marca_zara = new Marca(1);
     }
     
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        _marca_prueba.Delete();
     }
 
     /**
      * Test of getId method, of class Marca.
-     * @throws java.sql.SQLException Error al acceder a la base de datos
      */
     @Test
-    public void testGetId() throws SQLException {
+    public void testGetId() {
         System.out.println("getId");
-        Marca instance = new Marca(1);
+        Marca instance = _marca_zara;
         int expResult = 1;
         int result = instance.getId();
         assertEquals(expResult, result);
@@ -54,38 +59,35 @@ public class MarcaTest {
 
     /**
      * Test of getNombre method, of class Marca.
-     * @throws java.sql.SQLException Error al acceder a la base de datos
      */
     @Test
-    public void testGetNombre() throws SQLException {
+    public void testGetNombre() {
         System.out.println("getNombre");
-        Marca instance = new Marca(1);
-        String expResult = "ZARA";
+        Marca instance = _marca_prueba;
+        String expResult = "Prueba_Marca";
         String result = instance.getNombre();
         assertEquals(expResult, result);
     }
 
     /**
      * Test of getId_Imagen method, of class Marca.
-     * @throws java.sql.SQLException Error al acceder a la base de datos
      */
     @Test
-    public void testGetId_Imagen() throws SQLException {
+    public void testGetId_Imagen() {
         System.out.println("getId_Imagen");
-        Marca instance = new Marca(1);
-        int expResult = 1;
+        Marca instance = _marca_prueba;
+        int expResult = -1;
         int result = instance.getId_Imagen();
         assertEquals(expResult, result);
     }
 
     /**
      * Test of getIsDeleted method, of class Marca.
-     * @throws java.sql.SQLException Error al acceder a la base de datos
      */
     @Test
-    public void testGetIsDeleted() throws SQLException {
+    public void testGetIsDeleted() {
         System.out.println("getIsDeleted");
-        Marca instance = new Marca(1);
+        Marca instance = _marca_prueba;
         boolean expResult = false;
         boolean result = instance.getIsDeleted();
         assertEquals(expResult, result);
@@ -97,11 +99,10 @@ public class MarcaTest {
     @Test
     public void testSetNombre() {
         System.out.println("setNombre");
-        String sNombre = "";
-        Marca instance = null;
+        String sNombre = "Prueba_Marca_Set_Nombre";
+        Marca instance = _marca_prueba;
         instance.setNombre(sNombre);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(sNombre, instance.getNombre());
     }
 
     /**
@@ -111,10 +112,10 @@ public class MarcaTest {
     public void testSetId_Imagen() {
         System.out.println("setId_Imagen");
         int iId_Imagen = 0;
-        Marca instance = null;
+        Marca instance = _marca_prueba;
         instance.setId_Imagen(iId_Imagen);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(iId_Imagen, instance.getId_Imagen());
+        instance.setId_Imagen(-1);
     }
 
     /**
@@ -123,66 +124,67 @@ public class MarcaTest {
     @Test
     public void testToString() {
         System.out.println("toString");
-        Marca instance = null;
-        String expResult = "";
+        Marca instance = _marca_zara;
+        String expResult = "1:ZARA:1";
         String result = instance.toString();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
      * Test of Create method, of class Marca.
+     * @throws java.lang.Exception Error al acceder a la base de datos
      */
     @Test
     public void testCreate() throws Exception {
         System.out.println("Create");
-        String sNombre = "";
-        int iId_Imagen = 0;
-        Marca expResult = null;
+        String sNombre = "create";
+        int iId_Imagen = -1;
         Marca result = Marca.Create(sNombre, iId_Imagen);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(sNombre, result.getNombre());
+        assertEquals(iId_Imagen, result.getId_Imagen());
+        result.Delete();
     }
 
     /**
      * Test of Delete method, of class Marca.
+     * @throws java.lang.Exception Error al acceder a la base de datos
      */
     @Test
     public void testDelete() throws Exception {
         System.out.println("Delete");
-        Marca instance = null;
+        Marca instance = Marca.Create("Pruabe_Delete", -1);
         instance.Delete();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(true, instance.getIsDeleted());
     }
 
     /**
      * Test of Update method, of class Marca.
+     * @throws java.lang.Exception Error al acceder a la base de datos
      */
     @Test
     public void testUpdate() throws Exception {
         System.out.println("Update");
-        Marca instance = null;
-        instance.Update();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        _marca_prueba.setNombre("Prueba_Update");
+        _marca_prueba.Update();
+        Marca instance = new Marca(_marca_prueba.getId());
+        assertEquals("Prueba_Update", instance.getNombre());
     }
 
     /**
      * Test of Select method, of class Marca.
+     * @throws java.sql.SQLException Error al acceder a la base de datos
      */
     @Test
-    public void testSelect() throws Exception {
+    public void testSelect() throws SQLException  {
         System.out.println("Select");
-        String sNombre = "";
-        Integer iId_Imagen = null;
-        ArrayList<Marca> expResult = null;
-        ArrayList<Marca> result = Marca.Select(sNombre, iId_Imagen);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        ArrayList<Marca> result = Marca.Select(null, null);
+        assertEquals(5, result.size());
+        
+        result = Marca.Select("ZARA", null);
+        assertEquals(1, result.size());
+        
+        result = Marca.Select(null, -1);
+        assertEquals(1, result.size());
     }
     
 }
