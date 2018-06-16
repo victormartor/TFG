@@ -8,15 +8,14 @@ package Data.Clases;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
+ * Test para la clase Marca.
  *
- * @author victor
+ * @author Víctor Martín Torres
  */
 public class MarcaTest {
     
@@ -24,14 +23,6 @@ public class MarcaTest {
     private Marca _marca_zara;
     
     public MarcaTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
     }
     
     @Before
@@ -50,7 +41,7 @@ public class MarcaTest {
      */
     @Test
     public void testGetId() {
-        System.out.println("getId");
+        System.out.println("Marca: getId");
         Marca instance = _marca_zara;
         int expResult = 1;
         int result = instance.getId();
@@ -62,7 +53,7 @@ public class MarcaTest {
      */
     @Test
     public void testGetNombre() {
-        System.out.println("getNombre");
+        System.out.println("Marca: getNombre");
         Marca instance = _marca_prueba;
         String expResult = "Prueba_Marca";
         String result = instance.getNombre();
@@ -74,7 +65,7 @@ public class MarcaTest {
      */
     @Test
     public void testGetId_Imagen() {
-        System.out.println("getId_Imagen");
+        System.out.println("Marca: getId_Imagen");
         Marca instance = _marca_prueba;
         int expResult = -1;
         int result = instance.getId_Imagen();
@@ -86,7 +77,7 @@ public class MarcaTest {
      */
     @Test
     public void testGetIsDeleted() {
-        System.out.println("getIsDeleted");
+        System.out.println("Marca: getIsDeleted");
         Marca instance = _marca_prueba;
         boolean expResult = false;
         boolean result = instance.getIsDeleted();
@@ -98,7 +89,7 @@ public class MarcaTest {
      */
     @Test
     public void testSetNombre() {
-        System.out.println("setNombre");
+        System.out.println("Marca: setNombre");
         String sNombre = "Prueba_Marca_Set_Nombre";
         Marca instance = _marca_prueba;
         instance.setNombre(sNombre);
@@ -110,7 +101,7 @@ public class MarcaTest {
      */
     @Test
     public void testSetId_Imagen() {
-        System.out.println("setId_Imagen");
+        System.out.println("Marca: setId_Imagen");
         int iId_Imagen = 0;
         Marca instance = _marca_prueba;
         instance.setId_Imagen(iId_Imagen);
@@ -123,7 +114,7 @@ public class MarcaTest {
      */
     @Test
     public void testToString() {
-        System.out.println("toString");
+        System.out.println("Marca: toString");
         Marca instance = _marca_zara;
         String expResult = "1:ZARA:1";
         String result = instance.toString();
@@ -136,7 +127,7 @@ public class MarcaTest {
      */
     @Test
     public void testCreate() throws Exception {
-        System.out.println("Create");
+        System.out.println("Marca: Create");
         String sNombre = "create";
         int iId_Imagen = -1;
         Marca result = Marca.Create(sNombre, iId_Imagen);
@@ -151,7 +142,7 @@ public class MarcaTest {
      */
     @Test
     public void testDelete() throws Exception {
-        System.out.println("Delete");
+        System.out.println("Marca: Delete");
         Marca instance = Marca.Create("Pruabe_Delete", -1);
         instance.Delete();
         assertEquals(true, instance.getIsDeleted());
@@ -163,7 +154,7 @@ public class MarcaTest {
      */
     @Test
     public void testUpdate() throws Exception {
-        System.out.println("Update");
+        System.out.println("Marca: Update");
         _marca_prueba.setNombre("Prueba_Update");
         _marca_prueba.Update();
         Marca instance = new Marca(_marca_prueba.getId());
@@ -176,7 +167,7 @@ public class MarcaTest {
      */
     @Test
     public void testSelect() throws SQLException  {
-        System.out.println("Select");
+        System.out.println("Marca: Select");
         ArrayList<Marca> result = Marca.Select(null, null);
         assertEquals(5, result.size());
         

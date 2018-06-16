@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -171,7 +169,7 @@ public class IfrPedido extends javax.swing.JFrame {
                 panelTicket.add(pedido);
                 
                 JLabel precio = new JLabel();
-                precio.setText(articulo.getPVP()+" €");
+                precio.setText(articulo.getPVP()+" €     ");
                 precio.setHorizontalAlignment(SwingConstants.RIGHT);
                 precio.setVerticalAlignment(SwingConstants.TOP);
                 precio.setFont(panelTicket.getFont());
@@ -393,6 +391,7 @@ public class IfrPedido extends javax.swing.JFrame {
         lblTotal.setText("Total: ");
 
         jScrollPane1.setBorder(null);
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         panelTicket.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         panelTicket.setMaximumSize(new java.awt.Dimension(537, 358));
@@ -538,7 +537,7 @@ public class IfrPedido extends javax.swing.JFrame {
                                         .addComponent(lblBloque)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(txtBloque, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 103, Short.MAX_VALUE))
+                                .addGap(0, 203, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblEmail)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
