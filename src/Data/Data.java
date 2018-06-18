@@ -66,19 +66,19 @@ public class Data
     	String result = "";
     	for(int i=0; i<s.length();i++)
     	{
-    		result += s.charAt(i);
-    		if(s.charAt(i) == '\'') result += '\''; 
-                if(s.charAt(i) == '\\') result += '\\'; 
+            result += s.charAt(i);
+            if(s.charAt(i) == '\'') result += '\''; 
+            if(s.charAt(i) == '\\') result += '\\'; 
     	}
     	
     	if(bAddWildcards)
     	{
-    		result = "%"+result+"%";
+            result = "%"+result+"%";
     	}
     	
     	if(bAddQuotes)
     	{
-    		result = "\'"+result+"\'";
+            result = "\'"+result+"\'";
     	}
     	
     	return result;

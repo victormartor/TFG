@@ -34,7 +34,6 @@ public class Pedido
     public boolean getIsDeleted() {return _bIsDeleted;}
 
     //SET
-    public void setId(int iId) {_iId = iId;}
     public void setFecha(Date Fecha) {_Fecha = Fecha;}
     public void setNumArticulos(int iNumArticulos) {_iNumArticulos = iNumArticulos;}
     public void setTotal(double dTotal) { _dTotal = dTotal;}

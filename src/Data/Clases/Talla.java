@@ -163,7 +163,7 @@ public class Talla
         ResultSet rs = null;
         try {
             String sQuery = "SELECT Id FROM Talla" + Where(sNombre, Es_Numero);
-            if(Es_Numero) sQuery += " ORDER BY Nombre";
+            if(Es_Numero != null && Es_Numero) sQuery += " ORDER BY Nombre";
             
             con = Data.Connection();
             rs = con.createStatement().executeQuery(sQuery);

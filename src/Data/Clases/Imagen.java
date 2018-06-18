@@ -32,7 +32,7 @@ public class Imagen
     
     //SET
     public void setNombre(String sNombre) {_sNombre = sNombre;}
-    public void setRuta(String sRuta) {_sNombre = sRuta;}
+    public void setRuta(String sRuta) {_sRuta = sRuta;}
 
     /**
      * Constructor a partir de un Id obtiene la imagen de la base de datos
