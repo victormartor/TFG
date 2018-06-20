@@ -676,14 +676,28 @@ public class IfrPedido extends javax.swing.JFrame {
                         aiArticulosStock);
                 
                 //SI EL ENVIO ES A DOMICILIO SE ENVIARÁ UN CORREO CON LOS DATOS PERSONALES
-                if(cmbDireccion.getSelectedIndex() == 1){
-                    String destinatario = Configuracion.Select("Email", null)
-                            .get(0).getValor();
-                    String asunto = "EasyShop - Envío a domicilio";
+                if(cmbDireccion.getSelectedIndex() == 1)
+                {
+                    String nombreTienda = Configuracion.Select("Nombre_tienda",
+                            null).get(0).getValor();
                     String linea1 = "\n=====================================\n";
                     String linea2 ="\n--------------------------------------\n";
-                    String cuerpo = "Pedido #"+pedido.getId()+linea1;
-                    cuerpo+= linea2+"ARTÍCULOS"+linea2;
+                    
+                    //emails adonde se enviara el mensaje
+                    String email_jefe = Configuracion.Select("Email", null)
+                            .get(0).getValor();
+                    String email_cliente = txtEmail.getText();
+                    
+                    //asunto
+                    String asunto = "EasyShop - Envío a domicilio";
+                    
+                    //cabeceras
+                    String cabecera_jefe = "Pedido #"+pedido.getId()+linea1;
+                    String cabecera_cliente = "¡Gracias por confiar en "
+                            +nombreTienda+"! Este es su pedido:"+linea1;
+                            
+                    //lista de articulos
+                    String lista_articulos = linea2+"ARTÍCULOS"+linea2;
                     for(Integer iId_Stock : pedido.getArticulosStock()){
                         Stock stock = new Stock(iId_Stock);
                         Articulo articulo = new Articulo(stock.getId_Articulo());
@@ -692,15 +706,17 @@ public class IfrPedido extends javax.swing.JFrame {
                         Color color = new Color(stock.getId_Color());
                         Talla talla = new Talla(stock.getId_Talla());
                         
-                        cuerpo+= "Cod: "+stock.toString()+"\n"
+                        lista_articulos+= "Cod: "+stock.toString()+"\n"
                                 +articulo.getNombre()+"\n"
                                 +marca.getNombre()+"\n"
                                 +"Color: "+color.getNombre()+"\n"
                                 +"Talla: "+talla.getNombre()+"\n"
                                 +"Precio: "+articulo.getPVP()+" €\n\n";
                     }
-                    cuerpo += "Total: "+pedido.getTotal()+" €";
-                    cuerpo += linea2+"DATOS DEL CLIENTE"+linea2
+                    lista_articulos += "Total: "+pedido.getTotal()+" €";
+                    
+                    //datos del cliente
+                    String datos_cliente = linea2+"DATOS DEL CLIENTE"+linea2
                             +"Nombre: "+txtNombre.getText()+"\n"
                             +"Ciudad: "+txtCiudad.getText()+"\n"
                             +"Código Postal: "+txtCodPostal.getText()+"\n"
@@ -710,7 +726,11 @@ public class IfrPedido extends javax.swing.JFrame {
                             +"Teléfono: "+txtTfno.getText()+"\n"
                             +"Email: "+txtEmail.getText()+linea1;
                     
-                    enviarConGMail(destinatario,asunto,cuerpo);
+                    //enviar emails
+                    enviarConGMail(email_jefe,asunto,cabecera_jefe
+                            +lista_articulos+datos_cliente);
+                    enviarConGMail(email_cliente,asunto,cabecera_cliente
+                            +lista_articulos+datos_cliente);
                 }
                 
                 JOptionPane.showMessageDialog(this, 

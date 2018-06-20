@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import util.Servidor;
@@ -29,9 +27,9 @@ import util.Servidor;
 public class IfrPrincipal extends javax.swing.JFrame 
 {
     private final Servidor _servidor;
+    private final ModPedidos _modPedidos;
     private String _sIP = null;
     private Thread _hilo;
-    private ModPedidos _modPedidos;
     private int _numPedidos;
     
     /**
@@ -170,17 +168,19 @@ public class IfrPrincipal extends javax.swing.JFrame
         icono_logo = new javax.swing.JLabel();
         lblException = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        MenuGestionar = new javax.swing.JMenu();
-        MenuItemBaseDatos = new javax.swing.JMenuItem();
-        MenuItemExistencias = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        MenuItemColores = new javax.swing.JMenuItem();
-        MenuItemTallas = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        MenuItemConfig = new javax.swing.JMenuItem();
-        MenuVer = new javax.swing.JMenu();
-        MenuItemPedidos = new javax.swing.JMenuItem();
+        jToolBar1 = new javax.swing.JToolBar();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jToolBar2 = new javax.swing.JToolBar();
+        butBaseDatos = new javax.swing.JButton();
+        butExistencias = new javax.swing.JButton();
+        jToolBar3 = new javax.swing.JToolBar();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        jToolBar4 = new javax.swing.JToolBar();
+        butTallas = new javax.swing.JButton();
+        butColores = new javax.swing.JButton();
+        jToolBar5 = new javax.swing.JToolBar();
+        butPedidos = new javax.swing.JButton();
+        butConf = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("EasyShop");
@@ -205,7 +205,7 @@ public class IfrPrincipal extends javax.swing.JFrame
         listPedidosPendientes.setSelectionBackground(new java.awt.Color(0, 0, 0));
         jScrollPane1.setViewportView(listPedidosPendientes);
 
-        butEstadoServidor.setBackground(new java.awt.Color(153, 153, 153));
+        butEstadoServidor.setBackground(new java.awt.Color(238, 36, 36));
         butEstadoServidor.setForeground(new java.awt.Color(255, 255, 255));
         butEstadoServidor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/power_90.png"))); // NOI18N
         butEstadoServidor.addActionListener(new java.awt.event.ActionListener() {
@@ -237,65 +237,113 @@ public class IfrPrincipal extends javax.swing.JFrame
 
         lblException.setText(" ");
 
-        MenuGestionar.setText("Gestionar");
+        jToolBar1.setBorder(null);
+        jToolBar1.setFloatable(false);
+        jToolBar1.setRollover(true);
 
-        MenuItemBaseDatos.setText("Base de datos");
-        MenuItemBaseDatos.addActionListener(new java.awt.event.ActionListener() {
+        jSplitPane1.setBorder(null);
+
+        jToolBar2.setBorder(null);
+        jToolBar2.setFloatable(false);
+        jToolBar2.setRollover(true);
+
+        butBaseDatos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/010-database-1.png"))); // NOI18N
+        butBaseDatos.setToolTipText("Base de datos");
+        butBaseDatos.setFocusable(false);
+        butBaseDatos.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        butBaseDatos.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        butBaseDatos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MenuItemBaseDatosActionPerformed(evt);
+                butBaseDatosActionPerformed(evt);
             }
         });
-        MenuGestionar.add(MenuItemBaseDatos);
+        jToolBar2.add(butBaseDatos);
 
-        MenuItemExistencias.setText("Existencias");
-        MenuItemExistencias.addActionListener(new java.awt.event.ActionListener() {
+        butExistencias.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/004-online-shop.png"))); // NOI18N
+        butExistencias.setToolTipText("Existencias");
+        butExistencias.setFocusable(false);
+        butExistencias.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        butExistencias.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        butExistencias.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MenuItemExistenciasActionPerformed(evt);
+                butExistenciasActionPerformed(evt);
             }
         });
-        MenuGestionar.add(MenuItemExistencias);
-        MenuGestionar.add(jSeparator1);
+        jToolBar2.add(butExistencias);
 
-        MenuItemColores.setText("Colores");
-        MenuItemColores.addActionListener(new java.awt.event.ActionListener() {
+        jSplitPane1.setLeftComponent(jToolBar2);
+
+        jToolBar3.setBorder(null);
+        jToolBar3.setFloatable(false);
+        jToolBar3.setRollover(true);
+
+        jSplitPane2.setBorder(null);
+
+        jToolBar4.setBorder(null);
+        jToolBar4.setFloatable(false);
+        jToolBar4.setRollover(true);
+
+        butTallas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/006-price-tag.png"))); // NOI18N
+        butTallas.setToolTipText("Tallas");
+        butTallas.setFocusable(false);
+        butTallas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        butTallas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        butTallas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MenuItemColoresActionPerformed(evt);
+                butTallasActionPerformed(evt);
             }
         });
-        MenuGestionar.add(MenuItemColores);
+        jToolBar4.add(butTallas);
 
-        MenuItemTallas.setText("Tallas");
-        MenuItemTallas.addActionListener(new java.awt.event.ActionListener() {
+        butColores.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/008-pantone.png"))); // NOI18N
+        butColores.setToolTipText("Colores");
+        butColores.setFocusable(false);
+        butColores.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        butColores.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        butColores.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MenuItemTallasActionPerformed(evt);
+                butColoresActionPerformed(evt);
             }
         });
-        MenuGestionar.add(MenuItemTallas);
-        MenuGestionar.add(jSeparator2);
+        jToolBar4.add(butColores);
 
-        MenuItemConfig.setText("Configuración");
-        MenuItemConfig.addActionListener(new java.awt.event.ActionListener() {
+        jSplitPane2.setLeftComponent(jToolBar4);
+
+        jToolBar5.setBorder(null);
+        jToolBar5.setFloatable(false);
+        jToolBar5.setRollover(true);
+
+        butPedidos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/001-list.png"))); // NOI18N
+        butPedidos.setToolTipText("Pedidos realizados");
+        butPedidos.setFocusable(false);
+        butPedidos.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        butPedidos.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        butPedidos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MenuItemConfigActionPerformed(evt);
+                butPedidosActionPerformed(evt);
             }
         });
-        MenuGestionar.add(MenuItemConfig);
+        jToolBar5.add(butPedidos);
 
-        jMenuBar1.add(MenuGestionar);
-
-        MenuVer.setText("Ver");
-
-        MenuItemPedidos.setText("Pedidos realizados");
-        MenuItemPedidos.addActionListener(new java.awt.event.ActionListener() {
+        butConf.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/002-gear.png"))); // NOI18N
+        butConf.setToolTipText("Configuración");
+        butConf.setFocusable(false);
+        butConf.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        butConf.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        butConf.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MenuItemPedidosActionPerformed(evt);
+                butConfActionPerformed(evt);
             }
         });
-        MenuVer.add(MenuItemPedidos);
+        jToolBar5.add(butConf);
 
-        jMenuBar1.add(MenuVer);
+        jSplitPane2.setRightComponent(jToolBar5);
 
-        setJMenuBar(jMenuBar1);
+        jToolBar3.add(jSplitPane2);
+
+        jSplitPane1.setRightComponent(jToolBar3);
+
+        jToolBar1.add(jSplitPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -304,7 +352,7 @@ public class IfrPrincipal extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                     .addComponent(lblNombreTienda)
                     .addComponent(lblIP))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -330,11 +378,13 @@ public class IfrPrincipal extends javax.swing.JFrame
                         .addContainerGap())))
             .addComponent(jSeparator3)
             .addComponent(lblException, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(butEstadoServidor, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -344,15 +394,15 @@ public class IfrPrincipal extends javax.swing.JFrame
                         .addComponent(butVerPedido)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(butEliminar)
-                        .addGap(41, 41, 41)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
                         .addComponent(icono_logo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblNombreTienda)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblIP)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addComponent(lblException))
@@ -360,42 +410,6 @@ public class IfrPrincipal extends javax.swing.JFrame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void MenuItemBaseDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemBaseDatosActionPerformed
-        java.awt.EventQueue.invokeLater(() -> {
-            Frame ifrMarca = null;
-            try {
-                ifrMarca = new IfrMarca();
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, 
-                "Error al leer la base de datos.\n"+ex.toString(), 
-                "Error", 
-                JOptionPane.ERROR_MESSAGE);
-            }
-            if(ifrMarca != null){
-                ifrMarca.setLocationRelativeTo(this);
-                ifrMarca.setVisible(true);
-            }
-        });
-    }//GEN-LAST:event_MenuItemBaseDatosActionPerformed
-
-    private void MenuItemConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemConfigActionPerformed
-        java.awt.EventQueue.invokeLater(() -> {
-            Frame frmConfig = null;
-            try {
-                frmConfig = new FrmConfig(lblNombreTienda);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, 
-                "Error al leer la base de datos.\n"+ex.toString(), 
-                "Error", 
-                JOptionPane.ERROR_MESSAGE);
-            }
-            if(frmConfig != null){
-                frmConfig.setLocationRelativeTo(this);
-                frmConfig.setVisible(true);
-            }
-        });
-    }//GEN-LAST:event_MenuItemConfigActionPerformed
 
     private void butEstadoServidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butEstadoServidorActionPerformed
         obtenerIP();
@@ -409,6 +423,7 @@ public class IfrPrincipal extends javax.swing.JFrame
                 lblException.setText(" "+ex.toString());
             }
             lblEstadoServidor.setText("Encendido");
+            butEstadoServidor.setBackground(new Color(135,253,150));
 
             _hilo = new Thread(){
             @Override
@@ -480,8 +495,11 @@ public class IfrPrincipal extends javax.swing.JFrame
                                         break;
                                 }
                             } 
-                        }catch(Exception ex){ 
-                            lblException.setText(" "+ex.toString());
+                        }catch(IOException | NumberFormatException | SQLException ex){ 
+                            if(ex.toString().contains("socket closed"))
+                                lblException.setText(" Servidor apagado.");
+                            else
+                                lblException.setText("  "+ex.toString());
                         }
                     }
                 }
@@ -495,34 +513,36 @@ public class IfrPrincipal extends javax.swing.JFrame
                 _servidor.apagarServidor();
                 _hilo.interrupt();
                 lblEstadoServidor.setText("Apagado");
+                butEstadoServidor.setBackground(new Color(238,36,36));
             }catch(IOException ex){ 
                 lblException.setText(" "+ex.toString());
             }
         }
     }//GEN-LAST:event_butEstadoServidorActionPerformed
 
-    private void MenuItemColoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemColoresActionPerformed
-        java.awt.EventQueue.invokeLater(() -> {
-            Frame frmColores = new FrmColores();
-            frmColores.setLocationRelativeTo(this);
-            frmColores.setVisible(true);
-
-        });
-    }//GEN-LAST:event_MenuItemColoresActionPerformed
-
-    private void MenuItemTallasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemTallasActionPerformed
-        java.awt.EventQueue.invokeLater(() -> {
-            Frame frmTallas = new FrmTallas();
-            frmTallas.setLocationRelativeTo(this);
-            frmTallas.setVisible(true);
-        });
-    }//GEN-LAST:event_MenuItemTallasActionPerformed
-
     private void butVerPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butVerPedidoActionPerformed
         ver_pedido();
     }//GEN-LAST:event_butVerPedidoActionPerformed
 
-    private void MenuItemExistenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemExistenciasActionPerformed
+    private void butBaseDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butBaseDatosActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame ifrMarca = null;
+            try {
+                ifrMarca = new IfrMarca();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, 
+                "Error al leer la base de datos.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            }
+            if(ifrMarca != null){
+                ifrMarca.setLocationRelativeTo(this);
+                ifrMarca.setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_butBaseDatosActionPerformed
+
+    private void butExistenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butExistenciasActionPerformed
         java.awt.EventQueue.invokeLater(() -> {
             Frame frmExistencias = null;
             try {
@@ -538,14 +558,48 @@ public class IfrPrincipal extends javax.swing.JFrame
                 frmExistencias.setVisible(true);
             }
         });
-    }//GEN-LAST:event_MenuItemExistenciasActionPerformed
+    }//GEN-LAST:event_butExistenciasActionPerformed
 
-    private void MenuItemPedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemPedidosActionPerformed
+    private void butTallasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butTallasActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmTallas = new FrmTallas();
+            frmTallas.setLocationRelativeTo(this);
+            frmTallas.setVisible(true);
+        });
+    }//GEN-LAST:event_butTallasActionPerformed
+
+    private void butColoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butColoresActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmColores = new FrmColores();
+            frmColores.setLocationRelativeTo(this);
+            frmColores.setVisible(true);
+        });
+    }//GEN-LAST:event_butColoresActionPerformed
+
+    private void butConfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butConfActionPerformed
+        java.awt.EventQueue.invokeLater(() -> {
+            Frame frmConfig = null;
+            try {
+                frmConfig = new FrmConfig(lblNombreTienda);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                "Error al leer la base de datos.\n"+ex.toString(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            }
+            if(frmConfig != null){
+                frmConfig.setLocationRelativeTo(this);
+                frmConfig.setVisible(true);
+            }
+        });
+    }//GEN-LAST:event_butConfActionPerformed
+
+    private void butPedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butPedidosActionPerformed
         java.awt.EventQueue.invokeLater(() -> {
             Frame ifrPedidos = null;
             try {
                 ifrPedidos = new IfrPedidosRealizados();
-            } catch (Exception ex) {
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, 
                 "Error al leer la base de datos.\n"+ex.toString(), 
                 "Error", 
@@ -556,7 +610,7 @@ public class IfrPrincipal extends javax.swing.JFrame
                 ifrPedidos.setVisible(true);
             }
         });
-    }//GEN-LAST:event_MenuItemPedidosActionPerformed
+    }//GEN-LAST:event_butPedidosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -592,23 +646,25 @@ public class IfrPrincipal extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu MenuGestionar;
-    private javax.swing.JMenuItem MenuItemBaseDatos;
-    private javax.swing.JMenuItem MenuItemColores;
-    private javax.swing.JMenuItem MenuItemConfig;
-    private javax.swing.JMenuItem MenuItemExistencias;
-    private javax.swing.JMenuItem MenuItemPedidos;
-    private javax.swing.JMenuItem MenuItemTallas;
-    private javax.swing.JMenu MenuVer;
+    private javax.swing.JButton butBaseDatos;
+    private javax.swing.JButton butColores;
+    private javax.swing.JButton butConf;
     private javax.swing.JButton butEliminar;
     private javax.swing.JToggleButton butEstadoServidor;
+    private javax.swing.JButton butExistencias;
+    private javax.swing.JButton butPedidos;
+    private javax.swing.JButton butTallas;
     private javax.swing.JButton butVerPedido;
     private javax.swing.JLabel icono_logo;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar jToolBar2;
+    private javax.swing.JToolBar jToolBar3;
+    private javax.swing.JToolBar jToolBar4;
+    private javax.swing.JToolBar jToolBar5;
     private javax.swing.JLabel lblEstadoServidor;
     private javax.swing.JLabel lblException;
     private javax.swing.JLabel lblIP;
