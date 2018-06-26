@@ -39,7 +39,7 @@ public class Configuracion
         try {
             con = Data.Connection();
             rs = con.createStatement().executeQuery("SELECT Id, Campo, Valor "
-                            + "FROM Configuracion "
+                            + "FROM configuracion "
                             + "WHERE Id = " + iId + ";");
             rs.next();
 
@@ -76,7 +76,7 @@ public class Configuracion
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("UPDATE Configuracion "
+            con.createStatement().executeUpdate("UPDATE configuracion "
                         + "SET Campo = " + Data.String2Sql(_sCampo, true, false)
                         + ", Valor = " + Data.String2Sql(_sValor, true, false)
                         + " WHERE Id = " + _iId);
@@ -107,7 +107,7 @@ public class Configuracion
         try {
             con = Data.Connection();
             rs = con.createStatement().executeQuery(
-                    "SELECT Id FROM Configuracion" + Where(sCampo, sValor));
+                    "SELECT Id FROM configuracion" + Where(sCampo, sValor));
 
             while(rs.next()) 
                     aConfiguracion.add(new Configuracion(rs.getInt("Id")));

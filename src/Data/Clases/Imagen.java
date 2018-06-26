@@ -46,7 +46,7 @@ public class Imagen
         try {
             con = Data.Connection();
             rs = con.createStatement().executeQuery("SELECT Id, Nombre, Ruta "
-                            + "FROM Imagen "
+                            + "FROM imagen "
                             + "WHERE Id = " + iId + ";");
             rs.next();
 
@@ -109,7 +109,7 @@ public class Imagen
                        StandardCopyOption.REPLACE_EXISTING);
 
             //Insertarlo en la base de datos
-            con.createStatement().executeUpdate("INSERT INTO Imagen (Nombre, Ruta)"
+            con.createStatement().executeUpdate("INSERT INTO imagen (Nombre, Ruta)"
                             + " VALUES (" + Data.String2Sql(sNombre, true, false) + ", " 
                             + Data.String2Sql(sRuta, true, false) + ");");
 
@@ -139,7 +139,7 @@ public class Imagen
             con.createStatement().executeUpdate(
                 "DELETE FROM articulo_color_imagen WHERE Id_Imagen = " + _iId);
             con.createStatement().executeUpdate(
-                "DELETE FROM Imagen WHERE Id = " + _iId);
+                "DELETE FROM imagen WHERE Id = " + _iId);
             
             //Eliminar también el archivo
             Files.delete(Paths.get(_sRuta));
@@ -167,7 +167,7 @@ public class Imagen
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("UPDATE Imagen "
+            con.createStatement().executeUpdate("UPDATE imagen "
                     + "SET Nombre = " + Data.String2Sql(_sNombre, true, false)
                     + ", Ruta = " + Data.String2Sql(_sRuta, true, false)
                     + " WHERE Id = " + _iId);
@@ -197,7 +197,7 @@ public class Imagen
         ResultSet rs = null;
         try {
             con = Data.Connection();
-            rs = con.createStatement().executeQuery("SELECT Id FROM Imagen"
+            rs = con.createStatement().executeQuery("SELECT Id FROM imagen"
                             + Where(sNombre, sRuta));
 
             while(rs.next()) 

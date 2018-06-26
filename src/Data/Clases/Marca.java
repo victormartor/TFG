@@ -42,7 +42,7 @@ public class Marca
             con = Data.Connection();
             rs = con.createStatement().executeQuery(
                             "SELECT Id, Nombre, Id_Imagen "
-                            + "FROM Marca "
+                            + "FROM marca "
                             + "WHERE Id = " + iId + ";");
             rs.next();
 
@@ -82,7 +82,7 @@ public class Marca
         try {
             con = Data.Connection();
             con.createStatement().executeUpdate(
-                    "INSERT INTO Marca (Nombre, Id_Imagen)"
+                    "INSERT INTO marca (Nombre, Id_Imagen)"
                     + " VALUES (" + Data.String2Sql(sNombre, true, false) + ", " 
                     + iId_Imagen + ");");
 
@@ -110,7 +110,7 @@ public class Marca
         try {
             con = Data.Connection();
             con.createStatement().executeUpdate(
-                    "DELETE FROM Marca WHERE Id = " + _iId);
+                    "DELETE FROM marca WHERE Id = " + _iId);
             
             //Borrar también su imagen
             if(_iId_Imagen != -1) new Imagen(_iId_Imagen).Delete();
@@ -138,7 +138,7 @@ public class Marca
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("UPDATE Marca "
+            con.createStatement().executeUpdate("UPDATE marca "
                     + "SET Nombre = " + Data.String2Sql(_sNombre, true, false)
                     + ", Id_Imagen = " + _iId_Imagen
                     + " WHERE Id = " + _iId);
@@ -168,7 +168,7 @@ public class Marca
         ResultSet rs = null;
         try {
                 con = Data.Connection();
-                rs = con.createStatement().executeQuery("SELECT Id FROM Marca"
+                rs = con.createStatement().executeQuery("SELECT Id FROM marca"
                                 + Where(sNombre, iId_Imagen));
 
                 while(rs.next()) 

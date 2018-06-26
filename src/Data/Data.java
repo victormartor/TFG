@@ -130,7 +130,7 @@ public class Data
     {
         String OS = System.getProperty("os.name");
         if(OS.contains("Win")) return "C:\\AppServ\\www\\EasyShop\\Imagenes";
-        else return "/var/www/EasyShop/Imagenes";
+        else return "/var/www/html/EasyShop/Imagenes";
     }
 }
 

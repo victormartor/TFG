@@ -81,7 +81,7 @@ public class Talla
         try {
             con = Data.Connection();
             con.createStatement().executeUpdate(
-                    "INSERT INTO Talla (Nombre, Es_Numero)"
+                    "INSERT INTO talla (Nombre, Es_Numero)"
                     + " VALUES (" + Data.String2Sql(sNombre, true, false) + ", " 
                     + Data.Boolean2Sql(bEs_Numero) + ");");
 
@@ -109,7 +109,7 @@ public class Talla
         try {
             con = Data.Connection();
             con.createStatement().executeUpdate(
-                    "DELETE FROM Talla WHERE Id = " + _iId);
+                    "DELETE FROM talla WHERE Id = " + _iId);
             _bIsDeleted = true;
         }
         catch (SQLException ee) { throw ee; }
@@ -133,7 +133,7 @@ public class Talla
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("UPDATE Talla "
+            con.createStatement().executeUpdate("UPDATE talla "
                     + "SET Nombre = " + Data.String2Sql(_sNombre, true, false)
                     + ", Es_Numero = " + Data.Boolean2Sql(_bEs_Numero)
                     + " WHERE Id = " + _iId);
@@ -162,7 +162,7 @@ public class Talla
         Connection con = null;
         ResultSet rs = null;
         try {
-            String sQuery = "SELECT Id FROM Talla" + Where(sNombre, Es_Numero);
+            String sQuery = "SELECT Id FROM talla" + Where(sNombre, Es_Numero);
             if(Es_Numero != null && Es_Numero) sQuery += " ORDER BY Nombre";
             
             con = Data.Connection();

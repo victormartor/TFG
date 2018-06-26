@@ -56,7 +56,7 @@ public class Stock
             con = Data.Connection();
             rs = con.createStatement().executeQuery("SELECT "
                             + "Id_Articulo, Id_Color, Id_Talla, Existencias "
-                            + "FROM Stock "
+                            + "FROM stock "
                             + "WHERE "
                             + "Id = " + iId+";");
             rs.next();
@@ -108,7 +108,7 @@ public class Stock
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("INSERT INTO Stock "
+            con.createStatement().executeUpdate("INSERT INTO stock "
                             + "(Id_Articulo, Id_Color, Id_Talla, Existencias)"
                             + " VALUES (" + iId_Articulo + ", " 
                             + iId_Color + ", "
@@ -139,7 +139,7 @@ public class Stock
             con = Data.Connection();
             con.createStatement().executeUpdate("DELETE FROM pedido_stock WHERE "
                                     + "Id_Stock = " + _iId + ";");
-            con.createStatement().executeUpdate("DELETE FROM Stock WHERE "
+            con.createStatement().executeUpdate("DELETE FROM stock WHERE "
                                     + "Id = " + _iId + ";");
             _bIsDeleted = true;
         }
@@ -164,7 +164,7 @@ public class Stock
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("UPDATE Stock "
+            con.createStatement().executeUpdate("UPDATE stock "
                             + "SET Existencias = " + _iExistencias
                             + " WHERE "
                              + "Id = " + _iId + ";");
@@ -197,7 +197,7 @@ public class Stock
         ResultSet rs = null;
         try {
             con = Data.Connection();
-            rs = con.createStatement().executeQuery("SELECT Id FROM Stock"
+            rs = con.createStatement().executeQuery("SELECT Id FROM stock"
                     + Where(iId_Articulo, iId_Color, iId_Talla, iExistencias));
 
             while(rs.next()) 

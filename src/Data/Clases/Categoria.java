@@ -44,7 +44,7 @@ public class Categoria
             con = Data.Connection();
             rs = con.createStatement().executeQuery(
                     "SELECT Id, Nombre, Id_Imagen, Id_Marca "
-                    + "FROM Categoria WHERE Id = " + iId + ";");
+                    + "FROM categoria WHERE Id = " + iId + ";");
             rs.next();
 
             _iId = iId;
@@ -86,7 +86,7 @@ public class Categoria
         try {
                 con = Data.Connection();
                 con.createStatement().executeUpdate(
-                    "INSERT INTO Categoria (Nombre, Id_Imagen, Id_Marca)"
+                    "INSERT INTO categoria (Nombre, Id_Imagen, Id_Marca)"
                     + " VALUES (" + Data.String2Sql(sNombre, true, false) + ", " 
                     + iId_Imagen + ", "
                     + iId_Marca + ");");
@@ -114,7 +114,7 @@ public class Categoria
         try {   
             con = Data.Connection();
             con.createStatement().executeUpdate(
-                    "DELETE FROM Categoria WHERE Id = " + _iId);
+                    "DELETE FROM categoria WHERE Id = " + _iId);
             if(_iId_Imagen != -1) new Imagen(_iId_Imagen).Delete();
             _bIsDeleted = true;
         }
@@ -138,7 +138,7 @@ public class Categoria
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("UPDATE Categoria "
+            con.createStatement().executeUpdate("UPDATE categoria "
                 + "SET Nombre = " + Data.String2Sql(_sNombre, true, false)
                 + ", Id_Imagen = " + _iId_Imagen
                 + ", Id_Marca = " + _iId_Marca
@@ -171,7 +171,7 @@ public class Categoria
         ResultSet rs = null;
         try {
             con = Data.Connection();
-            rs = con.createStatement().executeQuery("SELECT Id FROM Categoria"
+            rs = con.createStatement().executeQuery("SELECT Id FROM categoria"
                             + Where(sNombre, iId_Imagen, iId_Marca));
 
             while(rs.next()) 

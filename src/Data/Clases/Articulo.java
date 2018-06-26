@@ -57,7 +57,7 @@ public class Articulo
             con = Data.Connection();
             rs = con.createStatement().executeQuery(
                 "SELECT Id, Nombre, PVP, Id_Categoria, Talla_Es_Numero "
-                + "FROM Articulo "
+                + "FROM articulo "
                 + "WHERE Id = " + iId + ";");
             rs.next();
 
@@ -147,7 +147,7 @@ public class Articulo
         try {
             con = Data.Connection();
             con.createStatement().executeUpdate(
-            "INSERT INTO Articulo (Nombre, PVP, Id_Categoria, Talla_Es_Numero)"
+            "INSERT INTO articulo (Nombre, PVP, Id_Categoria, Talla_Es_Numero)"
             + " VALUES (" + Data.String2Sql(sNombre, true, false) + ", " 
             + dPVP + ", "
             + iId_Categoria + ", "
@@ -200,7 +200,7 @@ public class Articulo
             con = Data.Connection();
 
             ResultSet rs = con.createStatement().executeQuery(
-                "SELECT Id_Imagen FROM Articulo_Color_Imagen "
+                "SELECT Id_Imagen FROM articulo_color_imagen "
                 + "WHERE Id_Articulo = "+_iId);
             
             for(Stock stock : Stock.Select(_iId, null, null, null))
@@ -216,7 +216,7 @@ public class Articulo
             con.createStatement().executeUpdate(
                "DELETE FROM articulo_color_imagen WHERE Id_Articulo = " + _iId);
             con.createStatement().executeUpdate(
-                "DELETE FROM Articulo WHERE Id = " + _iId);
+                "DELETE FROM articulo WHERE Id = " + _iId);
 
             while(rs.next())
                 new Imagen(rs.getInt("Id_Imagen")).Delete();
@@ -243,7 +243,7 @@ public class Articulo
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("UPDATE Articulo "
+            con.createStatement().executeUpdate("UPDATE articulo "
                 + "SET Nombre = " + Data.String2Sql(_sNombre, true, false)
                 + ", PVP = " + _dPVP
                 + ", Id_Categoria = " + _iId_Categoria
@@ -302,7 +302,7 @@ public class Articulo
         try {
                 con = Data.Connection();
                 rs = con.createStatement().executeQuery(
-                    "SELECT Id FROM Articulo"
+                    "SELECT Id FROM articulo"
                     + Where(sNombre, dPVP, iId_Categoria, bTalla_Es_Numero));
 
                 while(rs.next()) 
@@ -466,7 +466,7 @@ public class Articulo
             con = Data.Connection();
 
             ResultSet rs = con.createStatement().executeQuery(
-                "SELECT Id_Imagen FROM Articulo_Color_Imagen "
+                "SELECT Id_Imagen FROM articulo_color_imagen "
                 + "WHERE Id_Articulo = "+_iId+" AND Id_Color = "+iId_Color);
 
             con.createStatement().executeUpdate(

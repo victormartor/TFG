@@ -54,7 +54,7 @@ public class Pedido
             con = Data.Connection();
             rs = con.createStatement().executeQuery("SELECT Id, Fecha, "
                     + "NumArticulos, Total, CodPostal, DirEnvio "
-                            + "FROM Pedido "
+                            + "FROM pedido "
                             + "WHERE Id = " + iId + ";");
             rs.next();
 
@@ -112,7 +112,7 @@ public class Pedido
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("INSERT INTO Pedido "
+            con.createStatement().executeUpdate("INSERT INTO pedido "
                     + "(Fecha, NumArticulos, Total, CodPostal, DirEnvio)"
                     + " VALUES ("+ Data.String2Sql(Fecha.toString(), true, false) +", "+
                     iNumArticulos +", "+
@@ -154,7 +154,7 @@ public class Pedido
             con.createStatement().executeUpdate(
                     "DELETE FROM pedido_stock WHERE Id_Pedido = " + _iId);
             con.createStatement().executeUpdate(
-                    "DELETE FROM Pedido WHERE Id = " + _iId);
+                    "DELETE FROM pedido WHERE Id = " + _iId);
             _bIsDeleted = true;
         }
         catch (SQLException ee) { throw ee; }
@@ -178,7 +178,7 @@ public class Pedido
         Connection con = null;
         try {
             con = Data.Connection();
-            con.createStatement().executeUpdate("UPDATE Pedido "
+            con.createStatement().executeUpdate("UPDATE pedido "
                 + "SET Fecha = "+Data.String2Sql(_Fecha.toString(), true, false)
                 + ", NumArticulos = " +_iNumArticulos
                 + ", Total = " +_dTotal
@@ -225,7 +225,7 @@ public class Pedido
         ResultSet rs = null;
         try {
             con = Data.Connection();
-            rs = con.createStatement().executeQuery("SELECT Id FROM Pedido"
+            rs = con.createStatement().executeQuery("SELECT Id FROM pedido"
                             + Where(Fecha, iNumArticulos, dTotal,
                              iCodPostal, sDirEnvio));
 
