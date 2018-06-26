@@ -103,7 +103,7 @@ public class Imagen
             }
 
             //Copiar el archivo a la nueva ruta
-            sRuta += "\\"+sNombre;
+            sRuta += "/"+sNombre;
             Files.copy(Paths.get(file.getAbsolutePath()),
                        Paths.get(sRuta), 
                        StandardCopyOption.REPLACE_EXISTING);
