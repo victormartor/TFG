@@ -236,7 +236,7 @@ public class PedidoTest {
     @Test
     public void testSelect() throws Exception {
         System.out.println("Pedido: Select");
-        int expResult = 5;
+        int expResult = 7;
         ArrayList<Pedido> result = Pedido.Select(null, null, null, null, null);
         assertEquals(expResult, result.size());
     }
