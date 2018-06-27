@@ -16,8 +16,6 @@ public class Pedido
 {	
     private int _iId;
     private Date _Fecha;
-    private int _iNumArticulos;
-    private double _dTotal;
     private Integer _iCodPostal;
     private String _sDirEnvio;
     private ArrayList<Integer> _aiArticulosStock;
@@ -26,17 +24,35 @@ public class Pedido
     //GET
     public int getId() {return _iId;}
     public Date getFecha() {return _Fecha;}
-    public int getNumArticulos() {return _iNumArticulos;}
-    public double getTotal() {return _dTotal;}
     public Integer getCodPostal() {return _iCodPostal;}
     public String getDirEnvio() {return _sDirEnvio;}
     public ArrayList<Integer> getArticulosStock() {return _aiArticulosStock;}
     public boolean getIsDeleted() {return _bIsDeleted;}
+    
+    /**
+     * Devuelve el número de artículos del pedido
+     * @return el tamaño de la lista de artículos del pedido
+     */
+    public int getNumArticulos() {return getArticulosStock().size();}
+    
+    /**
+     * Devuelve el coste total del pedido
+     * @return la suma de costes de todos los artículos del pedido
+     * @throws SQLException error al acceder a la base de datos
+     */
+    public double getTotal() throws SQLException 
+    {
+        double dTotal = 0;
+        for(Integer iId_Stock : _aiArticulosStock)
+        {
+            Articulo articulo = new Articulo(new Stock(iId_Stock).getId_Articulo());
+            dTotal += articulo.getPVP();
+        }
+        return dTotal;
+    }
 
     //SET
     public void setFecha(Date Fecha) {_Fecha = Fecha;}
-    public void setNumArticulos(int iNumArticulos) {_iNumArticulos = iNumArticulos;}
-    public void setTotal(double dTotal) { _dTotal = dTotal;}
     public void setCodPostal(Integer iCodPostal) {_iCodPostal = iCodPostal;}
     public void setsDirEnvio(String sDirEnvio) { _sDirEnvio = sDirEnvio;}
     public void setArticulosStock(ArrayList<Integer> articulosStock) {_aiArticulosStock = articulosStock;}
@@ -53,15 +69,13 @@ public class Pedido
         try {
             con = Data.Connection();
             rs = con.createStatement().executeQuery("SELECT Id, Fecha, "
-                    + "NumArticulos, Total, CodPostal, DirEnvio "
+                    + "CodPostal, DirEnvio "
                             + "FROM pedido "
                             + "WHERE Id = " + iId + ";");
             rs.next();
 
             _iId = iId;
             _Fecha = rs.getDate("Fecha");
-            _iNumArticulos = rs.getInt("NumArticulos");
-            _dTotal = rs.getDouble("Total");
             _iCodPostal = rs.getInt("CodPostal");
             _sDirEnvio = rs.getString("DirEnvio");
 
@@ -88,7 +102,7 @@ public class Pedido
     public String toString() 
     {
 	return getId() + ":" + getFecha() + ":" + getNumArticulos()
-                 + ":" + getTotal() + ":" + getCodPostal()
+                 + ":" + getCodPostal()
                  + ":" + getDirEnvio() + ":" + getArticulosStock(); 
     }
 	
@@ -96,7 +110,6 @@ public class Pedido
      * Inserta un pedido en la base de datos.
      * 
      * @param Fecha Fecha del pedido.
-     * @param iNumArticulos Número de artículos del pedido.
      * @param dTotal Total del precio del pedido.
      * @param iCodPostal Código postal del cliente. Puede ser nulo.
      * @param sDirEnvio Lugar donde será entregado el pedido.
@@ -104,7 +117,7 @@ public class Pedido
      * @return devuelve el pedido insertado.
      * @throws java.sql.SQLException Hay un error en la conexión.
      */
-    public static Pedido Create(Date Fecha, int iNumArticulos, double dTotal,
+    public static Pedido Create(Date Fecha,
             Integer iCodPostal, String sDirEnvio, 
             ArrayList<Integer> aiArticulosStock) 
             throws SQLException  
@@ -113,10 +126,8 @@ public class Pedido
         try {
             con = Data.Connection();
             con.createStatement().executeUpdate("INSERT INTO pedido "
-                    + "(Fecha, NumArticulos, Total, CodPostal, DirEnvio)"
+                    + "(Fecha, CodPostal, DirEnvio)"
                     + " VALUES ("+ Data.String2Sql(Fecha.toString(), true, false) +", "+
-                    iNumArticulos +", "+
-                    dTotal +", "+
                     iCodPostal +", "+
                     Data.String2Sql(sDirEnvio, true, false) +");");
             int iId = Data.LastId(con);
@@ -180,8 +191,6 @@ public class Pedido
             con = Data.Connection();
             con.createStatement().executeUpdate("UPDATE pedido "
                 + "SET Fecha = "+Data.String2Sql(_Fecha.toString(), true, false)
-                + ", NumArticulos = " +_iNumArticulos
-                + ", Total = " +_dTotal
                 + ", CodPostal = " + _iCodPostal
                 + ", DirEnvio = " + Data.String2Sql(_sDirEnvio, true, false)
                 + " WHERE Id = " + _iId);

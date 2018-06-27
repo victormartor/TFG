@@ -25,8 +25,8 @@ public class PedidoTest {
     public void setUp() throws SQLException {
         ArrayList<Integer> aiArticulosStock = new ArrayList();
         aiArticulosStock.add(1);
-        _pedido_prueba = Pedido.Create(new Date(System.currentTimeMillis()), 1,
-                9.95, 11406, "Tienda", aiArticulosStock);
+        _pedido_prueba = Pedido.Create(new Date(System.currentTimeMillis()),
+                11406, "Tienda", aiArticulosStock);
         _pedido_uno = new Pedido(1);
     }
     
@@ -73,9 +73,10 @@ public class PedidoTest {
 
     /**
      * Test of getTotal method, of class Pedido.
+     * @throws java.sql.SQLException Error al acceder a la base de datos
      */
     @Test
-    public void testGetTotal() {
+    public void testGetTotal() throws SQLException {
         System.out.println("Pedido: getTotal");
         Pedido instance = _pedido_uno;
         double expResult = 143.7;
@@ -143,29 +144,6 @@ public class PedidoTest {
         assertEquals(Fecha, instance.getFecha());
     }
 
-    /**
-     * Test of setNumArticulos method, of class Pedido.
-     */
-    @Test
-    public void testSetNumArticulos() {
-        System.out.println("Pedido: setNumArticulos");
-        int iNumArticulos = 2;
-        Pedido instance = _pedido_prueba;
-        instance.setNumArticulos(iNumArticulos);
-        assertEquals(iNumArticulos, instance.getNumArticulos());
-    }
-
-    /**
-     * Test of setTotal method, of class Pedido.
-     */
-    @Test
-    public void testSetTotal() {
-        System.out.println("Pedido: setTotal");
-        double dTotal = 40;
-        Pedido instance = _pedido_prueba;
-        instance.setTotal(dTotal);
-        assertEquals(40, instance.getTotal(), 0.0);
-    }
 
     /**
      * Test of setCodPostal method, of class Pedido.
@@ -198,8 +176,8 @@ public class PedidoTest {
     @Test
     public void testSetArticulosStock() throws SQLException, Exception {
         System.out.println("Pedido: setArticulosStock");
-        Pedido instance = Pedido.Create(new Date(System.currentTimeMillis()), 1,
-                9.95, 11406, "Tienda", new ArrayList<>());
+        Pedido instance = Pedido.Create(new Date(System.currentTimeMillis()),
+                11406, "Tienda", new ArrayList<>());
         assertEquals(0, instance.getArticulosStock().size());
         instance.Delete();
     }
@@ -211,7 +189,7 @@ public class PedidoTest {
     public void testToString() {
         System.out.println("Pedido: toString");
         Pedido instance = _pedido_uno;
-        String expResult = "1:2018-06-16:6:143.7:11406:Tienda:[1, 42, 47, 51, 56, 64]";
+        String expResult = "1:2018-06-16:6:11406:Tienda:[1, 42, 47, 51, 56, 64]";
         String result = instance.toString();
         assertEquals(expResult, result);
     }

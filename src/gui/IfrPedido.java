@@ -669,9 +669,7 @@ public class IfrPedido extends javax.swing.JFrame {
                         Integer.parseInt(txtCodPostal.getText());
             
                 Pedido pedido = Pedido.Create(
-                        new Date(System.currentTimeMillis()), 
-                        _pedidoP.getNumArticulos(),
-                        _pedidoP.getTotal(), codPostal,
+                        new Date(System.currentTimeMillis()), codPostal,
                         cmbDireccion.getSelectedItem().toString(), 
                         aiArticulosStock);
                 

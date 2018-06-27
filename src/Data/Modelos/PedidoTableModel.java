@@ -1,7 +1,10 @@
 package Data.Modelos;
 
 import Data.Clases.Pedido;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -58,7 +61,13 @@ public class PedidoTableModel extends AbstractTableModel
             case 0: return _aData.get(iRow).getId();
             case 1: return _aData.get(iRow).getFecha();
             case 2: return _aData.get(iRow).getNumArticulos();
-            case 3: return _aData.get(iRow).getTotal()+" €";
+            case 3: {
+                try {
+                    return _aData.get(iRow).getTotal()+" €";
+                } catch (SQLException ex) {
+                    return "Error";
+                }
+            }
             case 4: return _aData.get(iRow).getCodPostal();
             case 5: return _aData.get(iRow).getDirEnvio();
             default: throw new IllegalStateException(

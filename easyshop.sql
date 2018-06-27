@@ -183,8 +183,6 @@ CREATE TABLE `marca` (
 CREATE TABLE `pedido` (
   `Id` int(11) NOT NULL,
   `Fecha` date NOT NULL,
-  `NumArticulos` int(11) NOT NULL,
-  `Total` double NOT NULL,
   `CodPostal` int(11) DEFAULT NULL,
   `DirEnvio` varchar(128) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
