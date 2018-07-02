@@ -110,7 +110,6 @@ public class Pedido
      * Inserta un pedido en la base de datos.
      * 
      * @param Fecha Fecha del pedido.
-     * @param dTotal Total del precio del pedido.
      * @param iCodPostal Código postal del cliente. Puede ser nulo.
      * @param sDirEnvio Lugar donde será entregado el pedido.
      * @param aiArticulosStock Array de artículos del pedido.
